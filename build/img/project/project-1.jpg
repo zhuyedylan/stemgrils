@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>中国妇女发展基金会</title>
+<link rel="stylesheet" href="https://www.cwdf.org.cn/statics/css/style.css?t=1775257965" type="text/css" />
+<script type='text/javascript' src="https://www.cwdf.org.cn/statics/js/jquery-1.7.2.min.js"></script>
+<style type="text/css">
+#gotop{background: url(https://www.cwdf.org.cn/statics/images/2014/maxtop.png);cursor: pointer;position: fixed;bottom: 20px;width: 46px;height: 47px;right: 50px;}
+.header-20{display: block;width: 100%;position:relative;height: 210px;}
+.header-20 li{list-style-type: none;height: 210px;padding:0;margin:0;display:none;}
+.header-20 li a{display: block;width:100%;height: 100%;}
+.header-20 .current{display: block}
+.header-20 .img1{ background:url('https://www.cwdf.org.cn/uploadfile/2022/1102/20221102041416657.jpeg') center;}
+.header-20 .img2{ background:url('https://www.cwdf.org.cn/uploadfile/2023/0426/ztjy.people.cn.jpg') center;}
+</style>
+</head>
+<body>
+<div class="header-20">
+    <li class="img-slide img1 current">
+        <a href="http://cpc.people.com.cn/20th/index.html" target="_blank"></a>
+    </li>
+    <li class="img-slide img2">
+        <a href="http://ztjy.people.cn" target="_blank"></a>
+    </li>
+</div>
+<div class="banner">
+    <div class="dianh5"></div>
+    <div class="banner-con">
+        <div class="logo"><a href="/"><img src="https://www.cwdf.org.cn/statics/images/2014/logo.png" /></a></div>
+        <div class="banner-right">
+            <div class="ner-right1">
+                <ul>
+
+                  <!--                                           <li ><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=69">年检报告</a></li>
+                                         -->
+					<li ><a href="http://topics.gmw.cn/node_125374.htm" target="_blank">母亲水窖20周年专题</a></li>
+                    <li class="eng_b_n">&nbsp;<a href="/en">English</a></li>
+                </ul>
+            </div>
+            <div class="ner-right2">
+                <div class="ner-right21">
+                    <ul>
+                     													<li>
+							<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=79">关于我们</a>
+							<div class="mnav">
+							 																	<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=79">机构简介</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=156">机构文化</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=85">理事会</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=95">组织架构</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=93">机构章程</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=149">党建工作</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=80&year=2020">历史足迹</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=115">联系方式</a>
+																						</div>
+							</li>
+                        							<li>
+							<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=26">资讯中心</a>
+							<div class="mnav">
+							 																	<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=26">本会新闻</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=84">本会公告</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=40">电子刊物</a>
+																						</div>
+							</li>
+                        							<li>
+							<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=98">我们的项目</a>
+							<div class="mnav">
+							 																	<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=98">项目推荐</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=99">持续发展类</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=100">资助救助类</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=101">宣传倡导类</a>
+																						</div>
+							</li>
+                        							<li>
+							<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=69">信息公开</a>
+							<div class="mnav">
+							 																	<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=69">年检报告</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=68">审计报告</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=66">财务报告</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=142">项目年报</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=94">管理制度</a>
+																						</div>
+							</li>
+                        							<li>
+							<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=55">支持我们</a>
+							<div class="mnav">
+							 																	<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=55">项目捐赠</a>
+																<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=56">捐赠查询</a>
+																						</div>
+							</li>
+                                                                    </ul>
+                </div>
+                <div class="ner-right22">
+                   <!--  <div class="ner-right221"><img src="https://www.cwdf.org.cn/statics/images/2014/sou2.png" /></div>
+                     <form action="index.php" method="get">
+                    <input type="hidden" name="m" value="content">
+                    <input type="hidden" name="c" value="index">
+                    <input type="hidden" name="a" value="serch">
+                    <input type="hidden" name="sou" value="ss">
+                    <div class="ner-right222">
+                        <input type="text" class="txt2" name="q" value="输入搜索关键词" onblur="this.value=(this.value=='')?'输入搜索关键词':this.value" onfocus="this.value=(this.value=='输入搜索关键词')?'':this.value"  />
+                    </div>
+                    <div class="ner-right223">
+
+                        <input type="submit" value="GO" class="but1" onclick="return check(this.form)"/>
+
+                    </div>
+                      </form> -->
+
+					  <div class="but1"><a href="/index.php?m=content&c=index&a=serch"><img src="https://www.cwdf.org.cn/statics/images/2014/sou2_1.png"></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+         function check(form) {
+
+            var m=$('input[name=m]').val();
+            var c=$('input[name=c]').val();
+            var a=$('input[name=a]').val();
+            var sou=$('input[name=sou]').val();
+
+             if(m!='content'){
+                alert('非法操作');
+                return false;
+            }
+             if(c!='index'){
+                alert('非法操作');
+                return false;
+            }
+             if(a!='serch'){
+                alert('非法操作');
+                return false;
+            }
+             if(sou!='ss'){
+                alert('非法操作');
+                return false;
+            }
+
+         return true;
+         }
+</script>
+<script>
+  $(function () {
+    $('.clse').click(function () {
+      $('.gonggao').hide();
+    })
+  })
+</script>
+
+<style type="text/css">
+  .clie {
+    width: 81px;
+    height: 10px;
+    margin: 0px auto;
+  }
+
+  /* .clie li{float: left;width: 15px;height: 8px;margin-left: 10px;cursor: pointer;border: 1px solid #972450;}*/
+
+  .clies {
+    width: 81px;
+    height: 10px;
+    margin: 0px auto;
+  }
+
+  .clies2 {
+    width: 81px;
+    height: 10px;
+    margin: 0px auto;
+  }
+
+  .clies3 {
+    width: 81px;
+    height: 10px;
+    margin: 0px auto;
+  }
+
+  .clies4 {
+    width: 81px;
+    height: 10px;
+    margin: 0px auto;
+  }
+
+  /* .clies li{float: left;width: 15px;height: 8px;margin-left: 10px;cursor: pointer;border: 1px solid #972450;}*/
+
+  .clie li {
+    cursor: pointer;
+    width: 9px;
+    height: 9px;
+    background: #5e5e5e;
+    float: left;
+    margin-left: 7px;
+    position: relative;
+    top: 0px;
+    -moz-border-radius: 50px;
+    /* Firefox */
+    -webkit-border-radius: 50px;
+    /* Safari and Chrome */
+    border-radius: 50px;
+    /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    z-index: 5;
+    behavior: url(https://www.cwdf.org.cn/statics/css/PIE-1.0.0/PIE.htc);
+  }
+
+  .clies li {
+    cursor: pointer;
+    width: 9px;
+    height: 9px;
+    background: #5e5e5e;
+    float: left;
+    margin-left: 7px;
+    position: relative;
+    top: 0px;
+    -moz-border-radius: 50px;
+    /* Firefox */
+    -webkit-border-radius: 50px;
+    /* Safari and Chrome */
+    border-radius: 50px;
+    /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    z-index: 5;
+    behavior: url(https://www.cwdf.org.cn/statics/css/PIE-1.0.0/PIE.htc);
+  }
+
+  .clies2 li {
+    cursor: pointer;
+    width: 9px;
+    height: 9px;
+    background: #5e5e5e;
+    float: left;
+    margin-left: 7px;
+    position: relative;
+    top: 0px;
+    -moz-border-radius: 50px;
+    /* Firefox */
+    -webkit-border-radius: 50px;
+    /* Safari and Chrome */
+    border-radius: 50px;
+    /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    z-index: 5;
+    behavior: url(https://www.cwdf.org.cn/statics/css/PIE-1.0.0/PIE.htc);
+  }
+
+  .clies3 li {
+    cursor: pointer;
+    width: 9px;
+    height: 9px;
+    background: #5e5e5e;
+    float: left;
+    margin-left: 7px;
+    position: relative;
+    top: 0px;
+    -moz-border-radius: 50px;
+    /* Firefox */
+    -webkit-border-radius: 50px;
+    /* Safari and Chrome */
+    border-radius: 50px;
+    /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    z-index: 5;
+    behavior: url(https://www.cwdf.org.cn/statics/css/PIE-1.0.0/PIE.htc);
+  }
+
+  .clies4 li {
+    cursor: pointer;
+    width: 9px;
+    height: 9px;
+    background: #5e5e5e;
+    float: left;
+    margin-left: 7px;
+    position: relative;
+    top: 0px;
+    -moz-border-radius: 50px;
+    /* Firefox */
+    -webkit-border-radius: 50px;
+    /* Safari and Chrome */
+    border-radius: 50px;
+    /* Opera 10.5+, future browsers, and now also Internet Explorer 6+ using IE-CSS3 */
+    z-index: 5;
+    behavior: url(https://www.cwdf.org.cn/statics/css/PIE-1.0.0/PIE.htc);
+  }
+
+
+  .bannerr {
+    width: 980px;
+    height: 170px;
+    margin: 40px auto;
+  }
+
+  .gonggao {
+    width: 127px;
+    height: 201px;
+    position: relative;
+    z-index: 222;
+    float: right;
+    margin-top: 200px;
+  }
+
+  .clse {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    position: absolute;
+    left: 50px;
+    top: 160px;
+  }
+  .red1{display:block;background: #a22820;}
+  .xixian3-3{line-height: 36px;border-bottom: 1px solid #972450;border-top: 1px solid #972450;clear: both;font-size: 14px;}
+  .xixian3-3 li{display: inline-block;text-align: left;width: 32%;list-style:none}
+  .xsgdmlli1{ width: 36%; float:left; /* padding-left: 23px; */ line-height: 22px; overflow:hidden;}
+  .xsgdmlli2{ width: 30%; float:left;/* text-align: center; */padding-left: 10px;}
+  .xsgdmlli3{ width: 20%; text-align: center;float:left;}
+  #demo{ width:280px; float:left; height: 262px;overflow: hidden;}
+  /*html,*/
+  /*body {*/
+  /*  filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);*/
+  /*  -webkit-filter: grayscale(100%);*/
+  /*  -moz-filter: grayscale(100%);*/
+  /*  -ms-filter: grayscale(100%);*/
+  /*  -o-filter: grayscale(100%);*/
+  /*  filter: grayscale(100%);*/
+  /*  filter: gray;*/
+  /*}*/
+
+  /* 漂浮的招聘公告按钮 */
+  .recruitment-float {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #972450;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    box-shadow: 0 10px 20px rgba(151, 36, 80, 0.35);
+    z-index: 1000;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transform: translateZ(0);
+    animation: floatY 3s ease-in-out infinite;
+    text-align: center;
+  }
+  .recruitment-float:hover { filter: brightness(1.05); }
+  .recruitment-float:active { transform: translateY(1px); }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @media (max-width: 480px) {
+    .recruitment-float { right: 16px; bottom: 16px; padding: 10px 14px; }
+  }
+</style>
+
+<script type='text/javascript' src="https://www.cwdf.org.cn/statics/js/index_new.js?v1775257965"></script>
+
+
+<script type='text/javascript' src="https://www.cwdf.org.cn/statics/js/xuanxiangka.js"></script>
+<script type='text/javascript' src="https://www.cwdf.org.cn/statics/js/xiangshanggundong.js"></script>
+
+<ul class="jiaodiantus">
+  <!-- 增加的html -->
+      <li style="display:block">
+    <a href="https://www.cwdf.org.cn/mothercellar/" target="_blank" style="background:url('https://www.cwdf.org.cn/uploadfile/2022/1102/20221102042358268.jpg');display: block;width: 100%;height:100%;background-position: center;background-repeat: no-repeat;background-size: cover;"></a>
+    <div class="in_pic">
+            <a href="https://www.cwdf.org.cn/mothercellar/" target="_blank"><img class="six" src="https://www.cwdf.org.cn/uploadfile/2014/1105/20141105011912135.png"> </a>
+            <div id="1twe" style="width:985px;height:28px;margin:10px auto;position: relative;left:-408px;">
+                <a href="https://www.cwdf.org.cn/mothercellar/" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2014/1211/20141211055508980.png"></a>
+              </div>
+    </div>
+  </li>
+    <li >
+    <a href="https://www.cwdf.org.cn/mqjkkc/" target="_blank" style="background:url('https://www.cwdf.org.cn/uploadfile/2022/1102/20221102042338345.jpg');display: block;width: 100%;height:100%;background-position: center;background-repeat: no-repeat;background-size: cover;"></a>
+    <div class="in_pic">
+            <a href="https://www.cwdf.org.cn/mqjkkc/" target="_blank"><img class="six" src="https://www.cwdf.org.cn/uploadfile/2014/1105/20141105012354266.png"> </a>
+            <div id="2twe" style="width:985px;height:28px;margin:10px auto;position: relative;left:-408px;">
+                <a href="https://www.cwdf.org.cn/mqjkkc/" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2014/1105/20141105125855360.png"></a>
+              </div>
+    </div>
+  </li>
+    <li >
+    <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=80" target="_blank" style="background:url('https://www.cwdf.org.cn/uploadfile/2021/0317/20210317112919198.jpg');display: block;width: 100%;height:100%;background-position: center;background-repeat: no-repeat;background-size: cover;"></a>
+    <div class="in_pic">
+            <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=80" target="_blank"><img class="six" src="https://www.cwdf.org.cn/uploadfile/2021/0304/20210304032630212.png"> </a>
+            <div id="3twe" style="width:985px;height:28px;margin:10px auto;position: relative;left:-408px;">
+                <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=80" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2014/1105/20141105125921896.png"></a>
+              </div>
+    </div>
+  </li>
+    <li >
+    <a href="https://www.cwdf.org.cn/mqcy/" target="_blank" style="background:url('https://www.cwdf.org.cn/uploadfile/2024/0920/20240920042754141.jpg');display: block;width: 100%;height:100%;background-position: center;background-repeat: no-repeat;background-size: cover;"></a>
+    <div class="in_pic">
+            <a href="https://www.cwdf.org.cn/mqcy/" target="_blank"><img class="six" src="https://www.cwdf.org.cn/uploadfile/2021/0303/20210303045318289.png"> </a>
+            <div id="4twe" style="width:985px;height:28px;margin:10px auto;position: relative;left:-408px;">
+                <a href="https://www.cwdf.org.cn/mqcy/" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2021/0303/20210303045105771.png"></a>
+              </div>
+    </div>
+  </li>
+    <li >
+    <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=105" target="_blank" style="background:url('https://www.cwdf.org.cn/uploadfile/2022/1102/20221102042235236.jpg');display: block;width: 100%;height:100%;background-position: center;background-repeat: no-repeat;background-size: cover;"></a>
+    <div class="in_pic">
+            <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=105" target="_blank"><img class="six" src="https://www.cwdf.org.cn/uploadfile/2018/0202/20180202053703577.png"> </a>
+            <div id="5twe" style="width:985px;height:28px;margin:10px auto;position: relative;left:-408px;">
+                <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=100&id=105" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2016/1123/20161123053303746.jpg"></a>
+              </div>
+    </div>
+  </li>
+    
+  <div class="pics" style="display:none;">
+    <ul class="small_pic" id="alis">
+                        <li id="a1" style="background:url(https://www.cwdf.org.cn/statics/images/2014/1-1.png?3) no-repeat;width:458px;"></li>
+                                                      <li id="a2" style="background:url(https://www.cwdf.org.cn/statics/images/2014/22.png?1) no-repeat"></li>
+                                                      <li id="a3" style="background:url(https://www.cwdf.org.cn/statics/images/2014/33.png?1) no-repeat"></li>
+                                                      <li id="a4" style="background:url(https://www.cwdf.org.cn/statics/images/2014/44.png?1) no-repeat"></li>
+                                                      <li id="a5" style="background:url(https://www.cwdf.org.cn/statics/images/2014/55.png?1) no-repeat"></li>
+                      </ul>
+  </div>
+
+  <div class="gonggao" style="display:none;">
+    <div class="clse"></div>
+    <img src="https://www.cwdf.org.cn/statics/images/2014/gong_gao.jpg">
+
+  </div>
+</ul>
+
+
+<!-- 增加的html结束 -->
+<div class="touying"></div>
+
+<div class="content-index" style="height:1054px;">
+
+  <div class="content-ileft">
+    <div><a href="/index.php?m=content&c=index&a=lists&catid=153"><img src="https://www.cwdf.org.cn/statics/images/2019/70year.jpg" style="padding-top:20px;"></a></div>
+                <!-- 增加的广告位 -->
+        <!-- 广告位结束 -->
+            <div class="xuanxk1">
+      <ul id="myTab" style="width:660px;">
+        <!--        <li  onclick="nTabs(this,0,'https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=155');">-->
+
+        <li>
+          <h3><a href="https://www.women.org.cn/5523/5537/list.shtml"  target="_blank" style="color: #000000">妇联要闻</a></h3>
+        </li>
+        <li class="active" onclick="nTabs(this,1,'https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=26');">
+          <h3>资讯</h3>
+        </li>
+        <li class="normal" onclick="nTabs(this,2,'https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=84');">
+          <h3>公告</h3>
+        </li>
+        <li class="normal" onclick="nTabs(this,3,'https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=149');">
+          <h3>党建</h3>
+        </li>
+        <li class="normal" onclick="nTabs(this,4,'https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=114');">
+          <h3>专题</h3>
+        </li>
+        <li class="normal" style="margin-left:303px;">
+          <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=26"
+             style=";color:#972450;" id="clink">
+            <h3>更多>></h3>
+          </a></li>
+
+      </ul>
+    </div>
+    <div class="xixian1"></div>
+    <div class="TabContent">
+      <div id="myTab_Content0" style="display:none;">
+        <div class="xuanxk1-con">
+          <ul class="xuanxk1-conul1">
+            
+                                    <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="http://www.news.cn/politics/leaders/2022-03/06/c_1128443779.htm" style="color:#000000;" target="_blank">习近平总书记向女同胞致以节日祝贺、诚挚祝福</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2022-03-07</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="http://www.women.org.cn/art/2022/3/7/art_18_168650.html" style="color:#000000;" target="_blank">沈跃跃在参加福建代表团审议时强调 牢记“两个确立”做到“两个维护”以实际行动迎接党的二十大胜利召开</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2022-03-07</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="http://www.women.org.cn/art/2022/3/7/art_18_168667.html" style="color:#000000;" target="_blank">黄晓薇在参加政协小组讨论时表示 深刻领悟“两个确立”的决定性意义凝聚巾帼建功新时代的强大力量</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2022-03-07</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="https://mp.weixin.qq.com/s/CZFggJ9_FgwlRuoKVwTS9Q" style="color:#000000;" target="_blank">沈跃跃：团结动员广大妇女永远跟党走奋进新征程 以实际行动迎接党的二十大胜利召开</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2022-01-28</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="http://www.cnwomen.com.cn/2022/01/27/99243114.html" style="color:#000000;" target="_blank">中央文明办、全国妇联、民政部三部门发出倡议： 弘扬家庭美德过和谐年 践行移风易俗过文明年</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2022-01-27</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="https://mp.weixin.qq.com/s/TnC6leu60fPnuDAee83pFQ" style="color:#000000;" target="_blank">全国妇联机关召开党史学习教育总结会议 黄晓薇出席会议并讲话</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2021-12-31</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="https://mp.weixin.qq.com/s/WrfSUOD1NZDAB9m4MzyGvQ" style="color:#000000;" target="_blank">沈跃跃：深入学习贯彻习近平总书记重要讲话和党的十九届六中全会精神不断深化新时代妇女理论与实践研究</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2021-12-15</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="https://mp.weixin.qq.com/s/6qiszTXCaAUFsEWbZwheEQ" style="color:#000000;" target="_blank">全国妇联研究部署扎实做好为党凝聚妇女人心汇聚各民族妇女团结奋进力量的工作</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2021-12-08</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxkhp n-x" style="height: auto;">
+                <h3><a href="https://mp.weixin.qq.com/s/fzbtvxDuYpKrGPQWmqBzmA" style="color:#000000;" target="_blank">沈跃跃：深入学习贯彻习近平总书记重要论述精神 促进新时代家庭家教家风建设高质量发展</a></h3>
+                <p>
+                  　
+                </p>
+                <span>2021-11-30</span>
+              </div>
+            </li>
+                                              </ul>
+          <!--      <ul class="xuanxk1-conul2">
+
+                                                                          <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5470" style="color:#000000;">水润“她”世界：一滴水改变生活——“母亲水窖”25年公益实践纪实</a></h3>
+                            <p> 2026年，联合国将世界水日主题定为Water and Gender（水与性别），以国际视角深度探索水、妇女与性别平等三者之间不可分割的内在关联，唤...</p>
+                            <span>2026-03-22</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5468" style="color:#000000;">“美丽事业，美好人生”公益项目特色美妆班落地广州，赋能女性开辟新兴职业赛道</a></h3>
+                            <p> 以前做设计师是一个人在构建蓝图，现在参与了&lsquo;美丽事业，美好人生&rsquo;，是一群姐妹在往前走。我期待广州特色班也是这样&mdash;&mdash;手艺有...</p>
+                            <span>2026-03-19</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5467" style="color:#000000;">数智赋能女性健康发展，中国公益实践亮相联合国总部</a></h3>
+                            <p>    2026年3月10日，在第七十届联合国妇女地位委员会会议期间，数智赋能女性健康发展公益研讨会暨女性公益成果展示活动在美国纽约联合国...</p>
+                            <span>2026-03-13</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5465" style="color:#000000;">“她”健康关爱计划公益行动在京启动，为“三新”领域女性送上温暖健康关怀</a></h3>
+                            <p> 我们平时很少会自己体检，这种关爱我们女性健康的行动真的非常地暖心。2026年三八国际劳动妇女节前夕，在中国妇女发展基金会联合美年健康集...</p>
+                            <span>2026-03-10</span>
+                        </li>
+                                                                                         </ul> -->
+        </div>
+      </div>
+      <div id="myTab_Content1" style="display:block;">
+        <div class="xuanxk1-con">
+          <ul class="xuanxk1-conul1">
+            
+                                    <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2026/0403/20260403105104786.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5479" style="color:#000000;">以实践拓视野 以交流促成长——“探知未来科技女性培养计划”女中学生走进2026中关村论坛</a></h3>
+                <p>
+                   3月28日，2026中关村论坛科技女性创新论坛在京举办。作为汇聚全球智慧、共话创新发展的科技盛会，一群充满朝气的身影&mdash;&mdash;来自探知未来科...
+                </p>
+                <span>2026-04-03</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2026/0330/20260330095242573.png" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5473" style="color:#000000;">益起为她 筑梦芳华——2026年“关爱妇女家庭”公益赋能专题活动举办</a></h3>
+                <p>
+                     三月的南通，春意正浓，江海交汇处激荡着温暖而坚定的公益力量。3月24日&mdash;26日，益起为她 筑梦芳华&mdash;&mdash;2026年关爱妇女家庭公益赋能...
+                </p>
+                <span>2026-03-28</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2026/0325/20260325032157848.png" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5472" style="color:#000000;">“木兰花开”健康照护师培训赋能公益行动项目探访交流活动顺利举行</a></h3>
+                <p>
+                   近日，木兰花开健康照护师培训赋能公益行动项目探访交流活动在河北省三河市荣华齐山康乐家园举行。中国研究型医院学会会长何振喜，中国妇...
+                </p>
+                <span>2026-03-24</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2026/0323/20260323110123129.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5470" style="color:#000000;">水润“她”世界：一滴水改变生活——“母亲水窖”25年公益实践纪实</a></h3>
+                <p>
+                  2026年，联合国将世界水日主题定为Water and Gender（水与性别），以国际视角深度探索水、妇女与性别平等三者之间不可分割的内在关联，唤...
+                </p>
+                <span>2026-03-22</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2026/0320/20260320100917592.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5468" style="color:#000000;">“美丽事业，美好人生”公益项目特色美妆班落地广州，赋能女性开辟新兴职业赛道</a></h3>
+                <p>
+                  以前做设计师是一个人在构建蓝图，现在参与了&lsquo;美丽事业，美好人生&rsquo;，是一群姐妹在往前走。我期待广州特色班也是这样&mdash;&mdash;手艺有...
+                </p>
+                <span>2026-03-19</span>
+              </div>
+            </li>
+                                              </ul>
+
+        </div>
+      </div>
+      <div id="myTab_Content2" style="display:none;">
+        <div class="xuanxk1-con">
+          <ul class="xuanxk1-conul1">
+
+                        
+
+            <li>
+              <!--  <div class="xxktu"><img src="https://www.cwdf.org.cn/statics/images/nopic.gif" /></div> -->
+              <div class="xxkhp n-x">
+                <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5475" style="color:#000000;">关于选取机构参与2026年爱暖万家公益行动部分执行工作的公告</a></h3>
+                <p style="width:619px;">
+                   为深入贯彻落实习近平总书记同全国妇联新一届领导班子成员集体谈话时的重要讲话精神，落实中国妇女十三大目标任务，推动解决基层困难家庭...
+                </p>
+                <span>2026-04-01</span>
+              </div>
+            </li>
+            
+
+            <li>
+              <!--  <div class="xxktu"><img src="https://www.cwdf.org.cn/statics/images/nopic.gif" /></div> -->
+              <div class="xxkhp n-x">
+                <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5474" style="color:#000000;">关于选取机构参与“粉爱计划”项目物资包 设计制作的公告</a></h3>
+                <p style="width:619px;">
+                  在滴滴出行的支持下，中国妇女发展基金会实施粉爱计划项目，拟通过开发集健康关怀、职业保障等功能的物资包，为女性网约车司机提供切实关爱...
+                </p>
+                <span>2026-03-31</span>
+              </div>
+            </li>
+            
+
+            <li>
+              <!--  <div class="xxktu"><img src="https://www.cwdf.org.cn/statics/images/nopic.gif" /></div> -->
+              <div class="xxkhp n-x">
+                <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5471" style="color:#000000;">关于选取“加速消除宫颈癌试点项目”启动活动及宣教资料制作执行机构的公告</a></h3>
+                <p style="width:619px;">
+                  为了贯彻落实《健康中国2030规划纲要》，助力《加速消除宫颈癌行动计划（2023-2030年）》目标实现，提升低资源地区女性健康水平，中国妇女...
+                </p>
+                <span>2026-03-24</span>
+              </div>
+            </li>
+            
+
+            <li>
+              <!--  <div class="xxktu"><img src="https://www.cwdf.org.cn/statics/images/nopic.gif" /></div> -->
+              <div class="xxkhp n-x">
+                <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5469" style="color:#000000;">2025年度“第八期探知未来科技女性培养计划”优秀学生名单</a></h3>
+                <p style="width:619px;">
+                  命题优秀学生所在地区所在学校好物新装--绿色包装认知与设计高玉函四川成都天府中学杨祖玉海南北京师范大学万宁实验学校曾家颍海南北京师范...
+                </p>
+                <span>2026-03-18</span>
+              </div>
+            </li>
+            
+
+            <li>
+              <!--  <div class="xxktu"><img src="https://www.cwdf.org.cn/statics/images/nopic.gif" /></div> -->
+              <div class="xxkhp n-x">
+                <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5466" style="color:#000000;">中央专项彩票公益金支持低收入妇女“两癌”救助项目 2025 年度资金使用情况公告</a></h3>
+                <p style="width:619px;">
+                  中央专项彩票公益金支持低收入妇女两癌救助项目 2025 年度资金使用情况公告
+                </p>
+                <span>2026-03-11</span>
+              </div>
+            </li>
+                        
+          </ul>
+          <!--    <ul class="xuanxk1-conul2">
+
+                
+                                        <li>
+                           <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5469" style="color:#000000;">2025年度“第八期探知未来科技女性培养计划”优秀学生名单</a></h3>
+                            <p> 命题优秀学生所在地区所在学校好物新装--绿色包装认知与设计高玉函四川成都天府中学杨祖玉海南北京师范大学万宁实验学校曾家颍海南北京师范...</p>
+                            <span>2026-03-18</span>
+                        </li>
+                                                <li>
+                           <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5466" style="color:#000000;">中央专项彩票公益金支持低收入妇女“两癌”救助项目 2025 年度资金使用情况公告</a></h3>
+                            <p> 中央专项彩票公益金支持低收入妇女两癌救助项目 2025 年度资金使用情况公告</p>
+                            <span>2026-03-11</span>
+                        </li>
+                                                <li>
+                           <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5450" style="color:#000000;">关于选取机构参与“生育友好宫颈健康关爱行动 公益项目”推进会及专家交流会执行工作的公告</a></h3>
+                            <p>  在新的人口政策形势下，我国生育力保护和促进工作日趋重要。在《健康中国2030规划纲要》和《中国妇女发展纲要（2021&mdash;2030年）》中，将宫...</p>
+                            <span>2026-03-03</span>
+                        </li>
+                                                <li>
+                           <h3> <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=84&id=5444" style="color:#000000;">关于选取机构参与“乳腺健康关爱项目” 传播活动执行工作竞争性谈判的公告</a></h3>
+                            <p>  我会乳腺健康关爱项目旨在通过为困境患者发放救助金和对公众开展乳腺检查、健康知识宣传等系列行动，引导广大女性提升早发现、早诊断、早...</p>
+                            <span>2026-01-28</span>
+                        </li>
+                                                
+                    </ul> -->
+        </div>
+      </div>
+      <div id="myTab_Content3" style="display:none;">
+        <div class="xuanxk1-con">
+          <ul class="xuanxk1-conul1">
+            
+                                    <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2025/1126/thumb_164_112_20251126042025394.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=149&id=5395" style="color:#000000;">中国妇女发展基金会党支部认真学习贯彻党的二十届四中全会精神</a></h3>
+                <p>
+                   连日来，妇基会先后召开党支委会、党小组会、青年理论小组会等多层面专题学习，原汁原味学习领会习近平总书记在党的二十届四中全会上的重...
+                </p>
+                <span>2025-11-12</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2025/1126/thumb_164_112_20251126041040991.png" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=149&id=5394" style="color:#000000;"> 中国妇女发展基金会党支部举行预备党员入党宣誓仪式</a></h3>
+                <p>
+                   10月29日上午，中国妇女发展基金会党支部为新加入党组织的景日馨同志举行了预备党员入党宣誓仪式。   党支部委员董葵同志宣读《全国妇...
+                </p>
+                <span>2025-10-29</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2025/1024/thumb_164_112_20251024105058609.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=149&id=5376" style="color:#000000;">中国妇女发展基金会党支部传达学习全球妇女峰会精神并组织参观数智赋能妇女和女童成果展</a></h3>
+                <p>
+                     10月13日至14日，全球妇女峰会在北京举行。妇基会党支部第一时间组织学习习近平总书记在全球妇女峰会开幕式上的主旨讲话精神，并于10...
+                </p>
+                <span>2025-10-16</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2025/1009/thumb_164_112_20251009102850554.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=149&id=5364" style="color:#000000;">中国妇女发展基金会召开深入贯彻中央八项规定 精神学习教育总结会</a></h3>
+                <p>
+                  9月15日，妇基会召开深入贯彻中央八项规定精神学习教育总结会，党支部书记董葵同志主持会议。   会上传达学习了习近平总书记关于深入贯...
+                </p>
+                <span>2025-10-09</span>
+              </div>
+            </li>
+                        <li>
+              <div class="xxktu"><img src="https://www.cwdf.org.cn/uploadfile/2025/0808/thumb_164_112_20250808102237934.jpg" /></div>
+              <div class="xxkhp">
+                <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=149&id=5336" style="color:#000000;">中国妇女发展基金会开展 深入贯彻中央八项规定精神学习教育专题党课</a></h3>
+                <p>
+                     根据深入贯彻中央八项规定精神学习教育有关部署，7月14日妇基会召开全体会，会上党支部书记董葵以《坚持知行合一 以优良作风护航妇...
+                </p>
+                <span>2025-07-18</span>
+              </div>
+            </li>
+                                              </ul>
+          <!--      <ul class="xuanxk1-conul2">
+
+                                                                          <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5470" style="color:#000000;">水润“她”世界：一滴水改变生活——“母亲水窖”25年公益实践纪实</a></h3>
+                            <p> 2026年，联合国将世界水日主题定为Water and Gender（水与性别），以国际视角深度探索水、妇女与性别平等三者之间不可分割的内在关联，唤...</p>
+                            <span>2026-03-22</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5468" style="color:#000000;">“美丽事业，美好人生”公益项目特色美妆班落地广州，赋能女性开辟新兴职业赛道</a></h3>
+                            <p> 以前做设计师是一个人在构建蓝图，现在参与了&lsquo;美丽事业，美好人生&rsquo;，是一群姐妹在往前走。我期待广州特色班也是这样&mdash;&mdash;手艺有...</p>
+                            <span>2026-03-19</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5467" style="color:#000000;">数智赋能女性健康发展，中国公益实践亮相联合国总部</a></h3>
+                            <p>    2026年3月10日，在第七十届联合国妇女地位委员会会议期间，数智赋能女性健康发展公益研讨会暨女性公益成果展示活动在美国纽约联合国...</p>
+                            <span>2026-03-13</span>
+                        </li>
+                                                <li>
+                            <h3><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=26&id=5465" style="color:#000000;">“她”健康关爱计划公益行动在京启动，为“三新”领域女性送上温暖健康关怀</a></h3>
+                            <p> 我们平时很少会自己体检，这种关爱我们女性健康的行动真的非常地暖心。2026年三八国际劳动妇女节前夕，在中国妇女发展基金会联合美年健康集...</p>
+                            <span>2026-03-10</span>
+                        </li>
+                                                                                         </ul> -->
+        </div>
+      </div>
+      <div id="myTab_Content4" style="display:none;">
+        <div class="xuanxk1-con">
+          <ul class="xuanxk1-conul1" style="padding-top:10px;">
+
+            
+                        <li>
+
+              <div class="xxkhp n-x" style="height: auto">
+                <h3><a href="" style="color:#000000;">“母亲水窖”20周年专题网站</a></h3>
+                <p><a href="" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2020/0326/20200326062101665.png" /></a></p>
+                <!--  <span>2020-03-22</span> -->
+              </div>
+              <!--  <div class="xxktu"></div> -->
+            </li>
+                        <li>
+
+              <div class="xxkhp n-x" style="height: auto">
+                <h3><a href="" style="color:#000000;">三星探知未来科技女性培养计划</a></h3>
+                <p><a href="" target="_blank"><img src="https://www.cwdf.org.cn/uploadfile/2019/0415/20190415031216640.png" /></a></p>
+                <!--  <span>2019-04-15</span> -->
+              </div>
+              <!--  <div class="xxktu"></div> -->
+            </li>
+                                  </ul>
+          <ul class="xuanxk1-conul2">
+
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content-iright" >
+  <div style="padding-top:20px;padding-bottom:15px;">
+    <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=154"><img src="https://www.cwdf.org.cn/statics/images/2019/xxdjs.jpg"></a>
+  </div>
+  <div style="height:235px;padding: 0 17px;background-color:#F4F4F4;">
+    <div class="xinxigk">
+      <h3>参与支持</h3>
+    </div>
+    <div class="xixian2"></div>
+    <div class="dijijk" style="margin-top:22px">
+      <!--  <a href="http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=55" style="margin-right:16px;"><img src="https://www.cwdf.org.cn/statics/images/2014/zxjz.png" /></a>
+              <a href="http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=58"><img src="https://www.cwdf.org.cn/statics/images/2014/zhyzh.png" /></a> -->
+      <a href="http://lxi.me/ziicm" target="_blank"><i class="iconfont">&#xe601;</i>单次捐赠</a>
+      <a href="http://lxi.me/7sl7z" target="_blank"><i class="iconfont">&#xe601;</i>每月捐赠</a>
+      <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=56"><i class="iconfont">&#xe600;</i>捐赠查询</a>
+<!--      <a href="http://lxi.me/nnnjk" target="_blank"><i class="iconfont">&#xe615;</i>邮件订阅 </a>-->
+    </div>
+  </div>
+  <div class="nt-iright1" >
+    <div class="xinxigk">
+      <h3>信息公开</h3>
+    </div>
+    <div class="xixian2"></div>
+    <div class="xinxishum">
+                  <p>上一年度募资总额：<span>
+            4.97 </span>亿元</p>
+                                      <p>上一月度募资总额：<span>816.01 </span>万元</p>
+<!--      <p>上一月度募资总额：<span>816.01</span>亿元</p>-->
+                </div>
+    <!-- <div class="dijijk">
+              <a href="http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=57" style="margin-right:16px;"><img src="https://www.cwdf.org.cn/statics/images/2014/img4.png" /></a>
+              <a href="http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=55"><img src="https://www.cwdf.org.cn/statics/images/2014/img5.png" /></a>
+          </div> -->
+  </div>
+  <div class="nt-iright2" style="height:430px;">
+    <div class="xinxigk2">
+      <h3>在线捐赠名录</h3>
+    </div>
+    <div class="xixian3-3">
+      <li>捐赠人</li>
+      <li style="text-align: center">捐赠金额</li>
+      <li style="text-align: center">捐赠日期</li>
+    </div>
+    <div class="xsgdml">
+      <div id="demo" style="height: 285px;">
+        <ul id="demo1">
+                              <li>
+            <div class="xsgdmlli1">
+              <p>
+                王泽禹
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥140.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                龚越涵
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1200.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                宿迁市佰兴篷布有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥97.30</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                天津水竹体育用品有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥181.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                佛坪县完食尚电商有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.16</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                李柳
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.10</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                芜湖森越家居用品经营
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥3.66</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                朱江柳
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥8700.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                周鑫
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥2.60</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                上海盛万辉电子商务有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥6.40</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                潘翠琼
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥150.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                天津越泽体育用品有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥71.10</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                重庆锋达厉电子商务有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥3.84</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                广州中电科技有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥122.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                长沙一小只电子商务有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.76</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                张航
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥608.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                王红
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥4.95</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                王昕怡
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥100.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                任雯
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥160.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                合肥零平方商贸有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.70</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                俞涛
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥10.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                金雁
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥60.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                郑州值得买商贸有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.12</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                布宫科技(杭州)有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.02</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                深圳合宜谷德科技有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥6.38</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                义乌市迈客户外用品有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥9.40</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                湖北香灿灿食品有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥49.62</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                宿迁市捷冠橡塑制品有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥18.70</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                苏畅
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥318.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                深圳梓泽电子商务有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥63.30</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                南京腊梅食品有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥28.80</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                德州石趣工艺品有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥6.60</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                陈木兰
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥120.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                博罗县石湾镇信号工作
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥7.50</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                于佳彤
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥10.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                胡丹
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥3.36</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                吴怡淇
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥22.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                汪浩
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥60.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                潘静娴
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥10.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                叶政晖
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥468.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                胡珊珊
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥30.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                黄雨烨
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥360.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                西安壹云泰皮革制品有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.27</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                姜珊
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥30.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                蒋一苇
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥39.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                王晨
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥3.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                广州一马文化传播有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥170.76</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                徐婉旖
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥5.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                武汉香灿灿食品有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.10</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                定慧
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥12.42</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                开封企鸿贸易有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.18</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                朱芯蔚
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                新都区圣兴旺食品部(
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥4.94</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                刘晓
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥30.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                深圳市建圳达电线电缆
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.90</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                深圳柏兰慕科技有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.08</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                郑天
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                北京大名科技有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥66.42</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                陆芷仪
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                周子凡
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥480.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                徐珏炜
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥60.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                董娟娟
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥120.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                临沂三环体育用品有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.35</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                刘昕
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥100.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                武汉千之行商贸有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥22.96</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                田旷怡
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1227.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                顾梦娇
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥60.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                李蔚
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                云龙区珑璃服饰工作室
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥226.29</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                武汉千之行商贸有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥67.64</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                宿迁市捷冠橡塑制品有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.62</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                许蓉璎
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥8.97</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                梁溪区小阿四快跑电子
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥101.70</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                吴凯琳
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥3000.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                严椰铭
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥54.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                常州市奥美特节能科技
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                董亚会
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.30</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                深圳必不可少科技有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥11.60</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                湖北香灿灿食品有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥13.10</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                顾志岳
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1500.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                高素平
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥6.72</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                罗熙
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥2.50</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                金昭羽
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                余道明
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.02</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                于海杰
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥93.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                云龙区珑璃服饰工作室
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥83.84</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                刘涛
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥20.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                常州邦通物联网技术有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥2.80</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                嘉兴湘妃商贸有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1.62</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                王允萌
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥774.70</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                河南成仁食品科技有限
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1.30</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                金华市好源乳业有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥9.36</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                李栩晴
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥328.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                济南佳暖石墨烯科技有
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥0.50</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                张鑫
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                邱洵
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥230.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                李景瑞
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥50.00</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                新都区圣兴旺食品部(
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥1.44</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                中山市今将照明有限公司
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥12.70</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                    <li>
+            <div class="xsgdmlli1">
+              <p>
+                胡婉君
+              </p>
+            </div>
+            <div class="xsgdmlli2">
+              <p style="margin-left:-10px;">￥21.50</p>
+            </div>
+            <div class="xsgdmlli3">
+              <p>
+                03-30              </p>
+            </div>
+          </li>
+                              <!--  <li>
+                          <div class="xsgdmlli1"><p>廖小姐</p></div>
+                          <div class="xsgdmlli2"><p>￥230.00</p></div>
+                          <div class="xsgdmlli3"><p>08-06</p></div>
+                      </li>
+                       <li>
+                          <div class="xsgdmlli1"><p>林文裕 </p></div>
+                          <div class="xsgdmlli2"><p>￥500.00</p></div>
+                          <div class="xsgdmlli3"><p>08-06</p></div>
+                      </li>
+                       <li>
+                          <div class="xsgdmlli1"><p>陆晴杨</p></div>
+                          <div class="xsgdmlli2"><p>￥100.00</p></div>
+                          <div class="xsgdmlli3"><p>08-06</p></div>
+                      </li>
+                      <li>
+                          <div class="xsgdmlli1"><p>张庆</p></div>
+                          <div class="xsgdmlli2"><p>￥50.00</p></div>
+                          <div class="xsgdmlli3"><p>08-06</p></div>
+                      </li>            -->
+        </ul>
+      </div>
+      <div class="jkcxin"><a href="http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=56">捐款查询 >></a></div>
+    </div>
+  </div>
+
+</div>
+</div>
+<div class="xiabcon" style="display: none">
+  <div class="xinxigk4">
+    <ul id="myTab3">
+      <li class="active3" id="op1" onclick="nTabs3(this,0);">
+        <h3 class="po1">企业伙伴</h3>
+      </li>
+      <li class="normal3" id="op2" onclick="nTabs3(this,1);" style="display: none">
+        <h3 class="po2">媒体伙伴</h3>
+      </li>
+      <li class="normal3" id="links">
+        <h3>明星伙伴</h3>
+      </li>
+      <li class="normal3" id="op3" onclick="nTabs3(this,3);">
+        <h3 class="po3">合作伙伴</h3>
+      </li>
+      <li class="normal3" id="op4" onclick="nTabs3(this,4);">
+        <h3 class="po4">专业伙伴</h3>
+      </li>
+
+    </ul>
+  </div>
+  <div class="xixian3"></div>
+  <div class="TabContent">
+    <div id="myTab_Contents0">
+      <div class="hzmthuob">
+        <ul class="qiye" id="he" style="position: relative;left:0;">
+                              <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=18"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422091304370.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=58"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422091337219.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=61"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422091354858.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=175"><img src="https://www.cwdf.org.cn/uploadfile/2020/0426/20200426050608767.png" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=50"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422091410613.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=138&id=48"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422091437155.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=1"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090443273.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=12"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090522464.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=17"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090254409.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=92"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090607839.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=80"><img src="https://www.cwdf.org.cn/uploadfile/2019/0314/20190314102930329.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=88"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090640680.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=47"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090824891.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=36"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090329138.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=13"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090504484.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=43"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090840644.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=41"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090537534.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=148"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090552572.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=87"><img src="https://www.cwdf.org.cn/uploadfile/2019/0926/20190926105725373.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=59"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090753117.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=137&id=78"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422090714417.jpg" /></a></li>
+                    
+        </ul>
+      </div>
+
+      <ul class="clies">
+        <li style="background:#972450;"></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div id="myTab_Contents1" style="display:none;">
+      <div class="hzmthuob">
+        <ul class="meiti" id="mei" style="position: relative;left:0;">
+                              <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=172"><img src="https://www.cwdf.org.cn/uploadfile/2018/1106/20181106022257963.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=157"><img src="https://www.cwdf.org.cn/uploadfile/2016/0722/thumb_131_80_20160722044540652.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=93"><img src="https://www.cwdf.org.cn/uploadfile/2015/0729/20150729053212239.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=76"><img src="https://www.cwdf.org.cn/uploadfile/2014/1128/20141128092756431.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=66"><img src="https://www.cwdf.org.cn/uploadfile/2014/1121/20141121101939849.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=31"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114015431910.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=30"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114015034140.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=29"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114014404505.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=28"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114013402974.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=27"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114013017640.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=26"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114012530587.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=25"><img src="https://www.cwdf.org.cn/uploadfile/2014/1114/thumb_131_80_20141114011833789.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=21"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031043325230.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=20"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031042842474.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=19"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031042407268.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=16"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031041532733.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=15"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031030542866.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=14"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_20141031041308688.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=6"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422032757673.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=34&id=5"><img src="https://www.cwdf.org.cn/uploadfile/2014/1031/thumb_131_80_thumb_674_201_20141031091836274.jpg" /></a></li>
+                    
+        </ul>
+      </div>
+
+      <ul class="clie">
+        <li style="background:#972450;"></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+
+    <div id="myTab_Contents2" style="display:none;">
+      <div class="hzmthuob">
+        <ul class="mingxing" id="ming" style="position: relative;left:0;">
+                              
+        </ul>
+      </div>
+
+      <ul class="clies2">
+        <li style="background:#972450;"></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+
+    <div id="myTab_Contents3" style="display:none;">
+      <div class="hzmthuob">
+        <ul class="hezuo" id="zuo" style="position: relative;left:0;">
+                              <li><a href=""><img src="https://www.cwdf.org.cn/uploadfile/2014/1126/20141126033949720.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=36&id=70"><img src="https://www.cwdf.org.cn/uploadfile/2014/1126/20141126033402492.jpg" /></a></li>
+                    <li><a href=""><img src="https://www.cwdf.org.cn/uploadfile/2014/1120/20141120034039984.jpg" /></a></li>
+                    <li><a href=""><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422032517345.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=36&id=62"><img src="https://www.cwdf.org.cn/uploadfile/2014/1120/20141120030648112.jpg" /></a></li>
+                    <li><a href=""><img src="https://www.cwdf.org.cn/uploadfile/2014/1118/20141118111521639.jpg" /></a></li>
+                    <li><a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=show&catid=36&id=46"><img src="https://www.cwdf.org.cn/uploadfile/2016/0422/20160422032451422.jpg" /></a></li>
+                    
+        </ul>
+      </div>
+
+      <ul class="clies3">
+        <li style="background:#972450;"></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+
+    <div id="myTab_Contents4" style="display:none;">
+      <div class="hzmthuob">
+        <ul class="zhuanye" id="zhuan" style="position: relative;left:0;">
+                              
+        </ul>
+      </div>
+
+      <ul class="clies4">
+        <li style="background:#972450;"></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+
+
+
+
+
+
+  </div>
+
+</div>
+<!--<a-->
+<!--        class="recruitment-float"-->
+<!--        href="https://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp/zpgg/202512/t20251216_563863.html"-->
+<!--        target="_blank"-->
+<!--        rel="noopener"-->
+<!--        aria-label="中国妇女发展基金会招聘公告"-->
+<!--&gt;-->
+<!--&lt;!&ndash;  <span class="badge">公告</span>&ndash;&gt;-->
+<!--  全国妇联所属在京事业单位<br>2026年度公开招聘公告-->
+<!--</a>-->
+<style>
+.footer_zhifu{position: relative;}
+.footer_zhifu_kuang{width:190px;height:250px;position: absolute;top: -228px;display: none;z-index: 9;}
+.footer_zhifu_kuang li{clear: both; width: 190px;height:33px;background: white;margin-bottom:3px;line-height: 33px;text-align: center;border: 1px solid #972450; }
+.footer_zhifu_kuang li a{display: block;width: 190px;font-size: 14px;color:#972450; }
+</style>
+<div class="footern">
+	<div class="f_box">
+		<div class="f_box_l">
+			<img src="https://www.cwdf.org.cn/statics/images/2014/logo.png" alt="中国妇女发展基金会" width="67%">
+			<p>维护妇女权益，提高妇女素质，促进妇女和<br>妇女事业发展<!--，为构建和谐社会作出应有的贡献-->。</p>
+		</div>
+		<ul class="f_box_c">
+			<li>
+				<h6>关于我们</h6>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=79">机构简介</a>
+				<!-- <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=85">理事会</a> -->
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=95">组织架构</a>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=93">机构章程</a>
+				<!-- <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=149">党建工作</a> -->
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=80">历史足迹</a>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=115">联系方式</a>
+			</li>
+			<li>
+				<h6>信息公开</h6>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=69">年检报告</a>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=68">审计报告</a>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=66">财务报告</a>
+				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=142">项目年报</a>
+<!--				<a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=76">项目公示</a>-->
+				<!-- <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=77">捐赠信息</a> -->
+				<!-- <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=94">管理制度</a> -->
+				<!-- <a href="https://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=145">项目申请</a> -->
+			</li>
+		</ul>
+		<ul class="f_box_r">
+					<li>
+			<!-- 	<h6>关注我们</h6> -->
+				<p><img src="https://www.cwdf.org.cn/statics/images/2019/weixin.jpg" alt="中国妇女发展基金会--微信" width="100"><span>官方微信</span></p>
+				<p><a href="https://weibo.com/cwdf" target="_blank" title="查看微博"><img src="https://www.cwdf.org.cn/statics/images/2019/weibo.jpg" alt="中国妇女发展基金会--微博" width="100"></a><span>官方微博</span></p>
+
+			</li>
+		</ul>
+	</div>
+	<div class="footercp">
+				<p></p>
+        <p>中国妇女发展基金会&nbsp;&nbsp;版权所有&nbsp;&nbsp;&nbsp;Copyright(c)2001-2026&nbsp;&nbsp;cwdf.org.cn All Right Reserved&nbsp;&nbsp;&nbsp;<a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">京ICP备09074002号-9</a>&nbsp;&nbsp;&nbsp;<br/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010102003873"><img src="https://www.cwdf.org.cn/statics/images/2019/ghs.png">京公网安备 11010102003873号</a>&nbsp;&nbsp;&nbsp;网站构建：<a href="http://www.blovemedia.com">Blovemedia</a></p>
+  </div>
+</div>
+<div id="gotop" style="display:none;"></div><!-- cwdf.org.cn Baidu tongji analytics -->
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe7d24a2542ed4869eea68407b2a9fad8' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>
+
+<script type='text/javascript'>
+    $(document).ready(function(){
+    init_gotop();
+})
+
+    function init_gotop()
+{
+
+    $(window).scroll(function(){
+
+        var s_top = $(document).scrollTop()+$(window).height()-70;
+        if($.browser.msie && $.browser.version =="6.0")
+        {
+            $("#gotop").css("top",s_top);
+            if($(document).scrollTop()>0)
+            {
+                $("#gotop").css("visibility","visible");
+            }
+            else
+            {
+                $("#gotop").css("visibility","hidden");
+            }
+        }
+        else
+        {
+            if($(document).scrollTop()>0)
+            {
+                if($("#gotop").css("display")=="none")
+                $("#gotop").fadeIn();
+            }
+            else
+            {
+                if($("#gotop").css("display")!="none")
+                $("#gotop").fadeOut();
+            }
+        }
+    });
+    }
+
+
+    $('#gotop').click(function(){
+    $("html,body").animate({scrollTop:$(".dianh5").offset().top},300);
+})
+
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        $('.inhwbing1').mouseover(function(){
+            $('.er').stop().animate({'width':128+'px','height':141+'px'}).css({'background':'url(./https://www.cwdf.org.cn/statics/images/2014/erweima.png) no-repeat'});
+            $('.clo').click(function(){
+                $('.er').stop().animate({'width':0+'px','height':0+'px'});
+            })
+        })
+    })
+    /*
+lastScrollY=0;
+function heartBeat(){
+var diffY;
+if (document.documentElement && document.documentElement.scrollTop)
+    diffY = document.documentElement.scrollTop;
+else if (document.body)
+    diffY = document.body.scrollTop
+else*/
+    {/*Netscape stuff*/}
+/*percent=.1*(diffY-lastScrollY);
+if(percent>0)percent=Math.ceil(percent);
+else percent=Math.floor(percent);
+document.getElementById("full").style.top=parseInt(document.getElementById("full").style.top)+percent+"px";
+lastScrollY=lastScrollY+percent;
+}
+suspendcode="<div id=\"full\" style='right:1px;POSITION:absolute;TOP:600px;z-index:100;'><a onclick='window.scrollTo(0,0);'>返回顶部</a><br></div>"
+document.write(suspendcode);
+window.setInterval("heartBeat()",1);*/
+</script>
+<script type="text/javascript">
+  $(function(){
+    $('.www').mouseover(function(){
+        $('.weixin').show();
+    })
+     $('.www').mouseout(function(){
+        $('.weixin').hide();
+    })
+  })
+</script>
+<script type="text/javascript">
+  $(function(){
+    $('.tan').mouseover(function(){
+        $('.tu').show();
+    });
+     $('.tan').mouseout(function(){
+        $('.tu').hide();
+    });
+      $('.footer_zhifu').mouseover(function(){
+        $('.footer_zhifu .footer_zhifu_kuang').show();
+     });
+      $('.footer_zhifu').mouseout(function(){
+        $('.footer_zhifu .footer_zhifu_kuang').hide();
+     });
+	 $(".ner-right21 ul li").hover(
+		function () {
+			$(this).find(".mnav").show();
+		},
+		function () {
+			$(this).find(".mnav").hide();
+		}
+	);
+  })
+</script>
+
+<script type='text/javascript'>
+  $(function () {
+    cp = 0;
+    cp2 = 0;
+    cp3 = 0;
+    cp4 = 0;
+
+    // 获取li数量
+    var aa = document.getElementById("he").getElementsByTagName("li").length;
+    var bb = document.getElementById("mei").getElementsByTagName("li").length;
+    var cc = document.getElementById("ming").getElementsByTagName("li").length;
+    var dd = document.getElementById("zuo").getElementsByTagName("li").length;
+    var ee = document.getElementById("zhuan").getElementsByTagName("li").length;
+    // 获取指定的class名称
+
+    function run() {
+      cp++;
+      if (cp == 3) {
+        $('.qiye').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clies li').eq(0).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+        cp = 0;
+      }
+      var lr = -990.5 * cp;
+      $('.qiye').stop().animate({ 'left': lr + 'px' }, 1000);
+      $('.clies li').eq(cp).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+    }
+    function run1() {
+      cp2++;
+      if (cp2 == 3) {
+
+        $('.meiti').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clie li').eq(0).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+        cp2 = 0;
+      }
+
+      var lr = -990.5 * cp2;
+      $('.meiti').stop().animate({ 'left': lr + 'px' }, 1000);
+      $('.clie li').eq(cp2).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+
+    }
+
+    function run2() {
+      cp3++;
+      if (cp3 == 3) {
+        $('.hezuo').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clies3 li').eq(0).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+        cp3 = 0;
+      }
+      var lr = -990.5 * cp3;
+      $('.hezuo').stop().animate({ 'left': lr + 'px' }, 1000);
+      $('.clies3 li').eq(cp3).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+    }
+
+    function run3() {
+      cp4++;
+      if (cp4 == 3) {
+        $('.zhuanye').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clies4 li').eq(0).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+        cp4 = 0;
+      }
+      var lr = -990.5 * cp4;
+      $('.zhuanye').stop().animate({ 'left': lr + 'px' }, 1000);
+      $('.clies4 li').eq(cp4).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+    }
+
+
+    var time = setInterval(run, 6000);
+    // 1
+    $('.clies').mouseover(function () {
+      clearInterval(time);
+    })
+    $('.clies').mouseout(function () {
+
+      time = setInterval(run, 6000);
+    })
+    $('.po1').click(function () {
+      $('.qiye').stop().animate({ 'left': 0 + 'px' }, 10);
+      $('.clies li').eq(0).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+      cp = 0;
+    })
+    $('.po2').click(function () {
+      $('.meiti').stop().animate({ 'left': 0 + 'px' }, 10);
+      $('.clie li').eq(0).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+      cp2 = 0;
+    })
+
+    $('.po3').click(function () {
+
+      $('.hezuo').stop().animate({ 'left': 0 + 'px' }, 10);
+      $('.clies3 li').eq(0).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+      cp3 = 0;
+    })
+
+    $('.po4').click(function () {
+
+      $('.zhuanye').stop().animate({ 'left': 0 + 'px' }, 10);
+      $('.clies4 li').eq(0).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+      cp4 = 0;
+    })
+    $('#op2').click(function () {
+
+      var time2 = setInterval(run1, 6000);
+      $('.clie').mouseover(function () {
+        clearInterval(time2);
+      })
+      $('.clie').mouseout(function () {
+        time2 = setInterval(run1, 6000);
+      })
+      //清除掉以前绑定在click上的事件
+      $('#op2').unbind('click');
+
+
+    })
+
+    $('#op3').click(function () {
+      var time3 = setInterval(run2, 6000);
+      // 清除定时器
+      $('.clies3').mouseover(function () {
+        clearInterval(time3);
+      })
+      $('.clies3').mouseout(function () {
+        time3 = setInterval(run2, 6000);
+      })
+      $('#op3').unbind('click');
+    })
+
+    $('#op4').click(function () {
+
+
+      var time4 = setInterval(run3, 6000);
+      // 清除定时器
+      $('.clies4').mouseover(function () {
+        clearInterval(time4);
+      })
+      $('.clies4').mouseout(function () {
+        time4 = setInterval(run3, 6000);
+      })
+      $('#op4').unbind('click');
+    })
+
+    // $('.clies li').live("click", function () {
+    //   cp = $(this).index();
+    //
+    //   if (cp == 0 && aa <= 7 || cp == 0 && aa > 7) {
+    //
+    //     $('.qiye').stop().animate({ 'left': 0 + 'px' }, 1000);
+    //     $('.clies li').eq(cp).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+    //   }
+    //   if (cp == 1 && aa > 7 && aa < 22) {
+    //
+    //     $('.qiye').stop().animate({ 'left': -991 + 'px' }, 1000);
+    //     $('.clies li').eq(cp).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+    //   }
+    //   if (cp == 2 && aa > 14 && aa < 22) {
+    //
+    //     $('.qiye').stop().animate({ 'left': -1981 + 'px' }, 1000);
+    //     $('.clies li').eq(cp).css({ 'background': '#972450' }).siblings('.clies li').css({ 'background': '#5e5e5e' });
+    //   }
+    // })
+
+
+    // $('.clie li').live("click", function () {
+    //
+    //   cp2 = $(this).index();
+    //
+    //   if (cp2 == 0 && bb <= 7 || cp2 == 0 && bb > 7) {
+    //
+    //     $('.meiti').stop().animate({ 'left': 0 + 'px' }, 1000);
+    //     $('.clie li').eq(cp2).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+    //   }
+    //   if (cp2 == 1 && bb > 7 && bb < 22) {
+    //
+    //     $('.meiti').stop().animate({ 'left': -991 + 'px' }, 1000);
+    //     $('.clie li').eq(cp2).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+    //
+    //   }
+    //   if (cp2 == 2 && bb > 14 && bb < 22) {
+    //
+    //     $('.meiti').stop().animate({ 'left': -1981 + 'px' }, 1000);
+    //     $('.clie li').eq(cp2).css({ 'background': '#972450' }).siblings('.clie li').css({ 'background': '#5e5e5e' });
+    //   }
+    // })
+    // 清除定时器
+
+    // 3
+    $('#links').click(function () {
+
+      window.location.href = "http://www.cwdf.org.cn/index.php?m=content&c=index&a=lists&catid=35";
+    })
+
+    // 4
+    $('.clies3 li').on("click", function () {
+
+      cp3 = $(this).index();
+
+      if (cp3 == 0 && dd <= 7 || cp3 == 0 && dd > 7) {
+
+        $('.hezuo').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clies3 li').eq(cp3).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+      }
+      if (cp3 == 1 && dd > 7 && dd < 22) {
+
+        $('.hezuo').stop().animate({ 'left': -991 + 'px' }, 1000);
+        $('.clies3 li').eq(cp3).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+
+      }
+      if (cp3 == 2 && dd > 14 && dd < 22) {
+
+        $('.hezuo').stop().animate({ 'left': -1981 + 'px' }, 1000);
+        $('.clies3 li').eq(cp3).css({ 'background': '#972450' }).siblings('.clies3 li').css({ 'background': '#5e5e5e' });
+      }
+    })
+
+
+    // 5
+
+    $('.clies4 li').on("click", function () {
+
+      cp4 = $(this).index();
+
+      if (cp4 == 0 && ee <= 7 || cp4 == 0 && ee > 7) {
+
+        $('.zhuanye').stop().animate({ 'left': 0 + 'px' }, 1000);
+        $('.clies4 li').eq(cp4).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+      }
+      if (cp4 == 1 && ee > 7 && ee < 22) {
+
+        $('.zhuanye').stop().animate({ 'left': -991 + 'px' }, 1000);
+        $('.clies4 li').eq(cp4).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+
+      }
+      if (cp4 == 2 && ee > 14 && ee < 22) {
+
+        $('.zhuanye').stop().animate({ 'left': -1981 + 'px' }, 1000);
+        $('.clies4 li').eq(cp4).css({ 'background': '#972450' }).siblings('.clies4 li').css({ 'background': '#5e5e5e' });
+      }
+    });
+
+    var __index = 0;
+    var __timer;
+    function autoplay() {
+      __timer = setInterval(function() {
+        __index++; //index递增
+        if (__index === 2) __index = 0;
+        $(".header-20>li").eq(__index).fadeIn(600).addClass("current").siblings().fadeOut(1000).removeClass("current");
+      }, 5000);
+    }
+    autoplay(); //调用函数，开启定时器
+  })
+</script>
