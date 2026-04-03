@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+.docusaurus/
+build/
+.cache/
+
+# Environment and Secrets
+.env
+.env.local
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary and Uploads
+/uploads/*.docx
+/static/img/manuals/temp_*

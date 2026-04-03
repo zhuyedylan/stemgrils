@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/Users/dylanmba/Desktop/@贝贝/编程/工艺手册\\\" && npm install @docusaurus/theme-ideal-image\",\"timeout\":60000,\"description\":\"Install IdealImage plugin\"}",
+  "error": "Exit code 1\nnpm error code E404\nnpm error 404 Not Found - GET https://registry.npmjs.org/@docusaurus%2ftheme-ideal-image - Not found\nnpm error 404\nnpm error 404  The requested resource '@docusaurus/theme-ideal-image@*' could not be found or you do not have permission to access it.\nnpm error 404\nnpm error 404 Note that you can also install from a\nnpm error 404 tarball, folder, http url, or git url.\nnpm error A complete log of this run can be found in: /Users/dylanmba/.npm/_logs/2026-04-03T23_14_0...",
+  "timestamp": "2026-04-03T23:14:08.000Z",
+  "retry_count": 1
+}

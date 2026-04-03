@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"npx create-docusaurus@latest . classic --typescript\",\"timeout\":300000,\"description\":\"Initialize Docusaurus 3.x project\"}",
+  "error": "Exit code 1\nnpm warn exec The following package was not found and will be installed: create-docusaurus@3.9.2\n[ERROR] Error: Directory already exists at \"/Users/dylanmba/Desktop/@贝贝/编程/工艺手册\"!",
+  "timestamp": "2026-04-03T22:32:00.909Z",
+  "retry_count": 1
+}
