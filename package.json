@@ -13,15 +13,20 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "convert": "node scripts/convert-docx.js"
+    "convert": "node scripts/convert-docx.js",
+    "gitee": "npm run build && git add build -f && git commit -m 'Deploy to Gitee Pages' && git push gitee main",
+    "vercel": "node vercel-server.js"
   },
   "dependencies": {
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "fs-extra": "^11.3.4",
     "mammoth": "^1.12.0",
+    "multer": "^2.1.1",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

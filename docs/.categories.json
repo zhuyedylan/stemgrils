@@ -1,0 +1,20 @@
+[
+  {
+    "id": "项目介绍",
+    "name": "项目介绍",
+    "order": 0,
+    "allowUserUpload": false
+  },
+  {
+    "id": "工艺手册",
+    "name": "工艺手册",
+    "order": 1,
+    "allowUserUpload": true
+  },
+  {
+    "id": "简介",
+    "name": "使用指南",
+    "order": 2,
+    "allowUserUpload": false
+  }
+]

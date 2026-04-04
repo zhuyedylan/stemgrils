@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ssh-keyscan gitee.com >> ~/.ssh/known_hosts 2>/dev/null && cd \\\"/Users/dylanmba/Desktop/@贝贝/编程/工艺手册\\\" && git push -u gitee main\",\"timeout\":60000,\"description\":\"Add Gitee host key and push\"...",
-  "error": "Exit code 128\ngit@gitee.com: Permission denied (publickey).\r\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.",
-  "timestamp": "2026-04-03T23:39:24.310Z",
-  "retry_count": 2
+  "tool_input_preview": "{\"command\":\"git checkout src/pages/categories.tsx\",\"description\":\"Revert categories.tsx\"}",
+  "error": "Exit code 1\nerror: pathspec 'src/pages/categories.tsx' did not match any file(s) known to git",
+  "timestamp": "2026-04-04T10:20:25.360Z",
+  "retry_count": 1
 }

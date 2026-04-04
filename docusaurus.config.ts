@@ -18,14 +18,14 @@ const config: Config = {
   url: 'https://your-docusaurus-site.example.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/stemgirls/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'facebook', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'ignore',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -65,40 +65,21 @@ const config: Config = {
       },
       items: [
         {
+          to: '/',
+          label: '首页',
+          position: 'left',
+        },
+        {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: '工艺手册',
-        },
-        {
-          to: '/editor',
-          label: '编辑',
-          position: 'left',
+          label: '文档',
         },
       ],
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: '文档',
-          items: [
-            {
-              label: '工艺手册',
-              to: '/docs/咖啡渣和PLA再生打印线材工艺指南-朱可人',
-            },
-          ],
-        },
-        {
-          title: '关于',
-          items: [
-            {
-              label: '项目简介',
-              to: '/',
-            },
-          ],
-        },
-      ],
+      links: [],
       copyright: `Copyright © ${new Date().getFullYear()} 废旧高分子材料再生3D打印项目`,
     },
     prism: {

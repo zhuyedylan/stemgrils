@@ -65,6 +65,46 @@
   font-size: 0.95rem;
 }
 
+/* 一级目录（category）带色条标识 */
+.theme-doc-sidebar-container nav.menu ul li > a,
+.theme-doc-sidebar-container nav.menu ul li > span,
+.menu__link--sublist-category {
+  position: relative;
+}
+
+/* 侧边栏分类标题（顶级目录）- 更醒目的样式 */
+.theme-doc-sidebar-container nav.menu ul li.menu__list-item--category > a,
+.theme-doc-sidebar-container nav.menu ul li.menu__list-item--category .menu__link--sublist {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border-left: 4px solid var(--ifm-color-primary);
+  padding-left: 14px !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  color: var(--ifm-color-primary-darkest) !important;
+  border-radius: 0 8px 8px 0;
+  margin: 4px 0;
+}
+
+/* 分类标题在展开状态 */
+.theme-doc-sidebar-container nav.menu ul li.menu__list-item--category > a.menu__link--sublist--active,
+.theme-doc-sidebar-container nav.menu ul li.menu__list-item--category .menu__link--sublist[aria-expanded="true"] {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.35) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border-left-width: 4px;
+}
+
+/* 暗色主题下一级目录 */
+[data-theme='dark'] .theme-doc-sidebar-container nav.menu ul li.menu__list-item--category > a,
+[data-theme='dark'] .theme-doc-sidebar-container nav.menu ul li.menu__list-item--category .menu__link--sublist {
+  background: linear-gradient(90deg, rgba(52, 211, 153, 0.25) 0%, rgba(52, 211, 153, 0.08) 100%);
+  border-left-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary-lightest) !important;
+}
+
+/* 普通文档项 */
+.theme-doc-sidebar-container nav.menu ul li.menu__list-item:not(.menu__list-item--category) .menu__link {
+  padding-left: 20px !important;
+}
+
 /* 代码块圆角 */
 .prism-code {
   border-radius: 8px;

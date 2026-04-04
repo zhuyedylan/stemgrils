@@ -1,23 +1,225 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
+/* 首页样式 */
 
 .heroBanner {
-  padding: 4rem 0;
+  padding: 80px 20px;
   text-align: center;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
   position: relative;
   overflow: hidden;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
 }
 
-.buttons {
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroIcon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.heroTitle {
+  font-size: 3rem !important;
+  font-weight: 700 !important;
+  color: #065f46 !important;
+  margin-bottom: 16px !important;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: #374151;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.heroButtons {
   display: flex;
-  align-items: center;
+  gap: 16px;
   justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryButton {
+  display: inline-block;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white !important;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.secondaryButton {
+  display: inline-block;
+  padding: 14px 36px;
+  background: white;
+  color: #059669 !important;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 2px solid #10b981;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background: #ecfdf5;
+  transform: translateY(-2px);
+}
+
+/* 特性卡片 */
+.features {
+  padding: 60px 20px;
+  background: #f9fafb;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.featureCard {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.featureCard h3 {
+  font-size: 1.4rem;
+  color: #065f46 !important;
+  margin-bottom: 12px !important;
+}
+
+.featureCard p {
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* CTA 区域 */
+.cta {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  text-align: center;
+}
+
+.ctaContent {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cta h2 {
+  font-size: 2rem !important;
+  color: white !important;
+  margin-bottom: 16px !important;
+}
+
+.cta p {
+  color: #a7f3d0;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin-bottom: 30px;
+}
+
+/* 暗色主题 */
+[data-theme='dark'] .heroBanner {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+}
+
+[data-theme='dark'] .heroTitle {
+  color: #a7f3d0 !important;
+}
+
+[data-theme='dark'] .heroSubtitle {
+  color: #d1fae5;
+}
+
+[data-theme='dark'] .features {
+  background: #1f2937;
+}
+
+[data-theme='dark'] .featureCard {
+  background: #374151;
+}
+
+[data-theme='dark'] .featureCard h3 {
+  color: #a7f3d0 !important;
+}
+
+[data-theme='dark'] .featureCard p {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .secondaryButton {
+  background: transparent;
+  color: #a7f3d0 !important;
+}
+
+[data-theme='dark'] .secondaryButton:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+@media screen and (max-width: 768px) {
+  .heroTitle {
+    font-size: 2rem !important;
+  }
+
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .heroButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
 }
