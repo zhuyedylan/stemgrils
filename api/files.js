@@ -12,7 +12,7 @@ module.exports = (req, res) => {
 
   try {
     // Vercel 中项目根目录是 /var/task
-    const docsDir = '/var/task/docs';
+    const docsDir = '/var/task/build/docs';
 
     if (!fs.existsSync(docsDir)) {
       return res.json([]);

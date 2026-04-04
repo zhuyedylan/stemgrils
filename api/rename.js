@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const docsDir = '/var/task/docs';
+const docsDir = '/var/task/build/docs';
 
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
