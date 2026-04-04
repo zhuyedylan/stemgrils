@@ -1,39 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
-// 读取本地 docs 目录 - 尝试多个路径
-const possiblePaths = [
-  path.join(__dirname, '../../docs'),
-  path.join(process.cwd(), 'docs'),
-  '/var/task/docs'
-];
+const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
-let docsDir = null;
-for (const p of possiblePaths) {
-  console.log('checking:', p);
-  if (fs.existsSync(p)) {
-    docsDir = p;
-    break;
-  }
-}
-let testContent = {};
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// 尝试读取本地文件
-try {
-  if (fs.existsSync(docsDir)) {
-    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
-    for (const file of files) {
-      const fileName = file.replace('.md', '');
-      const content = fs.readFileSync(path.join(docsDir, file), 'utf8');
-      testContent[fileName] = content;
-    }
-    console.log('Loaded files:', Object.keys(testContent));
-  }
-} catch (e) {
-  console.log('Error loading docs:', e.message);
-}
-
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -49,11 +21,20 @@ module.exports = (req, res) => {
   }
 
   const fileName = filePath.replace('.md', '');
-  const content = testContent[fileName];
 
-  if (!content) {
-    return res.status(404).json({ error: '文件不存在: ' + filePath });
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('content')
+      .eq('filename', fileName)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: '文件不存在: ' + filePath });
+    }
+
+    res.json({ content: data.content });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  res.json({ content });
 };

@@ -1,7 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
-module.exports = (req, res) => {
+// Supabase 配置 - 从环境变量读取
+const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -11,13 +16,23 @@ module.exports = (req, res) => {
     return res.status(200).end();
   }
 
-  // 硬编码测试数据
-  const testFiles = [
-    { path: 'project-intro.md', label: 'project-intro' },
-    { path: '探知未来科技女性培养计划.md', label: '探知未来科技女性培养计划' },
-    { path: '家庭废旧ABS制品再生3d打印线材工艺手册.md', label: '家庭废旧ABS制品再生3d打印线材工艺手册' },
-    { path: '再生PLA与咖啡渣混合打印线材工艺指南.md', label: '再生PLA与咖啡渣混合打印线材工艺指南' }
-  ];
+  try {
+    // 获取文档列表
+    const { data: files, error } = await supabase
+      .from('documents')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  res.json(testFiles);
+    if (error) throw error;
+
+    res.json(files.map(f => ({
+      path: f.filename,
+      label: f.filename.replace('.md', ''),
+      uploader: f.uploader,
+      category: f.category
+    })));
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
 };
