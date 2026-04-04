@@ -29,7 +29,7 @@ function WYSIWYGEditor() {
     setUser(userData);
     setIsLoggedIn(true);
     loadCategories();
-    fetch('/api/files')
+    fetch('/api/files?t=' + Date.now())
       .then(res => res.json())
       .then(files => {
         setEditableFiles(files);
@@ -84,7 +84,7 @@ function WYSIWYGEditor() {
   const loadFile = async (docPath) => {
     try {
       // 使用 API 读取原始 md 文件
-      const response = await fetch(`/api/read?filePath=${encodeURIComponent(docPath)}`);
+      const response = await fetch(`/api/read?filePath=${encodeURIComponent(docPath)}&t=${Date.now()}`);
       if (response.ok) {
         const data = await response.json();
         const text = data.content;
