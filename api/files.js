@@ -1,0 +1,47 @@
+const fs = require('fs');
+const path = require('path');
+
+const docsDir = path.join(__dirname, '../../docs');
+
+if (!fs.existsSync(docsDir)) {
+  fs.mkdirSync(docsDir, { recursive: true });
+}
+
+module.exports = (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  try {
+    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    const uploadersFile = path.join(docsDir, '.uploaders.json');
+    let uploaders = {};
+    if (fs.existsSync(uploadersFile)) {
+      uploaders = JSON.parse(fs.readFileSync(uploadersFile, 'utf8'));
+    }
+
+    const categoriesFile = path.join(docsDir, '.categories.json');
+    let categories = [];
+    if (fs.existsSync(categoriesFile)) {
+      categories = JSON.parse(fs.readFileSync(categoriesFile, 'utf8'));
+    }
+
+    const filesWithInfo = files.map(f => {
+      const fileName = f.replace('.md', '');
+      return {
+        path: f,
+        label: fileName,
+        uploader: uploaders[fileName]?.uploader || null,
+        category: categories[0]?.id || 'intro'
+      };
+    });
+
+    res.json(filesWithInfo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

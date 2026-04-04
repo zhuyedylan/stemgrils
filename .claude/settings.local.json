@@ -13,7 +13,10 @@
       "Read(//private/tmp/**)",
       "Bash(curl:*)",
       "WebFetch(domain:www.cwdf.org.cn)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
