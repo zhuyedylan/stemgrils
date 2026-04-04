@@ -20,8 +20,8 @@ module.exports = async (req, res) => {
   const fileName = filePath.replace('.md', '');
 
   try {
-    // 检查文档是否存在
-    const checkResp = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=id`, {
+    // 检查文档是否存在，获取原上传者
+    const checkResp = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=id,uploader`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     const existing = await checkResp.json();
 
     if (existing && existing.length > 0) {
-      // 更新现有文档
+      // 更新现有文档，保留原上传者
       const updateResp = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}`, {
         method: 'PATCH',
         headers: {
