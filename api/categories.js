@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const docsDir = path.join(__dirname, '../build/docs');
+const docsDir = path.join(process.cwd(), 'build/docs');
 
 // 确保 docs 目录存在
 if (!fs.existsSync(docsDir)) {
