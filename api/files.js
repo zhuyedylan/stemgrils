@@ -1,12 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const docsDir = path.join(process.cwd(), 'build/docs');
-
-if (!fs.existsSync(docsDir)) {
-  fs.mkdirSync(docsDir, { recursive: true });
-}
-
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -26,6 +20,8 @@ module.exports = (req, res) => {
       docsDir = '/vercel/src0/docs';
     }
     console.log('docsDir:', docsDir, 'exists:', fs.existsSync(docsDir));
+    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    console.log('files:', files);
     const uploadersFile = path.join(docsDir, '.uploaders.json');
     let uploaders = {};
     if (fs.existsSync(uploadersFile)) {
