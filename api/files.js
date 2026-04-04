@@ -11,24 +11,16 @@ module.exports = (req, res) => {
   }
 
   try {
-    // 尝试多个路径
-    const paths = ['/var/task/docs', '/var/task/build/docs'];
-    let docsDir = null;
+    // 硬编码测试数据 - 确认 API 工作
+    const testFiles = [
+      { path: 'project-intro.md', label: 'project-intro' },
+      { path: '探知未来科技女性培养计划.md', label: '探知未来科技女性培养计划' },
+      { path: '家庭废旧ABS制品再生3d打印线材工艺手册.md', label: '家庭废旧ABS制品再生3d打印线材工艺手册' },
+      { path: '再生PLA与咖啡渣混合打印线材工艺指南.md', label: '再生PLA与咖啡渣混合打印线材工艺指南' }
+    ];
 
-    for (const p of paths) {
-      console.log('checking:', p, fs.existsSync(p));
-      if (fs.existsSync(p)) {
-        docsDir = p;
-        break;
-      }
-    }
-
-    if (!docsDir) {
-      console.log('cwd:', process.cwd());
-      return res.json([]);
-    }
-
-    console.log('using docsDir:', docsDir);
+    console.log('Returning test files');
+    res.json(testFiles);
 
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
     console.log('files:', files);
