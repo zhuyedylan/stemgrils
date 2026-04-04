@@ -21,6 +21,3 @@ yarn-error.log*
 
 # Uploads (Word files)
 uploads/
-
-# Build (keep for local dev)
-# /build

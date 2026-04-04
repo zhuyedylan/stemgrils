@@ -9,6 +9,8 @@ function WYSIWYGEditor() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [originalContent, setOriginalContent] = useState('');
 
   const CORRECT_PASSWORD = '2014';
 
@@ -29,9 +31,11 @@ function WYSIWYGEditor() {
         // 移除 frontmatter
         const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
         setContent(withoutFrontmatter);
+        setOriginalContent(withoutFrontmatter);
+        setHasChanges(false);
         setMessage('文件已加载');
       } else {
-        setMessage('文件不存在');
+        setMessage('文件不存在: ' + mdPath);
       }
     } catch (error) {
       setMessage('加载文件失败: ' + error.message);
@@ -58,7 +62,18 @@ function WYSIWYGEditor() {
   };
 
   const handleFileChange = (e) => {
-    setFilePath(e.target.value);
+    const newPath = e.target.value;
+
+    // 如果有未保存的更改，弹出确认对话框
+    if (hasChanges) {
+      const confirmSwitch = window.confirm('您有未保存的更改，确定要切换文件吗？\n\n点击"确定"将放弃当前更改\n点击"取消"将留在当前文件');
+      if (!confirmSwitch) {
+        // 用户取消，保持当前文件
+        return;
+      }
+    }
+
+    setFilePath(newPath);
   };
 
   // 执行富文本命令
@@ -73,7 +88,10 @@ function WYSIWYGEditor() {
 
   // 处理内容变化
   const handleInput = (e) => {
-    setContent(e.target.innerHTML);
+    const newContent = e.target.innerHTML;
+    setContent(newContent);
+    // 检查是否有更改
+    setHasChanges(newContent !== originalContent);
   };
 
   // 保存功能 - 生成下载
@@ -122,6 +140,8 @@ ${markdown}`;
 
     setMessage('文件已下载，请手动上传到 Gitee');
     setSaving(false);
+    setHasChanges(false);
+    setOriginalContent(content);
   };
 
   if (!isAuthenticated) {
@@ -165,7 +185,7 @@ ${markdown}`;
             <option key={f.path} value={f.path}>{f.label}</option>
           ))}
         </select>
-        <span style={{ color: '#666', fontSize: '14px' }}>（切换文件会自动保存当前编辑）</span>
+        <span style={{ color: '#666', fontSize: '14px' }}>{hasChanges ? '⚠️ 有未保存的更改' : '（切换文件会提示保存）'}</span>
       </div>
 
       {/* 工具栏 */}
