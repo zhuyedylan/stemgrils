@@ -11,57 +11,19 @@ module.exports = (req, res) => {
   }
 
   try {
-    // 尝试多个可能的路径
-    const paths = [
-      path.join(process.cwd(), 'build/docs'),
-      path.join(__dirname, '../build/docs'),
-      '/var/task/build/docs',
-      '/var/task/docs',
-      path.join(process.cwd(), 'docs'),
-      '/var/task/docs'
-    ];
+    // Vercel 中项目根目录是 /var/task
+    const docsDir = /var/task/docs;
 
-    let docsDir = null;
-    for (const p of paths) {
-      console.log('checking:', p, fs.existsSync(p));
-      if (fs.existsSync(p)) {
-        docsDir = p;
-        break;
-      }
-    }
-
-    console.log('docsDir found:', docsDir);
-
-    if (!docsDir) {
+    if (!fs.existsSync(docsDir)) {
       return res.json([]);
     }
 
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
-    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
-    console.log('files:', files);
-    const uploadersFile = path.join(docsDir, '.uploaders.json');
-    let uploaders = {};
-    if (fs.existsSync(uploadersFile)) {
-      uploaders = JSON.parse(fs.readFileSync(uploadersFile, 'utf8'));
-    }
 
-    const categoriesFile = path.join(docsDir, '.categories.json');
-    let categories = [];
-    if (fs.existsSync(categoriesFile)) {
-      categories = JSON.parse(fs.readFileSync(categoriesFile, 'utf8'));
-    }
-
-    const filesWithInfo = files.map(f => {
-      const fileName = f.replace('.md', '');
-      return {
-        path: f,
-        label: fileName,
-        uploader: uploaders[fileName]?.uploader || null,
-        category: categories[0]?.id || 'intro'
-      };
-    });
-
-    res.json(filesWithInfo);
+    res.json(files.map(f => ({
+      path: f,
+      label: f.replace('.md', '')
+    })));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
