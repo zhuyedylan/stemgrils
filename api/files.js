@@ -1,10 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-
-// Supabase 配置 - 从环境变量读取
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,13 +12,14 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 获取文档列表
-    const { data: files, error } = await supabase
-      .from('documents')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
+    });
 
-    if (error) throw error;
+    const files = await response.json();
 
     res.json(files.map(f => ({
       path: f.filename,

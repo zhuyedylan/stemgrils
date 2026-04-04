@@ -1,8 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-
-const docsDir = '/var/task/build/docs';
-
 module.exports = (req, res) => {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,15 +8,10 @@ module.exports = (req, res) => {
     return res.status(200).end();
   }
 
-  try {
-    // 获取分类列表
-    const file = path.join(docsDir, '.categories.json');
-    const categories = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : [
-      { id: 'intro', name: '项目介绍', order: 0, allowUserUpload: true },
-      { id: 'process', name: '工艺手册', order: 1, allowUserUpload: true }
-    ];
-    res.json(categories);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  // 返回分类列表（静态数据）
+  const categories = [
+    { id: 'intro', name: '项目介绍', order: 0, allowUserUpload: true },
+    { id: 'process', name: '工艺手册', order: 1, allowUserUpload: true }
+  ];
+  res.json(categories);
 };

@@ -1,9 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -23,17 +19,20 @@ module.exports = async (req, res) => {
   const fileName = filePath.replace('.md', '');
 
   try {
-    const { data, error } = await supabase
-      .from('documents')
-      .select('content')
-      .eq('filename', fileName)
-      .single();
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=content`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
+    });
 
-    if (error || !data) {
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
       return res.status(404).json({ error: '文件不存在: ' + filePath });
     }
 
-    res.json({ content: data.content });
+    res.json({ content: data[0].content });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

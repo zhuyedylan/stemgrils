@@ -1,9 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,12 +18,19 @@ module.exports = async (req, res) => {
   const filename = fileName.replace('.md', '');
 
   try {
-    const { error } = await supabase
-      .from('documents')
-      .delete()
-      .eq('filename', filename);
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Prefer': 'return=minimal'
+      }
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(err);
+    }
 
     res.json({ success: true });
   } catch (error) {
