@@ -64,11 +64,19 @@ function WYSIWYGEditor() {
   };
 
   // 加载文档所属目录
-  const loadDocCategory = async (fileName) => {
+  const loadDocCategory = async (docPath) => {
     try {
-      const response = await fetch(`/api/doc-category?fileName=${encodeURIComponent(fileName)}`);
+      const fileName = docPath.split('/').pop().replace('.md', '');
+      const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+      const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=category`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      });
       const data = await response.json();
-      setCurrentCategory(data.category);
+      if (data && data.length > 0) {
+        setCurrentCategory(data[0].category || '');
+      }
     } catch (error) {
       console.error('加载文档目录失败:', error);
     }
@@ -110,7 +118,7 @@ function WYSIWYGEditor() {
 
         // 加载文档所属目录
         const fileName = docPath.split('/').pop();
-        loadDocCategory(fileName);
+        loadDocCategory(docPath);
 
         // 加载文档审批状态
         const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
