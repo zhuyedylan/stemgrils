@@ -3,11 +3,6 @@ const path = require('path');
 
 const docsDir = '/var/task/build/docs';
 
-// 确保 docs 目录存在
-if (!fs.existsSync(docsDir)) {
-  fs.mkdirSync(docsDir, { recursive: true });
-}
-
 module.exports = (req, res) => {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
