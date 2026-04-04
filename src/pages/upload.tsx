@@ -10,6 +10,7 @@ function UploadPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('process');
   const [myDocs, setMyDocs] = useState([]);
+  const [editingDoc, setEditingDoc] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -46,7 +47,6 @@ function UploadPage() {
   };
 
   const loadMyDocs = async () => {
-    // 获取用户上传的文档（包括待审批的）
     const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
     const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
     try {
@@ -124,9 +124,45 @@ ${markdownContent}`;
     setUploading(false);
   };
 
+  const handleResubmit = async (doc) => {
+    // 重新提交被拒绝的文档（清除拒绝状态，重新审批）
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(doc.filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          approved: false,
+          hidden: false,
+          rejection_reason: null,
+          updated_at: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        setMessage('✅ 已重新提交，等待审批');
+        loadMyDocs();
+      } else {
+        setMessage('❌ 提交失败');
+      }
+    } catch (error) {
+      setMessage('❌ 提交失败: ' + error.message);
+    }
+  };
+
   const getStatusBadge = (doc) => {
-    if (!doc.approved && !doc.hidden) {
+    if (!doc.approved && !doc.hidden && !doc.rejection_reason) {
       return <span style={{ padding: '2px 8px', backgroundColor: '#f59e0b', color: 'white', borderRadius: '4px', fontSize: '12px' }}>待审批</span>;
+    }
+    if (!doc.approved && doc.hidden && doc.rejection_reason) {
+      return <span style={{ padding: '2px 8px', backgroundColor: '#ef4444', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已拒绝</span>;
     }
     if (doc.approved && doc.hidden) {
       return <span style={{ padding: '2px 8px', backgroundColor: '#6b7280', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已隐藏</span>;
@@ -140,6 +176,10 @@ ${markdownContent}`;
   if (!isLoggedIn) {
     return <div style={{ textAlign: 'center', padding: '50px' }}>正在跳转...</div>;
   }
+
+  const pendingDocs = myDocs.filter(d => !d.approved && !d.hidden && !d.rejection_reason);
+  const rejectedDocs = myDocs.filter(d => !d.approved && d.hidden && d.rejection_reason);
+  const approvedDocs = myDocs.filter(d => d.approved);
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
@@ -180,27 +220,68 @@ ${markdownContent}`;
         </div>
       )}
 
-      {/* 我的文档列表 */}
-      <div style={{ marginTop: '30px' }}>
-        <h3>📋 我的文档 ({myDocs.length})</h3>
-        {myDocs.length === 0 ? (
-          <p style={{ color: '#666' }}>您还没有上传过文档</p>
-        ) : (
+      {/* 待审批文档 */}
+      {pendingDocs.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h3>⏳ 待审批 ({pendingDocs.length})</h3>
           <div style={{ display: 'grid', gap: '10px' }}>
-            {myDocs.map((doc, idx) => (
-              <div key={idx} style={{ padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
+            {pendingDocs.map((doc, idx) => (
+              <div key={idx} style={{ padding: '15px', backgroundColor: '#fffbeb', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontWeight: 'bold' }}>{doc.filename}</span>
                   {getStatusBadge(doc)}
-                  <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '5px' }}>
-                    上传时间: {new Date(doc.created_at).toLocaleString()}
-                  </div>
+                </div>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '5px' }}>
+                  上传时间: {new Date(doc.created_at).toLocaleString()}
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* 被拒绝的文档 - 可以重新修改提交 */}
+      {rejectedDocs.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h3>❌ 被退回需修改 ({rejectedDocs.length})</h3>
+          <div style={{ display: 'grid', gap: '10px' }}>
+            {rejectedDocs.map((doc, idx) => (
+              <div key={idx} style={{ padding: '15px', backgroundColor: '#fef2f2', borderRadius: '8px', border: '1px solid #fca5a5' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontWeight: 'bold' }}>{doc.filename}</span>
+                  {getStatusBadge(doc)}
+                </div>
+                <div style={{ fontSize: '12px', color: '#dc2626', marginBottom: '10px', padding: '10px', backgroundColor: 'white', borderRadius: '5px' }}>
+                  <strong>拒绝理由：</strong>{doc.rejection_reason}
+                </div>
+                <button onClick={() => handleResubmit(doc)} style={{ padding: '8px 20px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                  ✏️ 修改后重新提交
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 已通过的文档 */}
+      {approvedDocs.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h3>✅ 已公开 ({approvedDocs.length})</h3>
+          <div style={{ display: 'grid', gap: '10px' }}>
+            {approvedDocs.map((doc, idx) => (
+              <div key={idx} style={{ padding: '15px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 'bold' }}>{doc.filename}</span>
+                  {getStatusBadge(doc)}
+                </div>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '5px' }}>
+                  审批时间: {doc.approval_date ? new Date(doc.approval_date).toLocaleString() : '-'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <button onClick={() => window.location.href = '/'} style={{ marginTop: '20px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
         🏠 返回首页

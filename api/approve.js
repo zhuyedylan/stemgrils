@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   // GET - 获取待审批文档
   if (method === 'GET') {
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.false&order=created_at.desc`, {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.false&hidden=eq.false&order=created_at.desc`, {
         headers: {
           'apikey': supabaseKey,
           'Authorization': `Bearer ${supabaseKey}`
@@ -31,8 +31,8 @@ module.exports = async (req, res) => {
     return;
   }
 
-  // POST - 审批通过
-  const { fileName, action } = req.body || {};
+  // POST - 审批操作
+  const { fileName, action, rejectionReason } = req.body || {};
 
   if (!fileName) {
     return res.status(400).json({ error: '缺少文件名' });
@@ -53,7 +53,8 @@ module.exports = async (req, res) => {
         },
         body: JSON.stringify({
           approved: true,
-          approval_date: new Date().toISOString()
+          approval_date: new Date().toISOString(),
+          rejection_reason: null  // 清除拒绝理由
         })
       });
 
@@ -61,8 +62,8 @@ module.exports = async (req, res) => {
         const err = await response.text();
         throw new Error(err);
       }
-    } else if (action === 'hide') {
-      // 隐藏/显示文档
+    } else if (action === 'reject') {
+      // 拒绝并填写理由
       const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: {
@@ -72,8 +73,27 @@ module.exports = async (req, res) => {
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({
-          hidden: true
+          rejection_reason: rejectionReason || '不符合要求',
+          approved: false,
+          hidden: true  // 隐藏拒绝的文档
         })
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(err);
+      }
+    } else if (action === 'hide') {
+      // 隐藏文档
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ hidden: true })
       });
 
       if (!response.ok) {
@@ -90,24 +110,7 @@ module.exports = async (req, res) => {
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({
-          hidden: false
-        })
-      });
-
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err);
-      }
-    } else if (action === 'reject') {
-      // 拒绝（删除）
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
-        method: 'DELETE',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Prefer': 'return=minimal'
-        }
+        body: JSON.stringify({ hidden: false })
       });
 
       if (!response.ok) {

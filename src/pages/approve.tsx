@@ -8,6 +8,7 @@ function ApprovePage() {
   const [allDocs, setAllDocs] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [rejectModal, setRejectModal] = useState(null);  // { filename, reason }
 
   useEffect(() => {
     const savedUser = localStorage.getItem('stem_user');
@@ -28,23 +29,23 @@ function ApprovePage() {
   const loadDocs = async () => {
     setLoading(true);
     try {
-      const [pendingRes, allRes] = await Promise.all([
-        fetch('/api/approve'),
-        fetch('/api/files?t=' + Date.now())
-      ]);
-      const pending = await pendingRes.json();
-      const all = await allRes.json();
-
-      // 获取所有文档（包括未审批的）用于管理
       const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
       const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+      // 获取待审批文档（未审批且未隐藏）
+      const pendingRes = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.false&hidden=eq.false&order=created_at.desc`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      });
+      const pending = await pendingRes.json();
+
+      // 获取所有文档
       const fullRes = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&order=created_at.desc`, {
         headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
       });
-      const fullDocs = await fullRes.json();
+      const full = await fullRes.json();
 
       setPendingDocs(pending);
-      setAllDocs(fullDocs);
+      setAllDocs(full);
     } catch (error) {
       console.error('加载失败:', error);
     }
@@ -70,17 +71,22 @@ function ApprovePage() {
     }
   };
 
-  const handleReject = async (filename) => {
-    if (!confirm('确定要拒绝并删除该文档吗？')) return;
+  const handleReject = async () => {
+    if (!rejectModal) return;
     try {
       const response = await fetch('/api/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileName: filename, action: 'reject' })
+        body: JSON.stringify({
+          fileName: rejectModal.filename,
+          action: 'reject',
+          rejectionReason: rejectModal.reason || '不符合要求'
+        })
       });
       const result = await response.json();
       if (result.success) {
-        setMessage('✅ 已拒绝并删除');
+        setMessage('✅ 已拒绝');
+        setRejectModal(null);
         loadDocs();
       } else {
         setMessage('❌ 操作失败: ' + result.error);
@@ -150,6 +156,34 @@ function ApprovePage() {
         </div>
       )}
 
+      {/* 拒绝理由弹窗 */}
+      {rejectModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '12px', maxWidth: '400px', width: '90%' }}>
+            <h3 style={{ marginTop: 0 }}>填写拒绝理由</h3>
+            <p style={{ color: '#666', marginBottom: '15px' }}>请说明拒绝该文档的原因，以便上传者修改</p>
+            <textarea
+              value={rejectModal.reason}
+              onChange={(e) => setRejectModal({ ...rejectModal, reason: e.target.value })}
+              placeholder="例如：内容不符合主题、格式有问题、缺少必要信息等"
+              style={{ width: '100%', height: '100px', padding: '10px', borderRadius: '5px', border: '1px solid #ddd', fontSize: '14px', marginBottom: '15px' }}
+            />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setRejectModal(null)} style={{ padding: '8px 20px', backgroundColor: '#9ca3af', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                取消
+              </button>
+              <button onClick={handleReject} style={{ padding: '8px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                确认拒绝
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 待审批列表 */}
       <div style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#fffbeb', borderRadius: '12px', border: '2px solid #f59e0b' }}>
         <h3 style={{ marginTop: 0, color: '#92400e' }}>⏳ 待审批文档 ({pendingDocs.length})</h3>
@@ -169,7 +203,7 @@ function ApprovePage() {
                   <button onClick={() => handleApprove(doc.filename)} style={{ padding: '8px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '10px' }}>
                     ✅ 通过
                   </button>
-                  <button onClick={() => handleReject(doc.filename)} style={{ padding: '8px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                  <button onClick={() => setRejectModal({ filename: doc.filename, reason: '' })} style={{ padding: '8px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                     ❌ 拒绝
                   </button>
                 </div>
