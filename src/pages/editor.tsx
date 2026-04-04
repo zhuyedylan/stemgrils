@@ -33,9 +33,18 @@ function WYSIWYGEditor() {
       .then(res => res.json())
       .then(files => {
         setEditableFiles(files);
-        if (files.length > 0) {
-          setFilePath(files[0].path);
-          loadFile(files[0].path);
+        // 检查 URL 参数中是否指定了文件
+        const params = new URLSearchParams(window.location.search);
+        const fileParam = params.get('file');
+        const refreshParam = params.get('refresh');
+        const targetFile = fileParam ? files.find(f => f.path === fileParam || f.path === fileParam + '.md') : files[0];
+        if (targetFile) {
+          setFilePath(targetFile.path);
+          loadFile(targetFile.path);
+          // 如果有 refresh 参数，清除 URL 参数
+          if (refreshParam) {
+            window.history.replaceState({}, '', '/editor?file=' + targetFile.path.replace('.md', ''));
+          }
         }
       });
   }, []);
@@ -319,12 +328,11 @@ ${markdown}`;
       });
       const saveResult = await saveResponse.json();
       if (saveResult.success) {
-        setMessage('✅ 文件已保存，正在重新构建...');
-        await fetch('/api/rebuild', { method: 'POST' });
-        setMessage('✅ 保存成功！页面将刷新...');
+        setMessage('✅ 保存成功！');
         setHasChanges(false);
         setOriginalContent(editor.innerHTML);
-        setTimeout(() => window.location.reload(), 1500);
+        // 强制刷新，跳转到首页再回来
+        window.location.href = '/editor?refresh=' + Date.now();
       } else {
         setMessage('保存失败: ' + saveResult.error);
       }
