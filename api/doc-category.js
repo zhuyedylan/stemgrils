@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  const { fileName, category } = req.body || {};
+  const { fileName } = req.query;
   if (!fileName) {
     return res.status(400).json({ error: '缺少文件名' });
   }
@@ -18,24 +18,22 @@ module.exports = async (req, res) => {
   const filename = fileName.replace('.md', '');
 
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
-      method: 'PATCH',
+    // 从 Supabase 获取文档的分类
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}&select=category`, {
       headers: {
         'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ category: category })
+        'Authorization': `Bearer ${supabaseKey}`
+      }
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(err);
-    }
+    const data = await response.json();
 
-    res.json({ success: true });
+    if (data && data.length > 0) {
+      res.json({ category: data[0].category || '' });
+    } else {
+      res.json({ category: '' });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.json({ category: '' });
   }
 };

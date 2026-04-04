@@ -553,14 +553,26 @@ ${markdown}`;
                 const newCategory = e.target.value;
                 if (!confirm(`确定要将文档移动到 "${categories.find(c => c.id === newCategory)?.name}" 吗？`)) return;
                 try {
-                  await fetch('/api/doc-category', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileName: currentFile?.label, category: newCategory })
+                  const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+                  const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+                  // 保存分类到 Supabase
+                  await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(currentFile?.label)}`, {
+                    method: 'PATCH',
+                    headers: {
+                      'apikey': supabaseKey,
+                      'Authorization': `Bearer ${supabaseKey}`,
+                      'Content-Type': 'application/json',
+                      'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ category: newCategory })
                   });
+
                   setCurrentCategory(newCategory);
-                  setMessage('✅ 文档已移动到新目录');
-                  await fetch('/api/rebuild', { method: 'POST' });
+                  setMessage('✅ 文档分类已更新');
+
+                  // 触发 Vercel 重新部署
+                  await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
                 } catch (error) {
                   setMessage('移动失败: ' + error.message);
                 }

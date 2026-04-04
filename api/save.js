@@ -41,6 +41,7 @@ module.exports = async (req, res) => {
         },
         body: JSON.stringify({
           content: content,
+          category: category || existing[0]?.category || 'process',
           updated_at: new Date().toISOString()
         })
       });
