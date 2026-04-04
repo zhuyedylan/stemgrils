@@ -18,6 +18,8 @@ module.exports = (req, res) => {
   }
 
   const fullPath = path.join(docsDir, filePath);
+  console.log('fullPath:', fullPath, 'exists:', fs.existsSync(fullPath));
+  console.log('docsDir exists:', fs.existsSync(docsDir));
   if (!fs.existsSync(fullPath)) {
     return res.status(404).json({ error: '文件不存在' });
   }
