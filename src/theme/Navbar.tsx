@@ -93,7 +93,7 @@ export default function Navbar() {
               container.id = 'auth-container';
               const authHtml = (() => {
                 const user = localStorage.getItem('stem_user');
-                const baseUrl = '/stemgirls/';
+                const baseUrl = '/';
                 if (!user) {
                   return `<a href="${baseUrl}login" style="color:white;background:#10b981;padding:5px 15px;border-radius:4px;text-decoration:none;font-size:14px;margin-right:10px">登录</a>`;
                 }

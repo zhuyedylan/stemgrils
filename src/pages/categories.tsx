@@ -17,16 +17,16 @@ function CategoryManager() {
         setIsAdmin(true);
         loadCategories();
       } else {
-        window.location.href = '/stemgirls/';
+        window.location.href = '/';
       }
     } else {
-      window.location.href = '/stemgirls/login';
+      window.location.href = '/login';
     }
   }, []);
 
   const loadCategories = async () => {
     try {
-      const response = await fetch('/stemgirls/api/stemgirls/categories');
+      const response = await fetch('/api/categories');
       const data = await response.json();
       setCategories(data.sort((a, b) => a.order - b.order));
     } catch (error) {
@@ -41,9 +41,9 @@ function CategoryManager() {
     }
 
     try {
-      const response = await fetch('/stemgirls/api/stemgirls/categories', {
+      const response = await fetch('/api/categories', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/stemgirls/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newCategoryName.trim() })
       });
       const result = await response.json();
@@ -52,7 +52,6 @@ function CategoryManager() {
         setNewCategoryName('');
         setShowAddForm(false);
         loadCategories();
-        await rebuild();
       } else {
         setMessage('添加失败: ' + result.error);
       }
@@ -67,38 +66,16 @@ function CategoryManager() {
     if (!confirm(`再次确认：此操作不可恢复！`)) return;
 
     try {
-      const response = await fetch(`/stemgirls/api/stemgirls/categories/stemgirls/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
       const result = await response.json();
       if (result.success) {
         setMessage('✅ 目录已删除');
         loadCategories();
-        await rebuild();
       } else {
         setMessage('删除失败: ' + result.error);
       }
     } catch (error) {
       setMessage('删除失败: ' + error.message);
-    }
-  };
-
-  const handleToggleUpload = async (id, currentValue) => {
-    try {
-      const cat = categories.find(c => c.id === id);
-      const response = await fetch(`/stemgirls/api/stemgirls/categories/stemgirls/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/stemgirls/json' },
-        body: JSON.stringify({ name: cat.name, allowUserUpload: !currentValue })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setMessage(`✅ 已${!currentValue ? '允许' : '禁止'}普通用户上传到该目录`);
-        loadCategories();
-        await rebuild();
-      } else {
-        setMessage('更新失败: ' + result.error);
-      }
-    } catch (error) {
-      setMessage('更新失败: ' + error.message);
     }
   };
 
@@ -110,16 +87,35 @@ function CategoryManager() {
     const allowUpload = confirm('是否允许普通用户上传到该目录？');
 
     try {
-      const response = await fetch(`/stemgirls/api/stemgirls/categories/stemgirls/${id}`, {
+      const response = await fetch(`/api/categories/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/stemgirls/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName, allowUserUpload: allowUpload })
       });
       const result = await response.json();
       if (result.success) {
         setMessage('✅ 目录已更新');
         loadCategories();
-        await rebuild();
+      } else {
+        setMessage('更新失败: ' + result.error);
+      }
+    } catch (error) {
+      setMessage('更新失败: ' + error.message);
+    }
+  };
+
+  const handleToggleUpload = async (id, currentValue) => {
+    try {
+      const cat = categories.find(c => c.id === id);
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: cat.name, allowUserUpload: !currentValue })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage(`✅ 已${!currentValue ? '允许' : '禁止'}普通用户上传到该目录`);
+        loadCategories();
       } else {
         setMessage('更新失败: ' + result.error);
       }
@@ -135,13 +131,12 @@ function CategoryManager() {
     const orderIds = newOrder.map(c => c.id);
 
     try {
-      await fetch('/stemgirls/api/stemgirls/categories/stemgirls/reorder', {
+      await fetch('/api/categories/reorder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/stemgirls/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ order: orderIds })
       });
       loadCategories();
-      await rebuild();
     } catch (error) {
       setMessage('排序失败: ' + error.message);
     }
@@ -154,56 +149,51 @@ function CategoryManager() {
     const orderIds = newOrder.map(c => c.id);
 
     try {
-      await fetch('/stemgirls/api/stemgirls/categories/stemgirls/reorder', {
+      await fetch('/api/categories/reorder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/stemgirls/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ order: orderIds })
       });
       loadCategories();
-      await rebuild();
     } catch (error) {
       setMessage('排序失败: ' + error.message);
     }
   };
 
-  const rebuild = async () => {
-    await fetch('/stemgirls/api/stemgirls/rebuild', { method: 'POST' });
-  };
-
   if (!isAdmin) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>正在跳转...</stemgirls/div>;
+    return <div style={{ textAlign: 'center', padding: '50px' }}>正在跳转...</div>;
   }
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>📁 目录管理</stemgirls/h2>
-        <button onClick={() => window.location.href = '/stemgirls/'} style={{ padding: '8px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+        <h2>📁 目录管理</h2>
+        <button onClick={() => window.location.href = '/'} style={{ padding: '8px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
           🏠 返回首页
-        </stemgirls/button>
-      </stemgirls/div>
+        </button>
+      </div>
 
       {message && (
         <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginBottom: '20px' }}>
           {message}
-        </stemgirls/div>
+        </div>
       )}
 
       <div style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
         <p style={{ margin: '0 0 10px 0', color: '#666' }}>
           💡 管理一级目录，可以添加、删除、重命名目录，调整顺序，设置是否允许普通用户上传文档。
-        </stemgirls/p>
-      </stemgirls/div>
+        </p>
+      </div>
 
       <div style={{ marginBottom: '20px' }}>
         <button onClick={() => setShowAddForm(!showAddForm)} style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
           {showAddForm ? '取消添加' : '+ 添加目录'}
-        </stemgirls/button>
-      </stemgirls/div>
+        </button>
+      </div>
 
       {showAddForm && (
         <div style={{ padding: '20px', backgroundColor: '#f0fdf4', borderRadius: '8px', marginBottom: '20px', border: '2px solid #10b981' }}>
-          <h3 style={{ marginTop: 0 }}>添加新目录</stemgirls/h3>
+          <h3 style={{ marginTop: 0 }}>添加新目录</h3>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <input
               type="text"
@@ -211,24 +201,24 @@ function CategoryManager() {
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="请输入目录名称"
               style={{ padding: '10px', fontSize: '16px', border: '1px solid #ddd', borderRadius: '5px', flex: 1 }}
-            /stemgirls/>
+            />
             <button onClick={handleAddCategory} style={{ padding: '10px 30px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
               添加
-            </stemgirls/button>
-          </stemgirls/div>
-        </stemgirls/div>
+            </button>
+          </div>
+        </div>
       )}
 
       <div style={{ backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-              <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', color: '#6b7280' }}>顺序</stemgirls/th>
-              <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', color: '#6b7280' }}>目录名称</stemgirls/th>
-              <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>允许上传</stemgirls/th>
-              <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>操作</stemgirls/th>
-            </stemgirls/tr>
-          </stemgirls/thead>
+              <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', color: '#6b7280' }}>顺序</th>
+              <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', color: '#6b7280' }}>目录名称</th>
+              <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>允许上传</th>
+              <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}>操作</th>
+            </tr>
+          </thead>
           <tbody>
             {categories.map((cat, index) => (
               <tr key={cat.id} style={{ borderBottom: index < categories.length - 1 ? '1px solid #e5e7eb' : 'none' }}>
@@ -240,17 +230,17 @@ function CategoryManager() {
                       style={{ padding: '5px 10px', backgroundColor: index === 0 ? '#e5e7eb' : '#10b981', color: 'white', border: 'none', borderRadius: '3px', cursor: index === 0 ? 'not-allowed' : 'pointer', opacity: index === 0 ? 0.5 : 1 }}
                     >
                       ↑
-                    </stemgirls/button>
+                    </button>
                     <button
                       onClick={() => handleMoveDown(index)}
                       disabled={index === categories.length - 1}
                       style={{ padding: '5px 10px', backgroundColor: index === categories.length - 1 ? '#e5e7eb' : '#10b981', color: 'white', border: 'none', borderRadius: '3px', cursor: index === categories.length - 1 ? 'not-allowed' : 'pointer', opacity: index === categories.length - 1 ? 0.5 : 1 }}
                     >
                       ↓
-                    </stemgirls/button>
-                  </stemgirls/div>
-                </stemgirls/td>
-                <td style={{ padding: '12px', fontWeight: 'bold' }}>{cat.name}</stemgirls/td>
+                    </button>
+                  </div>
+                </td>
+                <td style={{ padding: '12px', fontWeight: 'bold' }}>{cat.name}</td>
                 <td style={{ padding: '12px', textAlign: 'center' }}>
                   <button
                     onClick={() => handleToggleUpload(cat.id, cat.allowUserUpload)}
@@ -266,37 +256,37 @@ function CategoryManager() {
                     }}
                   >
                     {cat.allowUserUpload ? '✅ 允许' : '❌ 禁止'}
-                  </stemgirls/button>
-                </stemgirls/td>
+                  </button>
+                </td>
                 <td style={{ padding: '12px', textAlign: 'center' }}>
                   <button
                     onClick={() => handleUpdateCategory(cat.id)}
                     style={{ padding: '6px 15px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '5px' }}
                   >
                     ✏️ 编辑
-                  </stemgirls/button>
+                  </button>
                   <button
                     onClick={() => handleDeleteCategory(cat.id)}
                     style={{ padding: '6px 15px', backgroundColor: '#e53e3e', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
                   >
                     🗑️ 删除
-                  </stemgirls/button>
-                </stemgirls/td>
-              </stemgirls/tr>
+                  </button>
+                </td>
+              </tr>
             ))}
-          </stemgirls/tbody>
-        </stemgirls/table>
-      </stemgirls/div>
+          </tbody>
+        </table>
+      </div>
 
       {categories.length === 0 && (
         <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
           暂无目录，请添加
-        </stemgirls/div>
+        </div>
       )}
-    </stemgirls/div>
+    </div>
   );
 }
 
 export default function Categories() {
-  return <BrowserOnly fallback={<div style={{ textAlign: 'center', padding: '50px' }}>加载中...</stemgirls/div>}>{() => <CategoryManager /stemgirls/>}</stemgirls/BrowserOnly>;
+  return <BrowserOnly fallback={<div style={{ textAlign: 'center', padding: '50px' }}>加载中...</div>}>{() => <CategoryManager />}</BrowserOnly>;
 }
