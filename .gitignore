@@ -1,9 +1,6 @@
 # Dependencies
 /node_modules
 
-# Production
-/build
-
 # Generated files
 .docusaurus
 .cache-loader
@@ -24,3 +21,6 @@ yarn-error.log*
 
 # Uploads (Word files)
 uploads/
+
+# Build (keep for local dev)
+# /build

@@ -46,8 +46,18 @@
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
 }
 
+.hero__title,
+.hero__subtitle {
+  color: #1f2937;
+}
+
 [data-theme='dark'] .hero {
   background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+}
+
+[data-theme='dark'] .hero__title,
+[data-theme='dark'] .hero__subtitle {
+  color: #ffffff;
 }
 
 /* 侧边栏样式 */
