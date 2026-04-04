@@ -75,11 +75,6 @@ const config: Config = {
           position: 'left',
           label: '文档',
         },
-        {
-          to: '/approve',
-          label: '审批',
-          position: 'right',
-        },
       ],
     },
     footer: {

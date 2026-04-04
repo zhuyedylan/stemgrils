@@ -102,7 +102,8 @@ export default function Navbar() {
                 html += `<a href="${baseUrl}editor" style="color:#fff;background:#10b981;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:13px;margin-right:8px">编辑</a>`;
                 html += `<a href="${baseUrl}upload" style="color:#fff;background:#10b981;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:13px;margin-right:8px">上传</a>`;
                 if (u.role === 'admin') {
-                  html += `<a href="${baseUrl}admin" style="color:#fff;background:#f59e0b;padding:4px 10px;border-radius:4px;font-size:12px;text-decoration:none;margin-right:10px">用户管理</a>`;
+                  html += `<a href="${baseUrl}approve" style="color:#fff;background:#8b5cf6;padding:4px 10px;border-radius:4px;font-size:12px;text-decoration:none;margin-right:8px">审批</a>`;
+                  html += `<a href="${baseUrl}admin" style="color:#fff;background:#f59e0b;padding:4px 10px;border-radius:4px;font-size:12px;text-decoration:none;margin-right:8px">用户管理</a>`;
                   html += `<a href="${baseUrl}categories" style="color:#fff;background:#3b82f6;padding:4px 10px;border-radius:4px;font-size:12px;text-decoration:none;margin-right:10px">目录管理</a>`;
                 }
                 html += `<button onclick="localStorage.removeItem('stem_user');window.location.href='${baseUrl}'" style="background:transparent;border:1px solid rgba(255,255,255,0.5);color:white;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px">退出</button>`;
