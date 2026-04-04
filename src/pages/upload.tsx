@@ -7,6 +7,8 @@ function UploadPage() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [mammothReady, setMammothReady] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('process');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -19,12 +21,30 @@ function UploadPage() {
     setUser(userData);
     setIsLoggedIn(true);
 
+    // 加载分类
+    loadCategories();
+
     // 动态加载 mammoth
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
     script.onload = () => setMammothReady(true);
     document.head.appendChild(script);
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      // 根据用户角色过滤分类
+      const allowedCategories = user?.role === 'admin' ? data : data.filter(c => c.allowUserUpload);
+      setCategories(allowedCategories.sort((a, b) => a.order - b.order));
+      if (allowedCategories.length > 0) {
+        setSelectedCategory(allowedCategories[0].id);
+      }
+    } catch (error) {
+      console.error('加载目录失败:', error);
+    }
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -44,19 +64,14 @@ function UploadPage() {
     setMessage('转换中...');
 
     try {
-      // 读取文件为 ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
-
-      // 使用 mammoth 转换为 Markdown
       // @ts-ignore
       const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
       const markdownContent = result.value;
 
-      // 使用文件名作为标题
       const fileName = file.name.replace(/\.docx?$/i, '');
       const title = fileName;
 
-      // 构建文档内容（带 frontmatter）
       const fullContent = `---
 id: ${title}
 title: ${title}
@@ -64,14 +79,13 @@ title: ${title}
 
 ${markdownContent}`;
 
-      // 保存到 Supabase（会触发 Vercel 部署）
       const response = await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           filePath: title + '.md',
           content: fullContent,
-          category: 'process',
+          category: selectedCategory,
           uploader: user.username
         })
       });
@@ -102,9 +116,26 @@ ${markdownContent}`;
         上传 Word 文档，系统将自动转换为网页格式。
       </p>
 
-      <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '60px', textAlign: 'center', backgroundColor: '#f0fdf4' }}>
-        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady} id="file-upload" style={{ display: 'none' }} />
-        <label htmlFor="file-upload" style={{ cursor: mammothReady ? 'pointer' : 'not-allowed', opacity: mammothReady ? 1 : 0.5 }}>
+      {/* 分类选择 */}
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '10px' }}>选择分类：</label>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{ padding: '8px 15px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', minWidth: '200px' }}
+        >
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+        {categories.length === 0 && (
+          <span style={{ color: '#e53e3e', marginLeft: '10px' }}>暂无允许上传的分类</span>
+        )}
+      </div>
+
+      <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '60px', textAlign: 'center', backgroundColor: '#f0fdf4', opacity: categories.length === 0 ? 0.5 : 1 }}>
+        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady || categories.length === 0} id="file-upload" style={{ display: 'none' }} />
+        <label htmlFor="file-upload" style={{ cursor: (mammothReady && categories.length > 0) ? 'pointer' : 'not-allowed' }}>
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
             {uploading ? '转换中...' : (!mammothReady ? '加载中...' : '点击选择 Word 文档')}
