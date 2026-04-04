@@ -11,14 +11,16 @@ module.exports = (req, res) => {
   }
 
   try {
-    // Vercel 中项目根目录是 /var/task
     const docsDir = '/var/task/build/docs';
+    console.log('docsDir:', docsDir, 'exists:', fs.existsSync(docsDir));
+    console.log('cwd:', process.cwd());
 
     if (!fs.existsSync(docsDir)) {
       return res.json([]);
     }
 
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    console.log('files:', files);
 
     res.json(files.map(f => ({
       path: f,
