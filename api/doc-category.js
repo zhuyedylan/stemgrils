@@ -1,9 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
-const docsDir = '/var/task/build/docs';
+const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
-module.exports = (req, res) => {
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,17 +19,18 @@ module.exports = (req, res) => {
     return res.status(400).json({ error: '缺少文件名' });
   }
 
-  const uploadersFile = path.join(docsDir, '.uploaders.json');
-  let uploaders = {};
-  if (fs.existsSync(uploadersFile)) {
-    uploaders = JSON.parse(fs.readFileSync(uploadersFile, 'utf8'));
-  }
+  const filename = fileName.replace('.md', '');
 
-  if (!uploaders[fileName]) {
-    uploaders[fileName] = {};
-  }
-  uploaders[fileName].category = category;
-  fs.writeFileSync(uploadersFile, JSON.stringify(uploaders, null, 2), 'utf8');
+  try {
+    const { error } = await supabase
+      .from('documents')
+      .update({ category: category })
+      .eq('filename', filename);
 
-  res.json({ success: true });
+    if (error) throw error;
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
