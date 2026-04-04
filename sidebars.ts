@@ -24,6 +24,16 @@ const docCategoryMap = {
 
 const sidebarItems = categories.map(cat => {
   const docs = localDocs.filter(doc => docCategoryMap[doc] === cat.id);
+
+  // 如果分类没有文档，添加一个占位链接
+  if (docs.length === 0) {
+    return {
+      type: 'link',
+      label: cat.name,
+      href: '#'
+    };
+  }
+
   return {
     type: 'category',
     label: cat.name,
