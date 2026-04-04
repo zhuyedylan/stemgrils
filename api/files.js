@@ -17,7 +17,13 @@ module.exports = (req, res) => {
   }
 
   try {
+    const cwd = process.cwd();
+    const docsDir = path.join(cwd, 'build/docs');
+    console.log('cwd:', cwd);
+    console.log('docsDir:', docsDir);
+    console.log('exists:', fs.existsSync(docsDir));
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    console.log('files:', files);
     const uploadersFile = path.join(docsDir, '.uploaders.json');
     let uploaders = {};
     if (fs.existsSync(uploadersFile)) {
