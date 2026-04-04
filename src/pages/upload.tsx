@@ -9,6 +9,7 @@ function UploadPage() {
   const [mammothReady, setMammothReady] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('process');
+  const [myDocs, setMyDocs] = useState([]);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -21,10 +22,9 @@ function UploadPage() {
     setUser(userData);
     setIsLoggedIn(true);
 
-    // 加载分类
     loadCategories();
+    loadMyDocs();
 
-    // 动态加载 mammoth
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
     script.onload = () => setMammothReady(true);
@@ -35,7 +35,6 @@ function UploadPage() {
     try {
       const response = await fetch('/api/categories');
       const data = await response.json();
-      // 根据用户角色过滤分类
       const allowedCategories = user?.role === 'admin' ? data : data.filter(c => c.allowUserUpload);
       setCategories(allowedCategories.sort((a, b) => a.order - b.order));
       if (allowedCategories.length > 0) {
@@ -43,6 +42,21 @@ function UploadPage() {
       }
     } catch (error) {
       console.error('加载目录失败:', error);
+    }
+  };
+
+  const loadMyDocs = async () => {
+    // 获取用户上传的文档（包括待审批的）
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      });
+      const docs = await response.json();
+      setMyDocs(docs);
+    } catch (error) {
+      console.error('加载我的文档失败:', error);
     }
   };
 
@@ -93,8 +107,13 @@ ${markdownContent}`;
       const saveResult = await response.json();
 
       if (saveResult.success) {
-        setMessage(`✅ ${title} 上传成功！正在部署，请稍后刷新查看`);
+        if (saveResult.needsApproval) {
+          setMessage(`✅ ${title} 上传成功！需要管理员审批后才能公开显示`);
+        } else {
+          setMessage(`✅ ${title} 上传成功！`);
+        }
         if (fileInputRef.current) fileInputRef.current.value = '';
+        loadMyDocs();
       } else {
         setMessage('上传失败: ' + saveResult.error);
       }
@@ -105,15 +124,28 @@ ${markdownContent}`;
     setUploading(false);
   };
 
+  const getStatusBadge = (doc) => {
+    if (!doc.approved && !doc.hidden) {
+      return <span style={{ padding: '2px 8px', backgroundColor: '#f59e0b', color: 'white', borderRadius: '4px', fontSize: '12px' }}>待审批</span>;
+    }
+    if (doc.approved && doc.hidden) {
+      return <span style={{ padding: '2px 8px', backgroundColor: '#6b7280', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已隐藏</span>;
+    }
+    if (doc.approved && !doc.hidden) {
+      return <span style={{ padding: '2px 8px', backgroundColor: '#10b981', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已公开</span>;
+    }
+    return null;
+  };
+
   if (!isLoggedIn) {
     return <div style={{ textAlign: 'center', padding: '50px' }}>正在跳转...</div>;
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h2>📤 上传文档</h2>
       <p style={{ color: '#666', marginBottom: '20px' }}>
-        上传 Word 文档，系统将自动转换为网页格式。
+        上传 Word 文档，系统将自动转换为网页格式。新文档需要管理员审批后才能公开显示。
       </p>
 
       {/* 分类选择 */}
@@ -128,14 +160,12 @@ ${markdownContent}`;
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
-        {categories.length === 0 && (
-          <span style={{ color: '#e53e3e', marginLeft: '10px' }}>暂无允许上传的分类</span>
-        )}
       </div>
 
-      <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '60px', textAlign: 'center', backgroundColor: '#f0fdf4', opacity: categories.length === 0 ? 0.5 : 1 }}>
-        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady || categories.length === 0} id="file-upload" style={{ display: 'none' }} />
-        <label htmlFor="file-upload" style={{ cursor: (mammothReady && categories.length > 0) ? 'pointer' : 'not-allowed' }}>
+      {/* 上传区域 */}
+      <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '40px', textAlign: 'center', backgroundColor: '#f0fdf4', marginBottom: '20px' }}>
+        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady} id="file-upload" style={{ display: 'none' }} />
+        <label htmlFor="file-upload" style={{ cursor: mammothReady ? 'pointer' : 'not-allowed', opacity: mammothReady ? 1 : 0.5 }}>
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
             {uploading ? '转换中...' : (!mammothReady ? '加载中...' : '点击选择 Word 文档')}
@@ -145,10 +175,32 @@ ${markdownContent}`;
       </div>
 
       {message && (
-        <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginTop: '20px' }}>
+        <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginBottom: '20px' }}>
           {message}
         </div>
       )}
+
+      {/* 我的文档列表 */}
+      <div style={{ marginTop: '30px' }}>
+        <h3>📋 我的文档 ({myDocs.length})</h3>
+        {myDocs.length === 0 ? (
+          <p style={{ color: '#666' }}>您还没有上传过文档</p>
+        ) : (
+          <div style={{ display: 'grid', gap: '10px' }}>
+            {myDocs.map((doc, idx) => (
+              <div key={idx} style={{ padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <span style={{ fontWeight: 'bold' }}>{doc.filename}</span>
+                  {getStatusBadge(doc)}
+                  <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '5px' }}>
+                    上传时间: {new Date(doc.created_at).toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <button onClick={() => window.location.href = '/'} style={{ marginTop: '20px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
         🏠 返回首页

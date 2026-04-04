@@ -10,7 +10,16 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  // 返回错误，因为 Vercel 无文件系统
-  // 需要使用 Supabase Storage 或其他方式
-  res.status(501).json({ error: '上传功能暂时不可用，请直接在编辑器中创建文档' });
+  // 检查是否是 multipart/form-data
+  const contentType = req.headers['content-type'] || '';
+
+  if (!contentType.includes('multipart/form-data')) {
+    return res.status(400).json({ error: '需要 multipart/form-data' });
+  }
+
+  // 手动解析 multipart 数据（简化版）
+  // 由于 Vercel 无文件系统，我们需要使用其他方式
+  // 这里返回一个提示，说明需要客户端处理
+
+  res.status(501).json({ error: '上传功能开发中，请直接在编辑器中创建文档' });
 };

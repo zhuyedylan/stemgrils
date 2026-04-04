@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
         throw new Error(err);
       }
     } else {
-      // 插入新文档
+      // 新文档需要审批，默认 approved=false
       const insertResp = await fetch(`${supabaseUrl}/rest/v1/documents`, {
         method: 'POST',
         headers: {
@@ -63,7 +63,9 @@ module.exports = async (req, res) => {
           filename: fileName,
           content: content,
           category: category || 'process',
-          uploader: uploader || 'admin'
+          uploader: uploader || 'admin',
+          approved: false,  // 新上传需要审批
+          hidden: false
         })
       });
 
@@ -80,7 +82,7 @@ module.exports = async (req, res) => {
       console.log('Trigger deploy failed:', e.message);
     }
 
-    res.json({ success: true });
+    res.json({ success: true, needsApproval: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

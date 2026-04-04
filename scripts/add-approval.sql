@@ -1,0 +1,4 @@
+-- 为 documents 表添加审批相关字段
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS approved BOOLEAN DEFAULT false;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS hidden BOOLEAN DEFAULT false;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS approval_date TIMESTAMP;

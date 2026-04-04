@@ -12,7 +12,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&order=created_at.desc`, {
+    // 只获取已审批且未隐藏的文档
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.true&hidden=eq.false&order=created_at.desc`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`

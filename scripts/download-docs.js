@@ -19,7 +19,8 @@ async function downloadDocs() {
       fs.mkdirSync(docsDir, { recursive: true });
     }
 
-    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*`, {
+    // 只获取已审批且未隐藏的文档
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.true&hidden=eq.false&order=created_at.desc`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
@@ -27,7 +28,7 @@ async function downloadDocs() {
     });
 
     const docs = await response.json();
-    console.log(`Found ${docs.length} documents to sync`);
+    console.log(`Found ${docs.length} approved documents to sync`);
 
     for (const doc of docs) {
       const filename = doc.filename + '.md';

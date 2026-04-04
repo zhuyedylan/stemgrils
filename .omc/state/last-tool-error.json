@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"git checkout src/pages/categories.tsx\",\"description\":\"Revert categories.tsx\"}",
-  "error": "Exit code 1\nerror: pathspec 'src/pages/categories.tsx' did not match any file(s) known to git",
-  "timestamp": "2026-04-04T10:20:25.360Z",
-  "retry_count": 1
+  "tool_input_preview": "{\"command\":\"cd \\\"/Users/dylanmba/Desktop/@贝贝/编程/工艺手册\\\" && git add docs/ && git commit -m \\\"$(cat <<'EOF'\\nsync: 删除V3文档\\n\\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\\nEOF\\n)\\\" && git push ...",
+  "error": "Exit code 1\nOn branch main\nYour branch is ahead of 'gitee/main' by 45 commits.\n  (use \"git push\" to publish your local commits)\n\nChanges not staged for commit:\n  (use \"git add/rm <file>...\" to update what will be committed)\n  (use \"git restore <file>...\" to discard changes in working directory)\n\tmodified:   .omc/state/hud-stdin-cache.json\n\tmodified:   .omc/state/idle-notif-cooldown.json\n\tmodified:   .omc/state/last-tool-error.json\n\tmodified:   api/upload.js\n\tmodified:   build/404.html\n\tmodified:...",
+  "timestamp": "2026-04-04T16:06:37.519Z",
+  "retry_count": 2
 }
