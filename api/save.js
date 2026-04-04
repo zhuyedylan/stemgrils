@@ -1,6 +1,8 @@
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
+const DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB';
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -69,6 +71,13 @@ module.exports = async (req, res) => {
         const err = await insertResp.text();
         throw new Error(err);
       }
+    }
+
+    // 触发 Vercel 重新部署
+    try {
+      await fetch(DEPLOY_HOOK, { method: 'POST' });
+    } catch (e) {
+      console.log('Trigger deploy failed:', e.message);
     }
 
     res.json({ success: true });
