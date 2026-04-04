@@ -12,8 +12,17 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 只获取已审批且未隐藏的文档
-    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.true&hidden=eq.false&order=created_at.desc`, {
+    // 检查用户是否是管理员
+    const userRole = req.headers['x-user-role'];
+    const isAdmin = userRole === 'admin';
+
+    // 如果是管理员，返回所有文档；否则只返回已公开的
+    let filter = '';
+    if (!isAdmin) {
+      filter = '&approved=eq.true&hidden=eq.false';
+    }
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*${filter}&order=created_at.desc`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
@@ -24,9 +33,12 @@ module.exports = async (req, res) => {
 
     res.json(files.map(f => ({
       path: f.filename,
-      label: f.filename.replace('.md', ''),
+      label: f.filename,
       uploader: f.uploader,
-      category: f.category
+      category: f.category,
+      approved: f.approved,
+      hidden: f.hidden,
+      rejection_reason: f.rejection_reason
     })));
   } catch (error) {
     console.error('Error:', error.message);

@@ -15,6 +15,9 @@ function WYSIWYGEditor() {
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState('');
   const [user, setUser] = useState(null);
+  const [currentDoc, setCurrentDoc] = useState(null);
+  const [docStatus, setDocStatus] = useState('');
+  const [rejectModal, setRejectModal] = useState(null);
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -108,6 +111,31 @@ function WYSIWYGEditor() {
         // 加载文档所属目录
         const fileName = docPath.split('/').pop();
         loadDocCategory(fileName);
+
+        // 加载文档审批状态
+        const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+        const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+        try {
+          const statusRes = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=approved,hidden,rejection_reason`, {
+            headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+          });
+          const statusData = await statusRes.json();
+          if (statusData && statusData.length > 0) {
+            const doc = statusData[0];
+            setCurrentDoc(doc);
+            if (doc.hidden && doc.rejection_reason) {
+              setDocStatus('已拒绝');
+            } else if (doc.hidden) {
+              setDocStatus('已隐藏');
+            } else if (doc.approved) {
+              setDocStatus('已公开');
+            } else {
+              setDocStatus('待审批');
+            }
+          }
+        } catch (e) {
+          console.error('加载状态失败:', e);
+        }
 
         setTimeout(() => {
           if (editorRef.current) {
@@ -288,6 +316,115 @@ function WYSIWYGEditor() {
     }
   };
 
+  // 审批通过
+  const handleApprove = async () => {
+    if (!currentFile) return;
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+    const filename = currentFile.label;
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          approved: true,
+          hidden: false,
+          rejection_reason: null,
+          approval_date: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        setMessage('✅ 审批通过！');
+        setDocStatus('已公开');
+        // 触发重新部署
+        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+      } else {
+        setMessage('❌ 操作失败');
+      }
+    } catch (error) {
+      setMessage('❌ 操作失败: ' + error.message);
+    }
+  };
+
+  // 拒绝
+  const handleReject = () => {
+    setRejectModal({ filename: currentFile.label, reason: '' });
+  };
+
+  const confirmReject = async () => {
+    if (!rejectModal) return;
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(rejectModal.filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          approved: false,
+          hidden: true,
+          rejection_reason: rejectModal.reason || '不符合要求'
+        })
+      });
+
+      if (response.ok) {
+        setMessage('❌ 已拒绝');
+        setDocStatus('已拒绝');
+        setRejectModal(null);
+        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+      } else {
+        setMessage('❌ 操作失败');
+      }
+    } catch (error) {
+      setMessage('❌ 操作失败: ' + error.message);
+    }
+  };
+
+  // 隐藏/显示
+  const handleToggleHidden = async () => {
+    if (!currentFile || !currentDoc) return;
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+    const filename = currentFile.label;
+    const newHidden = !currentDoc.hidden;
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ hidden: newHidden })
+      });
+
+      if (response.ok) {
+        setMessage(newHidden ? '👁️ 已隐藏' : '👁️‍🗨️ 已显示');
+        setCurrentDoc({ ...currentDoc, hidden: newHidden });
+        setDocStatus(newHidden ? '已隐藏' : '已公开');
+        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+      } else {
+        setMessage('❌ 操作失败');
+      }
+    } catch (error) {
+      setMessage('❌ 操作失败: ' + error.message);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     const editor = editorRef.current;
@@ -348,6 +485,34 @@ ${markdown}`;
 
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+      {/* 拒绝理由弹窗 */}
+      {rejectModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '12px', maxWidth: '400px', width: '90%' }}>
+            <h3 style={{ marginTop: 0 }}>填写拒绝理由</h3>
+            <p style={{ color: '#666', marginBottom: '15px' }}>请说明拒绝该文档的原因</p>
+            <textarea
+              value={rejectModal.reason}
+              onChange={(e) => setRejectModal({ ...rejectModal, reason: e.target.value })}
+              placeholder="例如：内容不符合主题、格式有问题等"
+              style={{ width: '100%', height: '100px', padding: '10px', borderRadius: '5px', border: '1px solid #ddd', fontSize: '14px', marginBottom: '15px' }}
+            />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setRejectModal(null)} style={{ padding: '8px 20px', backgroundColor: '#9ca3af', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                取消
+              </button>
+              <button onClick={confirmReject} style={{ padding: '8px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                确认拒绝
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2>📝 所见即所得编辑器</h2>
         <div style={{ display: 'flex', gap: '10px' }}>
@@ -440,6 +605,29 @@ ${markdown}`;
         </button>
         {message && <span style={{ color: '#10b981', fontSize: '16px' }}>{message}</span>}
       </div>
+
+      {/* 审批操作按钮 - 仅管理员可见 */}
+      {user?.role === 'admin' && (
+        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f0f9ff', borderRadius: '8px', border: '2px solid #0ea5e9' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '10px', color: '#0369a1' }}>⚙️ 管理员操作</div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button onClick={handleApprove} style={{ padding: '8px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              ✅ 审批通过
+            </button>
+            <button onClick={handleReject} style={{ padding: '8px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              ❌ 拒绝
+            </button>
+            <button onClick={handleToggleHidden} style={{ padding: '8px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              {currentDoc?.hidden ? '👁️ 取消隐藏' : '👁️ 隐藏'}
+            </button>
+          </div>
+          {docStatus && (
+            <div style={{ marginTop: '10px', fontSize: '14px', color: docStatus === '已公开' ? '#10b981' : docStatus === '待审批' ? '#f59e0b' : '#6b7280' }}>
+              当前状态: {docStatus}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
