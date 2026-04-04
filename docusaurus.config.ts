@@ -70,6 +70,11 @@ const config: Config = {
           position: 'left',
           label: '工艺手册',
         },
+        {
+          to: '/editor',
+          label: '编辑',
+          position: 'left',
+        },
       ],
     },
     footer: {
