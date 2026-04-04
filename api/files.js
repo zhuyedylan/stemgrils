@@ -12,13 +12,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 检查用户是否是管理员
-    const userRole = req.headers['x-user-role'];
-    const isAdmin = userRole === 'admin';
+    // 检查 URL 参数，如果是编辑器页面，返回所有文档
+    const referer = req.headers.referer || '';
+    const isEditor = referer.includes('/editor') || referer.includes('/upload') || referer.includes('/admin') || referer.includes('/categories');
 
-    // 如果是管理员，返回所有文档；否则只返回已公开的
+    // 编辑器和后台返回所有文档，前台只返回已公开的
     let filter = '';
-    if (!isAdmin) {
+    if (!isEditor) {
       filter = '&approved=eq.true&hidden=eq.false';
     }
 
