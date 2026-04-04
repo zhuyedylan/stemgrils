@@ -11,13 +11,24 @@ module.exports = (req, res) => {
   }
 
   try {
-    const docsDir = '/var/task/build/docs';
-    console.log('docsDir:', docsDir, 'exists:', fs.existsSync(docsDir));
-    console.log('cwd:', process.cwd());
+    // 尝试多个路径
+    const paths = ['/var/task/docs', '/var/task/build/docs'];
+    let docsDir = null;
 
-    if (!fs.existsSync(docsDir)) {
+    for (const p of paths) {
+      console.log('checking:', p, fs.existsSync(p));
+      if (fs.existsSync(p)) {
+        docsDir = p;
+        break;
+      }
+    }
+
+    if (!docsDir) {
+      console.log('cwd:', process.cwd());
       return res.json([]);
     }
+
+    console.log('using docsDir:', docsDir);
 
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
     console.log('files:', files);
