@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"pkill -f \\\"node server.js\\\" 2>/dev/null; node server.js > /tmp/server.log 2>&1 &\\nsleep 2\\ncurl -s -o /dev/null -w \\\"%{http_code}\\\" http://localhost:3001/\",\"description\":\"Restart server\"}",
+  "error": "Exit code 7\n000",
+  "timestamp": "2026-04-04T08:18:16.448Z",
+  "retry_count": 1
+}
