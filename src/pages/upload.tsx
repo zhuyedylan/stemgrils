@@ -4,12 +4,10 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 function UploadPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
-  const [docs, setDocs] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('process');
-  const [newDocTitle, setNewDocTitle] = useState('');
-  const [creating, setCreating] = useState(false);
+  const [mammothReady, setMammothReady] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('stem_user');
@@ -20,98 +18,77 @@ function UploadPage() {
     const userData = JSON.parse(savedUser);
     setUser(userData);
     setIsLoggedIn(true);
-    loadDocs();
-    loadCategories();
+
+    // 动态加载 mammoth
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+    script.onload = () => setMammothReady(true);
+    document.head.appendChild(script);
   }, []);
 
-  const loadDocs = async () => {
-    try {
-      const response = await fetch('/api/files?t=' + Date.now());
-      const data = await response.json();
-      setDocs(data);
-    } catch (error) {
-      console.error('加载文档失败:', error);
-    }
-  };
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const loadCategories = async () => {
-    try {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-      setCategories(data.sort((a, b) => a.order - b.order));
-    } catch (error) {
-      console.error('加载目录失败:', error);
-    }
-  };
-
-  const handleCreateDoc = async () => {
-    if (!newDocTitle.trim()) {
-      setMessage('请输入文档标题');
+    if (!file.name.match(/\.docx?$/i)) {
+      setMessage('请上传 Word 文档 (.doc 或 .docx)');
       return;
     }
 
-    const fileName = newDocTitle.trim().replace(/\s+/g, '-');
+    if (!mammothReady) {
+      setMessage('正在加载转换工具，请稍后重试');
+      return;
+    }
 
-    setCreating(true);
-    setMessage('创建中...');
+    setUploading(true);
+    setMessage('转换中...');
 
     try {
-      // 创建新文档（空内容）
+      // 读取文件为 ArrayBuffer
+      const arrayBuffer = await file.arrayBuffer();
+
+      // 使用 mammoth 转换为 Markdown
+      // @ts-ignore
+      const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
+      const markdownContent = result.value;
+
+      // 使用文件名作为标题
+      const fileName = file.name.replace(/\.docx?$/i, '');
+      const title = fileName;
+
+      // 构建文档内容（带 frontmatter）
+      const fullContent = `---
+id: ${title}
+title: ${title}
+---
+
+${markdownContent}`;
+
+      // 保存到 Supabase（会触发 Vercel 部署）
       const response = await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          filePath: fileName + '.md',
-          content: '# ' + newDocTitle.trim() + '\n\n在这里开始编写您的工艺手册内容...\n',
-          category: selectedCategory,
+          filePath: title + '.md',
+          content: fullContent,
+          category: 'process',
           uploader: user.username
         })
       });
 
-      const result = await response.json();
+      const saveResult = await response.json();
 
-      if (result.success) {
-        setMessage('✅ 文档创建成功！正在跳转到编辑器...');
-        setNewDocTitle('');
-        // 跳转到编辑器
-        setTimeout(() => {
-          window.location.href = '/editor?file=' + fileName;
-        }, 1500);
+      if (saveResult.success) {
+        setMessage(`✅ ${title} 上传成功！正在部署，请稍后刷新查看`);
+        if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
-        setMessage('创建失败: ' + result.error);
+        setMessage('上传失败: ' + saveResult.error);
       }
     } catch (error) {
-      setMessage('创建失败: ' + error.message);
+      setMessage('转换失败: ' + error.message);
     }
 
-    setCreating(false);
-  };
-
-  const handleDelete = async (doc) => {
-    if (!confirm(`确定要删除 "${doc.label}" 吗？`)) {
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileName: doc.path })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setMessage(`✅ ${doc.label} 已删除`);
-        loadDocs();
-      } else {
-        setMessage('删除失败: ' + result.error);
-      }
-    } catch (error) {
-      setMessage('删除失败: ' + error.message);
-    }
-  };
-
-  const handleEdit = (doc) => {
-    window.location.href = '/editor?file=' + doc.path.replace('.md', '');
+    setUploading(false);
   };
 
   if (!isLoggedIn) {
@@ -119,126 +96,32 @@ function UploadPage() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h2>📝 文档管理</h2>
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+      <h2>📤 上传文档</h2>
       <p style={{ color: '#666', marginBottom: '20px' }}>
-        在此页面创建新文档或管理现有文档。
+        上传 Word 文档，系统将自动转换为网页格式。
       </p>
 
-      {/* 创建新文档 */}
-      <div style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#f0f9ff', borderRadius: '12px', border: '1px solid #0ea5e9' }}>
-        <h3 style={{ marginTop: 0 }}>➕ 创建新文档</h3>
-
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 'bold', marginRight: '10px' }}>文档标题：</label>
-          <input
-            type="text"
-            value={newDocTitle}
-            onChange={(e) => setNewDocTitle(e.target.value)}
-            placeholder="输入文档标题，例如：PLA材料工艺手册"
-            style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', width: '60%' }}
-            onKeyDown={(e) => e.key === 'Enter' && handleCreateDoc()}
-          />
-        </div>
-
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ fontWeight: 'bold', marginRight: '10px' }}>选择目录：</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd' }}
-          >
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          onClick={handleCreateDoc}
-          disabled={creating}
-          style={{
-            padding: '12px 30px',
-            fontSize: '16px',
-            backgroundColor: creating ? '#9ca3af' : '#0ea5e9',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: creating ? 'not-allowed' : 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          {creating ? '创建中...' : '✨ 创建文档'}
-        </button>
+      <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '60px', textAlign: 'center', backgroundColor: '#f0fdf4' }}>
+        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady} id="file-upload" style={{ display: 'none' }} />
+        <label htmlFor="file-upload" style={{ cursor: mammothReady ? 'pointer' : 'not-allowed', opacity: mammothReady ? 1 : 0.5 }}>
+          <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
+            {uploading ? '转换中...' : (!mammothReady ? '加载中...' : '点击选择 Word 文档')}
+          </div>
+          <div style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>支持 .doc 和 .docx 格式</div>
+        </label>
       </div>
 
       {message && (
-        <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginBottom: '20px' }}>
+        <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginTop: '20px' }}>
           {message}
         </div>
       )}
 
-      {/* 文档列表 */}
-      <div style={{ marginBottom: '20px' }}>
-        <h3>📋 现有文档 ({docs.length})</h3>
-        {docs.length === 0 ? (
-          <p style={{ color: '#666' }}>暂无文档，请创建新文档</p>
-        ) : (
-          <div style={{ display: 'grid', gap: '10px' }}>
-            {docs.map((doc, index) => (
-              <div key={index} style={{ padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <span style={{ fontWeight: 'bold', fontSize: '16px' }}>📄 {doc.label}</span>
-                  {doc.category && (
-                    <span style={{ marginLeft: '10px', padding: '2px 8px', backgroundColor: '#e5e7eb', borderRadius: '4px', fontSize: '12px', color: '#6b7280' }}>
-                      {doc.category}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <button
-                    onClick={() => handleEdit(doc)}
-                    style={{
-                      padding: '8px 20px',
-                      backgroundColor: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: 'pointer',
-                      marginRight: '10px'
-                    }}
-                  >
-                    编辑
-                  </button>
-                  {(user.role === 'admin' || user.username === doc.uploader) && (
-                    <button
-                      onClick={() => handleDelete(doc)}
-                      style={{
-                        padding: '8px 20px',
-                        backgroundColor: '#e53e3e',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      删除
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <button onClick={() => window.location.href = '/'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+      <button onClick={() => window.location.href = '/'} style={{ marginTop: '20px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
         🏠 返回首页
       </button>
-
-      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '8px', fontSize: '14px', color: '#856404' }}>
-        💡 提示：点击"编辑"后可使用富文本编辑器修改文档内容。修改后别忘了同步到静态网站（需要重新构建部署）。
-      </div>
     </div>
   );
 }
