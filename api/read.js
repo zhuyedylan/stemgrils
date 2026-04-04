@@ -1,16 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 
-const testContent = {
-  'project-intro': "---
-id: project-intro
-title: 项目介绍
----
+// 读取本地 docs 目录
+const docsDir = path.join(__dirname, '../../docs');
+let testContent = {};
 
-# 项目介绍
-
-本项目是关于废旧高分子材料再生3D打印的工艺手册。"
-};
+// 尝试读取本地文件
+try {
+  if (fs.existsSync(docsDir)) {
+    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    for (const file of files) {
+      const fileName = file.replace('.md', '');
+      const content = fs.readFileSync(path.join(docsDir, file), 'utf8');
+      testContent[fileName] = content;
+    }
+    console.log('Loaded files:', Object.keys(testContent));
+  }
+} catch (e) {
+  console.log('Error loading docs:', e.message);
+}
 
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,7 +39,7 @@ module.exports = (req, res) => {
   const content = testContent[fileName];
 
   if (!content) {
-    return res.status(404).json({ error: '文件不存在' });
+    return res.status(404).json({ error: '文件不存在: ' + filePath });
   }
 
   res.json({ content });
