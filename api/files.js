@@ -12,14 +12,27 @@ module.exports = (req, res) => {
 
   try {
     // 尝试多个可能的路径
-    let docsDir = path.join(process.cwd(), 'build/docs');
-    if (!fs.existsSync(docsDir)) {
-      docsDir = path.join(__dirname, '../../docs');
+    const paths = [
+      path.join(process.cwd(), 'build/docs'),
+      path.join(__dirname, '../../docs'),
+      '/vercel/src0/docs',
+      '/var/task/docs'
+    ];
+
+    let docsDir = null;
+    for (const p of paths) {
+      if (fs.existsSync(p)) {
+        docsDir = p;
+        break;
+      }
     }
-    if (!fs.existsSync(docsDir)) {
-      docsDir = '/vercel/src0/docs';
+
+    console.log('trying paths:', paths);
+    console.log('docsDir found:', docsDir);
+
+    if (!docsDir) {
+      return res.json([]);
     }
-    console.log('docsDir:', docsDir, 'exists:', fs.existsSync(docsDir));
     const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
     console.log('files:', files);
     const uploadersFile = path.join(docsDir, '.uploaders.json');
