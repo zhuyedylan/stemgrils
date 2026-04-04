@@ -80,7 +80,7 @@ const config: Config = {
           items: [
             {
               label: '工艺手册',
-              to: '/docs/43pla与咖啡渣再生打印线材工艺指南朱可人',
+              to: '/docs/咖啡渣和PLA再生打印线材工艺指南-朱可人',
             },
           ],
         },
