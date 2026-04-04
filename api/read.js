@@ -1,8 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-// 读取本地 docs 目录
-const docsDir = path.join(__dirname, '../../docs');
+// 读取本地 docs 目录 - 尝试多个路径
+const possiblePaths = [
+  path.join(__dirname, '../../docs'),
+  path.join(process.cwd(), 'docs'),
+  '/var/task/docs'
+];
+
+let docsDir = null;
+for (const p of possiblePaths) {
+  console.log('checking:', p);
+  if (fs.existsSync(p)) {
+    docsDir = p;
+    break;
+  }
+}
 let testContent = {};
 
 // 尝试读取本地文件
