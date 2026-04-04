@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const docsDir = /var/task/docs;
+const docsDir = '/var/task/docs';
 
 // 确保 docs 目录存在
 if (!fs.existsSync(docsDir)) {
