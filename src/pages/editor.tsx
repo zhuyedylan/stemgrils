@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 
 function WYSIWYGEditor() {
@@ -8,9 +8,10 @@ function WYSIWYGEditor() {
   const [filePath, setFilePath] = useState('docs/咖啡渣和PLA再生打印线材工艺指南-朱可人');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
+  const [renderedContent, setRenderedContent] = useState('');
+  const editorRef = useRef(null);
 
   const CORRECT_PASSWORD = '2014';
 
@@ -20,20 +21,64 @@ function WYSIWYGEditor() {
     { path: 'docs/project-intro', label: '项目简介' },
   ];
 
+  // 简单的 Markdown 转 HTML 转换器
+  const parseMarkdown = (text) => {
+    if (!text) return '';
+
+    let html = text;
+
+    // 处理标题
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+    // 处理加粗
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // 处理斜体
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    // 处理换行（空行分段）
+    html = html.replace(/\n\n/g, '</p><p>');
+    html = html.replace(/\n/g, '<br>');
+
+    // 包裹在段落中
+    html = '<p>' + html + '</p>';
+
+    // 清理空段落
+    html = html.replace(/<p><\/p>/g, '');
+    html = html.replace(/<p><br>/g, '<p>');
+    html = html.replace(/<br><\/p>/g, '</p>');
+
+    return html;
+  };
+
   // 加载文件内容
   const loadFile = async (docPath) => {
     try {
-      // 尝试直接加载 md 文件
       const mdPath = `${docPath}.md`;
       const response = await fetch(`/${mdPath}`);
+
       if (response.ok) {
         const text = await response.text();
         // 移除 frontmatter
         const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
+
+        // 解析 Markdown 为 HTML
+        const rendered = parseMarkdown(withoutFrontmatter);
+
         setContent(withoutFrontmatter);
-        setOriginalContent(withoutFrontmatter);
+        setRenderedContent(rendered);
+        setOriginalContent(rendered);
         setHasChanges(false);
         setMessage('文件已加载');
+
+        // 延迟更新 editor 内容，确保 DOM 已渲染
+        setTimeout(() => {
+          if (editorRef.current) {
+            editorRef.current.innerHTML = rendered;
+          }
+        }, 100);
       } else {
         setMessage('文件不存在: ' + mdPath);
       }
@@ -43,7 +88,7 @@ function WYSIWYGEditor() {
   };
 
   useEffect(() => {
-    if (isAuthenticated && filePath) {
+    if (isAuthenticated) {
       loadFile(filePath);
     }
   }, [isAuthenticated, filePath]);
@@ -52,7 +97,6 @@ function WYSIWYGEditor() {
     e.preventDefault();
     if (password === CORRECT_PASSWORD) {
       setIsAuthenticated(true);
-      // 登录后立即加载默认文件
       if (filePath) {
         loadFile(filePath);
       }
@@ -64,11 +108,9 @@ function WYSIWYGEditor() {
   const handleFileChange = (e) => {
     const newPath = e.target.value;
 
-    // 如果有未保存的更改，弹出确认对话框
     if (hasChanges) {
       const confirmSwitch = window.confirm('您有未保存的更改，确定要切换文件吗？\n\n点击"确定"将放弃当前更改\n点击"取消"将留在当前文件');
       if (!confirmSwitch) {
-        // 用户取消，保持当前文件
         return;
       }
     }
@@ -80,30 +122,35 @@ function WYSIWYGEditor() {
   const execCommand = (command, value = null) => {
     document.execCommand(command, false, value);
     // 更新内容
-    const editor = document.getElementById('wysiwyg-editor');
-    if (editor) {
-      setContent(editor.innerHTML);
+    if (editorRef.current) {
+      const newContent = editorRef.current.innerHTML;
+      setRenderedContent(newContent);
+      setHasChanges(newContent !== originalContent);
     }
   };
 
   // 处理内容变化
-  const handleInput = (e) => {
-    const newContent = e.target.innerHTML;
-    setContent(newContent);
-    // 检查是否有更改
-    setHasChanges(newContent !== originalContent);
+  const handleInput = () => {
+    if (editorRef.current) {
+      const newContent = editorRef.current.innerHTML;
+      setRenderedContent(newContent);
+      setHasChanges(newContent !== originalContent);
+    }
   };
 
-  // 保存功能 - 生成下载
+  // 保存功能
   const handleSave = () => {
     setSaving(true);
 
-    // 获取纯文本和HTML
-    const editor = document.getElementById('wysiwyg-editor');
-    const htmlContent = editor.innerHTML;
+    // 将 HTML 转换回简单 Markdown
+    const editor = editorRef.current;
+    if (!editor) {
+      setSaving(false);
+      return;
+    }
 
-    // 简单转换为 Markdown（基础版）
-    let markdown = content
+    let html = editor.innerHTML;
+    let markdown = html
       .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
       .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
       .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
@@ -118,9 +165,9 @@ function WYSIWYGEditor() {
       .replace(/&nbsp;/g, ' ')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&');
+      .replace(/&amp;/g, '&')
+      .replace(/\n{3,}/g, '\n\n');
 
-    // 构建完整文件内容
     const fileName = filePath.split('/').pop() + '.md';
     const fullContent = `---
 id: ${fileName.replace('.md', '')}
@@ -129,7 +176,6 @@ title: ${fileName.replace('.md', '')}
 
 ${markdown}`;
 
-    // 下载文件
     const blob = new Blob([fullContent], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -141,7 +187,7 @@ ${markdown}`;
     setMessage('文件已下载，请手动上传到 Gitee');
     setSaving(false);
     setHasChanges(false);
-    setOriginalContent(content);
+    setOriginalContent(editor.innerHTML);
   };
 
   if (!isAuthenticated) {
@@ -170,7 +216,7 @@ ${markdown}`;
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
       <h2>📝 所见即所得编辑器</h2>
 
       {/* 文件选择 */}
@@ -185,7 +231,9 @@ ${markdown}`;
             <option key={f.path} value={f.path}>{f.label}</option>
           ))}
         </select>
-        <span style={{ color: '#666', fontSize: '14px' }}>{hasChanges ? '⚠️ 有未保存的更改' : '（切换文件会提示保存）'}</span>
+        <span style={{ color: hasChanges ? '#e53e3e' : '#666', fontSize: '14px' }}>
+          {hasChanges ? '⚠️ 有未保存的更改' : '（切换文件会提示保存）'}
+        </span>
       </div>
 
       {/* 工具栏 */}
@@ -208,14 +256,11 @@ ${markdown}`;
         <span style={{ width: '1px', backgroundColor: '#ddd', margin: '0 5px' }}></span>
         <button onClick={() => execCommand('insertUnorderedList')} style={toolButtonStyle} title="无序列表">• 列表</button>
         <button onClick={() => execCommand('insertOrderedList')} style={toolButtonStyle} title="有序列表">1. 列表</button>
-        <span style={{ width: '1px', backgroundColor: '#ddd', margin: '0 5px' }}></span>
-        <button onClick={() => execCommand('justifyLeft')} style={toolButtonStyle} title="左对齐">⬅️</button>
-        <button onClick={() => execCommand('justifyCenter')} style={toolButtonStyle} title="居中">➡️⬅️</button>
-        <button onClick={() => execCommand('justifyRight')} style={toolButtonStyle} title="右对齐">➡️</button>
       </div>
 
-      {/* 编辑器 */}
+      {/* 编辑器 - 使用与网站一致的样式 */}
       <div
+        ref={editorRef}
         id="wysiwyg-editor"
         contentEditable
         onInput={handleInput}
@@ -227,9 +272,11 @@ ${markdown}`;
           backgroundColor: 'white',
           fontSize: '16px',
           lineHeight: '1.8',
-          outline: 'none'
+          outline: 'none',
+          // 添加与网站一致的样式
+          color: '#1f2937',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }}
-        dangerouslySetInnerHTML={{ __html: content }}
       />
 
       {/* 保存按钮 */}
