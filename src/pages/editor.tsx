@@ -5,7 +5,7 @@ function WYSIWYGEditor() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [content, setContent] = useState('');
-  const [filePath, setFilePath] = useState('docs/咖啡渣和PLA再生打印线材工艺指南-朱可人.md');
+  const [filePath, setFilePath] = useState('docs/咖啡渣和PLA再生打印线材工艺指南-朱可人');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -14,26 +14,32 @@ function WYSIWYGEditor() {
 
   // 可编辑的文件列表
   const editableFiles = [
-    'docs/咖啡渣和PLA再生打印线材工艺指南-朱可人.md',
-    'docs/project-intro.md',
+    { path: 'docs/咖啡渣和PLA再生打印线材工艺指南-朱可人', label: '咖啡渣和PLA再生打印线材工艺指南-朱可人' },
+    { path: 'docs/project-intro', label: '项目简介' },
   ];
 
   // 加载文件内容
-  const loadFile = async (path) => {
+  const loadFile = async (docPath) => {
     try {
-      const response = await fetch(`/${path}`);
-      const text = await response.text();
-      // 移除 frontmatter
-      const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
-      setContent(withoutFrontmatter);
-      setMessage('文件已加载');
+      // 尝试直接加载 md 文件
+      const mdPath = `${docPath}.md`;
+      const response = await fetch(`/${mdPath}`);
+      if (response.ok) {
+        const text = await response.text();
+        // 移除 frontmatter
+        const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
+        setContent(withoutFrontmatter);
+        setMessage('文件已加载');
+      } else {
+        setMessage('文件不存在');
+      }
     } catch (error) {
-      setMessage('加载文件失败');
+      setMessage('加载文件失败: ' + error.message);
     }
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && filePath) {
       loadFile(filePath);
     }
   }, [isAuthenticated, filePath]);
@@ -42,6 +48,10 @@ function WYSIWYGEditor() {
     e.preventDefault();
     if (password === CORRECT_PASSWORD) {
       setIsAuthenticated(true);
+      // 登录后立即加载默认文件
+      if (filePath) {
+        loadFile(filePath);
+      }
     } else {
       setMessage('密码错误，请重试');
     }
@@ -93,7 +103,7 @@ function WYSIWYGEditor() {
       .replace(/&amp;/g, '&');
 
     // 构建完整文件内容
-    const fileName = filePath.split('/').pop();
+    const fileName = filePath.split('/').pop() + '.md';
     const fullContent = `---
 id: ${fileName.replace('.md', '')}
 title: ${fileName.replace('.md', '')}
@@ -152,7 +162,7 @@ ${markdown}`;
           style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ddd', minWidth: '300px' }}
         >
           {editableFiles.map(f => (
-            <option key={f} value={f}>{f}</option>
+            <option key={f.path} value={f.path}>{f.label}</option>
           ))}
         </select>
         <span style={{ color: '#666', fontSize: '14px' }}>（切换文件会自动保存当前编辑）</span>
