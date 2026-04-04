@@ -33,20 +33,126 @@ module.exports = async (req, res) => {
       });
       let data = await response.json();
 
-      // 合并系统分类
-      const allCategories = [...DEFAULT_CATEGORIES, ...SYSTEM_CATEGORIES];
-
       // 如果有数据库分类，用数据库的
       if (data && data.length > 0) {
         // 添加系统分类
         data = [...data, ...SYSTEM_CATEGORIES];
       } else {
-        data = allCategories;
+        data = [...DEFAULT_CATEGORIES, ...SYSTEM_CATEGORIES];
       }
 
       res.json(data);
     } catch (error) {
-      res.json(allCategories);
+      res.json([...DEFAULT_CATEGORIES, ...SYSTEM_CATEGORIES]);
+    }
+    return;
+  }
+
+  // POST - 添加分类
+  if (method === 'POST') {
+    const { name } = req.body || {};
+    if (!name) {
+      return res.status(400).json({ error: '缺少分类名称' });
+    }
+
+    try {
+      // 获取当前最大 order
+      const maxResp = await fetch(`${supabaseUrl}/rest/v1/categories?select=order&order=order.desc&limit=1`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
+      });
+      const maxData = await maxResp.json();
+      const maxOrder = maxData.length > 0 ? maxData[0].order : 0;
+
+      const id = name.toLowerCase().replace(/\s+/g, '-');
+
+      const insertResp = await fetch(`${supabaseUrl}/rest/v1/categories`, {
+        method: 'POST',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          id,
+          name,
+          order: maxOrder + 1,
+          allowUserUpload: true
+        })
+      });
+
+      if (!insertResp.ok) {
+        const err = await insertResp.text();
+        return res.status(500).json({ error: err });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+    return;
+  }
+
+  // PUT - 更新分类
+  if (method === 'PUT') {
+    const { id, name, allowUserUpload } = req.body || {};
+    if (!id) {
+      return res.status(400).json({ error: '缺少分类ID' });
+    }
+
+    try {
+      const updateData = {};
+      if (name) updateData.name = name;
+      if (allowUserUpload !== undefined) updateData.allowUserUpload = allowUserUpload;
+
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        return res.status(500).json({ error: err });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+    return;
+  }
+
+  // DELETE - 删除分类
+  if (method === 'DELETE') {
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).json({ error: '缺少分类ID' });
+    }
+
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Prefer': 'return=minimal'
+        }
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        return res.status(500).json({ error: err });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
     return;
   }
