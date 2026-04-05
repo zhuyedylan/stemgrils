@@ -30,6 +30,32 @@ module.exports = async (req, res) => {
     const existing = await checkResp.json();
 
     if (existing && existing.length > 0) {
+      // 保存旧版本到备份表
+      const oldContentResp = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=content`, {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
+        }
+      });
+      const oldData = await oldContentResp.json();
+      if (oldData && oldData.length > 0 && oldData[0].content) {
+        // 插入备份
+        await fetch(`${supabaseUrl}/rest/v1/documents_backup`, {
+          method: 'POST',
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            filename: fileName,
+            content: oldData[0].content,
+            operator: uploader || 'admin'
+          })
+        });
+      }
+
       // 更新现有文档，保留原上传者
       const updateResp = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}`, {
         method: 'PATCH',
