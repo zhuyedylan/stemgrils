@@ -114,3 +114,9 @@
 .sidebar-category-hidden {
   display: none !important;
 }
+
+/* 默认隐藏待审批和隐藏分类，用JS检查后显示 */
+.sidebar-pending-category,
+.sidebar-hidden-category {
+  display: none !important;
+}

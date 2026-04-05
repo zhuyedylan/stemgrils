@@ -2,9 +2,15 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 const config: Config = {
+  // 自定义脚本
+  scripts: [
+    {
+      src: '/hide-categories.js',
+      async: true,
+      defer: true,
+    },
+  ],
   title: '社区家庭或校园废旧高分子材料再生3D打印项目',
   tagline: '初中生3D打印材料制作工艺手册汇集平台',
   favicon: 'img/favicon.ico',
