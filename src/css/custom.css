@@ -109,3 +109,8 @@
 .prism-code {
   border-radius: 8px;
 }
+
+/* 根据用户角色隐藏侧边栏分类 */
+.sidebar-category-hidden {
+  display: none !important;
+}

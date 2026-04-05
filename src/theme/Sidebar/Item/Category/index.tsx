@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DefaultSidebar from '@theme-original/Sidebar/Item/Category';
-import Link from '@docusaurus/Link';
+import { useThemeConfig } from '@docusaurus/theme-common';
 
 function getUserRole() {
   if (typeof window === 'undefined') return null;
@@ -22,13 +22,11 @@ export default function CustomCategory(props) {
   useEffect(() => {
     setUserStatus(getUserStatus());
 
-    // 监听登录状态变化
     const handleStorage = () => {
       setUserStatus(getUserStatus());
     };
 
     window.addEventListener('storage', handleStorage);
-    // 监听 localStorage 变化（同一页面内）
     const interval = setInterval(() => {
       setUserStatus(getUserStatus());
     }, 1000);
@@ -41,15 +39,18 @@ export default function CustomCategory(props) {
 
   const label = props.label;
 
-  // 待审批 - 只对登录用户可见
+  // 使用 CSS 类隐藏，而不是返回 null
+  // 这样可以避免 SSR/ hydration 不匹配问题
+  let hiddenClass = '';
   if (label === '待审批' && !userStatus.loggedIn) {
-    return null;
+    hiddenClass = 'sidebar-category-hidden';
+  } else if (label === '隐藏' && !userStatus.isAdmin) {
+    hiddenClass = 'sidebar-category-hidden';
   }
 
-  // 隐藏 - 只对管理员可见
-  if (label === '隐藏' && !userStatus.isAdmin) {
-    return null;
-  }
-
-  return <DefaultSidebar {...props} />;
+  return (
+    <div className={hiddenClass}>
+      <DefaultSidebar {...props} />
+    </div>
+  );
 }
