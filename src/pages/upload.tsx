@@ -152,6 +152,56 @@ ${markdownContent}`;
     }
   };
 
+  // 管理员审批通过
+  const handleApproveFromUpload = async (filename) => {
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ approved: true })
+      });
+      if (response.ok) {
+        setMessage(`✅ ${filename} 已审批通过`);
+        loadMyDocs();
+      }
+    } catch (error) {
+      setMessage('操作失败: ' + error.message);
+    }
+  };
+
+  // 管理员拒绝
+  const handleRejectFromUpload = async (filename) => {
+    const reason = prompt('请输入拒绝理由:');
+    if (!reason) return;
+    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ approved: false, hidden: true, rejection_reason: reason })
+      });
+      if (response.ok) {
+        setMessage(`❌ ${filename} 已拒绝`);
+        loadMyDocs();
+      }
+    } catch (error) {
+      setMessage('操作失败: ' + error.message);
+    }
+  };
+
   const getStatusBadge = (doc) => {
     if (doc.hidden && doc.rejection_reason) {
       return <span style={{ padding: '2px 8px', backgroundColor: '#ef4444', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已拒绝</span>;
@@ -224,6 +274,22 @@ ${markdownContent}`;
                 <span>{doc.filename}</span>
                 {getStatusBadge(doc)}
               </div>
+              {user?.role === 'admin' && (
+                <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => handleApproveFromUpload(doc.filename)}
+                    style={{ padding: '6px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}
+                  >
+                    ✅ 通过
+                  </button>
+                  <button
+                    onClick={() => handleRejectFromUpload(doc.filename)}
+                    style={{ padding: '6px 16px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}
+                  >
+                    ❌ 拒绝
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

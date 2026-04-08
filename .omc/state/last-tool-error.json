@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"curl -s http://localhost:3001/api/categories\"}",
-  "error": "Exit code 7",
-  "timestamp": "2026-04-08T06:32:32.223Z",
+  "tool_input_preview": "{\"command\":\"cd \\\"/Users/dylanmba/Desktop/@贝贝/编程/工艺手册\\\" && git remote set-url github git@github.com:zhuyedylan/stemgrils.git && git push github main\"}",
+  "error": "Exit code 128\ngit@github.com: Permission denied (publickey).\r\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.",
+  "timestamp": "2026-04-08T08:24:09.282Z",
   "retry_count": 1
 }
