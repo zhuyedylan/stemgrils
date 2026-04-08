@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useLocation } from '@docusaurus/router';
+import { useLocation } from '@docusaurus/router';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
@@ -12,9 +12,10 @@ function DocViewer() {
   const location = useLocation();
 
   useEffect(() => {
-    // 从 URL 获取文件名 /docs/文件名
+    // 从 URL 获取文件名
     const path = location.pathname;
-    const match = path.match(/^\/docs\/(.+)$/);
+    // 支持 /docs/文件名 或 /doc/文件名 格式
+    const match = path.match(/^\/(?:docs|doc)\/(.+)$/);
     if (!match) {
       setError('无效的文档路径');
       setLoading(false);
@@ -30,7 +31,6 @@ function DocViewer() {
         return res.json();
       })
       .then(data => {
-        // 解析 markdown 并渲染
         setContent(data.content || '');
         setLoading(false);
       })
@@ -76,7 +76,6 @@ function DocViewer() {
       <div
         style={{ lineHeight: '1.8', fontSize: '16px' }}
         dangerouslySetInnerHTML={{ __html: bodyContent
-          // 简单的 markdown 转 HTML（实际生产环境建议用库）
           .replace(/^### (.*$)/gm, '<h3>$1</h3>')
           .replace(/^## (.*$)/gm, '<h2>$1</h2>')
           .replace(/^# (.*$)/gm, '<h1>$1</h1>')
@@ -103,3 +102,6 @@ export default function DocPage() {
     </BrowserOnly>
   );
 }
+
+// 配置文档路径
+DocPage.path = 'docs/:slug*';
