@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { useLocation } from '@docusaurus/router';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import Layout from '@theme/Layout';
 
 const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
-function DocViewer() {
+function DocContent() {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const location = useLocation();
 
   useEffect(() => {
-    // 从 URL 获取文件名
     const path = location.pathname;
-    // 支持 /docs/文件名 或 /doc/文件名 格式
     const match = path.match(/^\/(?:docs|doc)\/(.+)$/);
     if (!match) {
       setError('无效的文档路径');
@@ -24,7 +24,6 @@ function DocViewer() {
 
     const fileName = decodeURIComponent(match[1]);
 
-    // 从 API 获取内容
     fetch(`/api/read?filePath=${encodeURIComponent(fileName + '.md')}`)
       .then(res => {
         if (!res.ok) throw new Error('文档不存在或未发布');
@@ -40,10 +39,28 @@ function DocViewer() {
       });
   }, [location.pathname]);
 
+  // 简单的 markdown 转 HTML
+  const renderMarkdown = (text) => {
+    if (!text) return '';
+
+    let html = text
+      .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
+      .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" style="max-width:100%;height:auto" />')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
+      .replace(/\n/g, '<br/>');
+
+    return html;
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '24px', marginBottom: '10px' }}>⏳ 加载中...</div>
+        <div style={{ fontSize: '24px' }}>⏳ 加载中...</div>
       </div>
     );
   }
@@ -54,7 +71,7 @@ function DocViewer() {
         <div style={{ fontSize: '48px', marginBottom: '20px' }}>📄</div>
         <h2>文档加载失败</h2>
         <p style={{ color: '#666' }}>{error}</p>
-        <a href="/" style={{ color: '#10b981' }}>← 返回首页</a>
+        <a href="/">← 返回首页</a>
       </div>
     );
   }
@@ -71,37 +88,31 @@ function DocViewer() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '20px' }}>
       {title && <h1>{title}</h1>}
       <div
         style={{ lineHeight: '1.8', fontSize: '16px' }}
-        dangerouslySetInnerHTML={{ __html: bodyContent
-          .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-          .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-          .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g, '<em>$1</em>')
-          .replace(/\n\n/g, '</p><p>')
-          .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" style="max-width:100%" />')
-          .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-          .replace(/\|(.+)\|/g, (match) => {
-            const cells = match.split('|').filter(c => c.trim());
-            if (cells.some(c => c.includes('---'))) return '';
-            return '<tr>' + cells.map(c => `<td>${c.trim()}</td>`).join('') + '</tr>';
-          })
-        }}
+        dangerouslySetInnerHTML={{ __html: renderMarkdown(bodyContent) }}
       />
     </div>
   );
 }
 
 export default function DocPage() {
+  const { siteConfig } = useDocusaurusContext();
+  const location = useLocation();
+
+  // 从路径获取标题
+  const match = location.pathname.match(/^\/(?:docs|doc)\/(.+)$/);
+  const title = match ? decodeURIComponent(match[1]) : '文档';
+
   return (
-    <BrowserOnly fallback={<div>加载中...</div>}>
-      {() => <DocViewer />}
-    </BrowserOnly>
+    <Layout title={title} description={siteConfig.tagline}>
+      <main>
+        <BrowserOnly fallback={<div style={{padding:'40px',textAlign:'center'}}>加载中...</div>}>
+          {() => <DocContent />}
+        </BrowserOnly>
+      </main>
+    </Layout>
   );
 }
-
-// 配置文档路径
-DocPage.path = 'docs/:slug*';
