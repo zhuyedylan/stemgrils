@@ -8,39 +8,52 @@ if (fs.existsSync(docsDir)) {
   localDocs = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.')).map(f => f.replace('.md', ''));
 }
 
-const categories = [
-  { id: 'intro', name: '项目介绍', order: 0 },
-  { id: 'process', name: '工艺手册', order: 1 },
-  { id: 'pending', name: '待审批', order: 99 },
-  { id: 'hidden', name: '隐藏', order: 100 }
-];
-
-const docCategoryMap = {
-  '项目说明': 'intro',
-  '探知未来科技女性培养计划': 'intro',
-  '再生PLA与咖啡渣混合打印线材工艺指南': 'process',
-  '家庭废旧ABS制品再生3d打印线材工艺手册': 'process'
-};
-
-const sidebarItems = categories.map(cat => {
-  const docs = localDocs.filter(doc => docCategoryMap[doc] === cat.id);
-
-  // 如果分类没有文档，添加一个占位链接
-  if (docs.length === 0) {
-    return {
-      type: 'link',
-      label: cat.name,
-      href: '#'
-    };
+// 读取分类配置
+let docCategoryMap = {};
+const categoriesFile = path.join(__dirname, 'docs', '.categories.json');
+if (fs.existsSync(categoriesFile)) {
+  const categoriesData = JSON.parse(fs.readFileSync(categoriesFile, 'utf8'));
+  // 从上传者信息读取分类
+  const uploadersFile = path.join(__dirname, 'docs', '.uploaders.json');
+  if (fs.existsSync(uploadersFile)) {
+    const uploaders = JSON.parse(fs.readFileSync(uploadersFile, 'utf8'));
+    for (const [filename, info] of Object.entries(uploaders)) {
+      if (info.category) {
+        docCategoryMap[filename] = info.category;
+      }
+    }
   }
+}
 
-  return {
+// 简单分类：项目介绍 vs 工艺手册
+const introDocs = localDocs.filter(doc => docCategoryMap[doc] === 'intro' || doc === '项目说明' || doc === '探知未来科技女性培养计划');
+const processDocs = localDocs.filter(doc => docCategoryMap[doc] === 'process' || doc === '工艺手册' || !introDocs.includes(doc));
+const pendingDocs = []; // 待审批从 Supabase 动态加载
+
+const sidebarItems = [
+  {
     type: 'category',
-    label: cat.name,
+    label: '项目介绍',
     collapsed: false,
-    items: docs
-  };
-});
+    items: introDocs.length > 0 ? introDocs : [{ type: 'link', label: '暂无', href: '#' }]
+  },
+  {
+    type: 'category',
+    label: '工艺手册',
+    collapsed: false,
+    items: processDocs.length > 0 ? processDocs : [{ type: 'link', label: '暂无', href: '#' }]
+  },
+  {
+    type: 'link',
+    label: '待审批',
+    href: '#pending'
+  },
+  {
+    type: 'link',
+    label: '隐藏',
+    href: '#hidden'
+  }
+];
 
 const sidebars: SidebarsConfig = {
   tutorialSidebar: sidebarItems
