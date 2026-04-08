@@ -16,5 +16,11 @@
     "name": "使用指南",
     "order": 2,
     "allowUserUpload": false
+  },
+  {
+    "id": "测试分类",
+    "name": "测试分类",
+    "order": 3,
+    "allowUserUpload": true
   }
 ]

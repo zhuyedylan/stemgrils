@@ -7,7 +7,7 @@ const util = require('util');
 const execPromise = util.promisify(exec);
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -567,6 +567,11 @@ app.post('/api/doc-category', (req, res) => {
   fs.writeFileSync(uploadersFile, JSON.stringify(uploaders, null, 2), 'utf8');
 
   res.json({ success: true });
+});
+
+// SPA fallback - 所有非 API 请求返回 index.html
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(PORT, () => {

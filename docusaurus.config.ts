@@ -11,6 +11,7 @@ const config: Config = {
       defer: true,
     },
   ],
+
   title: '社区家庭或校园废旧高分子材料再生3D打印项目',
   tagline: '初中生3D打印材料制作工艺手册汇集平台',
   favicon: 'img/favicon.ico',
