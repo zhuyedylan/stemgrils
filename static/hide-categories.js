@@ -31,6 +31,56 @@
     .catch(function() { return []; });
   }
 
+  function loadApprovedDocs() {
+    return fetch(supabaseUrl + '/rest/v1/documents?approved=eq.true&hidden=eq.false&select=filename,category&order=created_at.desc', {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer ' + supabaseKey
+      }
+    }).then(function(res) { return res.json(); })
+    .catch(function() { return []; });
+  }
+
+  // 分类名称映射
+  var categoryMap = {
+    'intro': '项目介绍',
+    'process': '工艺手册',
+    '项目介绍': '项目介绍',
+    '工艺手册': '工艺手册'
+  };
+
+  function findCategoryItem(categoryName) {
+    var menuItems = document.querySelectorAll('.theme-doc-sidebar-container nav.menu ul li.menu__list-item');
+    for (var i = 0; i < menuItems.length; i++) {
+      var link = menuItems[i].querySelector('.menu__link--sublist, .menu__link');
+      if (link && link.textContent.trim() === categoryName) {
+        return menuItems[i];
+      }
+    }
+    return null;
+  }
+
+  function addDocToCategory(categoryItem, docFilename) {
+    if (!categoryItem) return;
+    var subList = categoryItem.querySelector('.menu__list');
+    if (!subList) return;
+
+    // 检查是否已存在
+    var existingLink = subList.querySelector('a[href="/docs/' + docFilename + '"]');
+    if (existingLink) return;
+
+    // 移除占位链接（如果存在）
+    var placeholder = subList.querySelector('a[href="#"]');
+    if (placeholder) placeholder.remove();
+
+    var docLink = document.createElement('a');
+    docLink.className = 'menu__link';
+    docLink.href = '/docs/' + docFilename;
+    docLink.textContent = docFilename;
+    docLink.style.display = 'block';
+    subList.appendChild(docLink);
+  }
+
   function updateCategories() {
     var userStatus = getUserStatus();
     var menuItems = document.querySelectorAll('.theme-doc-sidebar-container nav.menu ul li.menu__list-item');
@@ -51,14 +101,10 @@
               return d.uploader === userStatus.username || userStatus.isAdmin;
             });
             if (userDocs.length > 0) {
-              // 找到分类下的链接容器
               var subList = item.querySelector('.menu__list');
               if (subList) {
-                // 移除旧的占位链接
                 var placeholder = subList.querySelector('a[href="#"]');
                 if (placeholder) placeholder.remove();
-
-                // 添加用户的待审批文档链接
                 userDocs.forEach(function(doc) {
                   var existingLink = subList.querySelector('a[href="/docs/' + doc.filename + '"]');
                   if (!existingLink) {
@@ -76,6 +122,37 @@
         } else {
           item.style.display = 'none';
         }
+      }
+
+      // 工艺手册 - 加载已审批文档
+      if (text === '工艺手册' || categoryMap[text]) {
+        loadApprovedDocs().then(function(docs) {
+          var subList = item.querySelector('.menu__list');
+          if (subList) {
+            docs.forEach(function(doc) {
+              var category = doc.category || 'process';
+              var expectedCategory = categoryMap[category] || '工艺手册';
+              if (expectedCategory === text || (!text && category === 'process')) {
+                addDocToCategory(item, doc.filename);
+              }
+            });
+          }
+        });
+      }
+
+      // 项目介绍 - 加载已审批文档
+      if (text === '项目介绍') {
+        loadApprovedDocs().then(function(docs) {
+          var subList = item.querySelector('.menu__list');
+          if (subList) {
+            docs.forEach(function(doc) {
+              var category = doc.category || 'process';
+              if (category === 'intro' || category === '项目介绍') {
+                addDocToCategory(item, doc.filename);
+              }
+            });
+          }
+        });
       }
 
       // 隐藏 - 只对管理员可见
