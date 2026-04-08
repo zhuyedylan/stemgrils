@@ -345,29 +345,34 @@ app.post('/api/delete', (req, res) => {
   }
 });
 
-// 获取文件列表 API（包含上传者信息）
-app.get('/api/files', (req, res) => {
-  const docsDir = path.join(__dirname, 'docs');
-  const files = fs.readdirSync(docsDir);
+// 获取文件列表 API（从 Supabase 读取）
+const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
-  // 读取上传者记录
-  const uploadersFile = path.join(__dirname, 'docs', '.uploaders.json');
-  let uploaders = {};
-  if (fs.existsSync(uploadersFile)) {
-    uploaders = JSON.parse(fs.readFileSync(uploadersFile, 'utf8'));
-  }
-
-  const mdFiles = files
-    .filter(f => f.endsWith('.md') && !f.startsWith('.'))
-    .map(f => {
-      const fileName = f.replace('.md', '');
-      return {
-        path: 'docs/' + fileName,
-        label: fileName,
-        uploader: uploaders[fileName]?.uploader || null
-      };
+app.get('/api/files', async (req, res) => {
+  try {
+    // 从 Supabase 获取所有文档
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
     });
-  res.json(mdFiles);
+    const files = await response.json();
+
+    res.json(files.map(f => ({
+      path: f.filename,
+      label: f.filename,
+      uploader: f.uploader,
+      category: f.category,
+      approved: f.approved,
+      hidden: f.hidden,
+      rejection_reason: f.rejection_reason
+    })));
+  } catch (error) {
+    console.error('Error fetching files:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 读取 Markdown 文件内容 API
