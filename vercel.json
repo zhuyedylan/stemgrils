@@ -1,5 +1,5 @@
 {
-  "buildCommand": "apt-get update && apt-get install -y pandoc && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "build",
   "installCommand": "npm install",
   "framework": "docusaurus-2",
