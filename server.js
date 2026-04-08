@@ -2,7 +2,9 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
-const mammoth = require('mammoth');
+const { exec } = require('child_process');
+const util = require('util');
+const execPromise = util.promisify(exec);
 
 const app = express();
 const PORT = 3001;
@@ -61,21 +63,75 @@ app.post('/api/upload', async (req, res) => {
       const filePath = req.file.path;
       const originalName = req.file.originalname;
 
-      // 使用 mammoth 转换 Word 为 Markdown
-      const result = await mammoth.convertToMarkdown({ path: filePath }, {
-        styleMap: [
-          "p[style-name='Heading 1'] => h1",
-          "p[style-name='Heading 2'] => h2",
-          "p[style-name='Heading 3'] => h3",
-          "p[style-name='Heading 4'] => h4",
-          "p[style-name='标题 1'] => h1",
-          "p[style-name='标题 2'] => h2",
-          "p[style-name='标题 3'] => h3",
-          "table => table",
-        ]
-      });
+      // 生成文件名（提前定义，供 pandoc 使用）
+      let baseName = path.basename(originalName, path.extname(originalName));
+      try {
+        baseName = decodeURIComponent(escape(baseName));
+      } catch (e) {}
+      const fileName = baseName
+        .replace(/[\(（\)]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9-]/g, '')
+        .toLowerCase();
 
-      let content = result.value;
+      // 使用 pandoc 将 Word 转换为 Markdown (GFM 格式，表格更兼容)
+      const tempOutput = filePath + '.md';
+      // -t gfm: 使用 GitHub Flavored Markdown，表格转为管道表
+      // --extract-media: 提取图片到指定目录
+      const mediaDir = path.join(__dirname, 'static', 'img', 'manuals', fileName);
+      await execPromise(`pandoc "${filePath}" -t gfm -o "${tempOutput}" --extract-media="${mediaDir}"`);
+
+      let content = fs.readFileSync(tempOutput, 'utf8');
+
+      // 双重正则抓取：标准 Markdown 图片 + HTML <img> 标签
+      const standardImageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+      const htmlImageRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+
+      // 处理图片路径和重命名
+      const imagesToProcess = [];
+
+      // 抓取标准 Markdown 图片
+      let match;
+      while ((match = standardImageRegex.exec(content)) !== null) {
+        imagesToProcess.push({ original: match[2], type: 'markdown', full: match[0] });
+      }
+
+      // 抓取 HTML img 标签
+      while ((match = htmlImageRegex.exec(content)) !== null) {
+        imagesToProcess.push({ original: match[1], type: 'html', full: match[0] });
+      }
+
+      // 去重（同一张图片可能被重复匹配）
+      const uniqueImages = Array.from(new Map(imagesToProcess.map(img => [img.original, img])).values());
+
+      // 处理每张图片：移动到正确位置并统一降级为标准 Markdown 格式
+      for (const img of uniqueImages) {
+        const src = img.original;
+        // 处理相对路径（pandoc 提取的图片路径）
+        if (src.startsWith('media/')) {
+          const srcFileName = path.basename(src);
+          const newFileName = `${fileName}-${Date.now()}-${srcFileName}`;
+          const srcPath = path.join(mediaDir, srcFileName);
+          const destPath = path.join(__dirname, 'static', 'img', 'manuals', newFileName);
+
+          if (fs.existsSync(srcPath)) {
+            fs.renameSync(srcPath, destPath);
+            // 统一降级为标准 Markdown 格式
+            const newMarkdown = `![${path.basename(srcFileName, path.extname(srcFileName))}](/img/manuals/${newFileName})`;
+            content = content.replace(img.full, newMarkdown);
+          }
+        }
+      }
+
+      // 清理提取的媒体目录（如果为空）
+      if (fs.existsSync(mediaDir) && fs.readdirSync(mediaDir).length === 0) {
+        fs.rmdirSync(mediaDir);
+      }
+
+      // 清理临时输出文件
+      if (fs.existsSync(tempOutput)) {
+        fs.unlinkSync(tempOutput);
+      }
 
       // 清理内容
       content = content.replace(/<a id="_[^"]*"><\/a>/g, '');
@@ -102,20 +158,6 @@ app.post('/api/upload', async (req, res) => {
       }
       // 匹配 "（一）" "（二）" 等开头的行
       content = content.replace(/^（[一二三四五六七八九十]+）\s*(.+)$/gm, '## $2');
-
-      // 生成文件名
-      let baseName = path.basename(originalName, path.extname(originalName));
-      // 处理编码问题
-      try {
-        baseName = decodeURIComponent(escape(baseName));
-      } catch (e) {
-        // 如果解码失败，使用原始值
-      }
-      const fileName = baseName
-        .replace(/[\(（\)]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9-]/g, '')
-        .toLowerCase();
 
       // 生成 YAML Frontmatter
       const cleanTitle = baseName.replace(/\.docx?$/i, '');
