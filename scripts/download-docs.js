@@ -17,7 +17,7 @@ async function downloadDocs() {
     }
 
     // 获取已审批且未隐藏的文档
-    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=*&approved=eq.true&hidden=eq.false&order=created_at.desc`, {
+    const response = await fetch(`${supabaseUrl}/rest/v1/documents?select=filename,content&approved=eq.true&hidden=eq.false&order=created_at.desc`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
@@ -25,20 +25,33 @@ async function downloadDocs() {
     });
 
     const docs = await response.json();
-    console.log(`Found ${docs.length} approved documents to sync`);
+    console.log(`Found ${docs.length} approved documents`);
+
+    const validFilenames = new Set(docs.map(d => d.filename + '.md'));
 
     for (const docsDir of docsDirs) {
       if (!fs.existsSync(docsDir)) {
         fs.mkdirSync(docsDir, { recursive: true });
+        continue;
       }
 
+      // 删除不在 Supabase 中的文档
+      const existingFiles = fs.readdirSync(docsDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+      for (const file of existingFiles) {
+        if (!validFilenames.has(file)) {
+          fs.unlinkSync(path.join(docsDir, file));
+          console.log(`🗑️ Deleted: ${file}`);
+        }
+      }
+
+      // 保存 Supabase 中的文档
       for (const doc of docs) {
         const filename = doc.filename + '.md';
         const filePath = path.join(docsDir, filename);
 
         let content = doc.content || '';
+        // 如果是 HTML，转为简单文本
         if (content.startsWith('<')) {
-          // 如果是 HTML，转为 Markdown 简单处理
           content = content.replace(/<[^>]+>/g, '');
         }
         content = content.replace(/^---[\s\S]*?---\n/, '');
@@ -53,13 +66,13 @@ title: ${doc.filename}
         const fullContent = frontmatter + content;
 
         fs.writeFileSync(filePath, fullContent, 'utf8');
-        console.log(`✓ Saved: ${filename} to ${docsDir}`);
+        console.log(`✓ Saved: ${filename}`);
       }
     }
 
     console.log('Docs sync completed');
   } catch (error) {
-    console.error('Error downloading docs:', error.message);
+    console.error('Error:', error.message);
   }
 }
 
