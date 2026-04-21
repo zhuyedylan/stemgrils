@@ -75,7 +75,7 @@
 
     var docLink = document.createElement('a');
     docLink.className = 'menu__link';
-    docLink.href = '/doc/' + docFilename;
+    docLink.href = '/docs/' + docFilename;
     docLink.textContent = docFilename;
     docLink.style.display = 'block';
     subList.appendChild(docLink);
