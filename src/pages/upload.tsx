@@ -99,12 +99,72 @@ function UploadPage() {
       markdownContent = markdownContent.replace(/\\-/g, '-');
       markdownContent = markdownContent.replace(/\\!/g, '!');
 
-      // 3. 处理 base64 图片（提示用户）
-      const base64Images = markdownContent.match(/!\[([^\]]*)\]\(data:image[^)]+\)/g);
-      if (base64Images && base64Images.length > 0) {
-        // 移除 base64 图片，添加提示
-        markdownContent = markdownContent.replace(/!\[([^\]]*)\]\(data:image[^)]+\)/g, '');
-        markdownContent += '\n\n---\n**⚠️ 图片提示**：本文档包含 ' + base64Images.length + ' 张图片，需手动添加。请将图片上传至 `/static/img/manuals/` 目录，然后在文档中使用 `![描述](/img/manuals/图片名.png)` 格式引用。\n';
+      // 3. 处理 base64 图片 - 自动上传到 Supabase Storage
+      const base64ImageRegex = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
+      const imageUploads: { original: string; altText: string; mimeType: string; base64Data: string }[] = [];
+      let imageMatch;
+      let imageIndex = 0;
+
+      // 收集所有 base64 图片
+      while ((imageMatch = base64ImageRegex.exec(markdownContent)) !== null) {
+        imageUploads.push({
+          original: imageMatch[0],
+          altText: imageMatch[1],
+          mimeType: imageMatch[2],
+          base64Data: imageMatch[3],
+        });
+      }
+
+      // 上传图片到 Supabase Storage
+      if (imageUploads.length > 0) {
+        setMessage(`转换中... 正在上传 ${imageUploads.length} 张图片`);
+
+        const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+        const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+        const docFileName = file.name.replace(/\.docx?$/i, '').replace(/[^\u4e00-\u9fa5a-zA-Z0-9_-]/g, '-');
+
+        for (let i = 0; i < imageUploads.length; i++) {
+          const img = imageUploads[i];
+          try {
+            // 将 base64 转换为 ArrayBuffer
+            const binaryString = atob(img.base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let j = 0; j < binaryString.length; j++) {
+              bytes[j] = binaryString.charCodeAt(j);
+            }
+
+            // 生成唯一文件名
+            const imageFileName = `${docFileName}-${Date.now()}-${i + 1}.${img.mimeType === 'png' ? 'png' : img.mimeType}`;
+            const imagePath = `images/${imageFileName}`;
+
+            // 上传到 Supabase Storage
+            const uploadResponse = await fetch(`${supabaseUrl}/storage/v1/object/${imagePath}`, {
+              method: 'POST',
+              headers: {
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`,
+                'Content-Type': `image/${img.mimeType}`,
+                'x-upsert': 'true',
+              },
+              body: bytes,
+            });
+
+            if (uploadResponse.ok) {
+              // 构建公开 URL
+              const publicUrl = `${supabaseUrl}/storage/v1/object/public/${imagePath}`;
+              // 替换 markdown 中的图片
+              const newImageMarkdown = `![${img.altText || '图片'}](${publicUrl})`;
+              markdownContent = markdownContent.replace(img.original, newImageMarkdown);
+            } else {
+              // 上传失败，保留原样并提示
+              console.error(`图片 ${i + 1} 上传失败`);
+              markdownContent = markdownContent.replace(img.original, `**[图片 ${i + 1} 上传失败]**`);
+            }
+          } catch (uploadError) {
+            console.error(`图片 ${i + 1} 上传错误:`, uploadError);
+            markdownContent = markdownContent.replace(img.original, `**[图片 ${i + 1} 处理失败]**`);
+          }
+        }
       }
 
       // 4. 清理 HTML 标签（如果有）
