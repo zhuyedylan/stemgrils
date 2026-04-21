@@ -79,8 +79,53 @@ function UploadPage() {
     try {
       const arrayBuffer = await file.arrayBuffer();
       // @ts-ignore
-      const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
-      const markdownContent = result.value;
+      const result = await window.mammoth.convertToMarkdown({ arrayBuffer }, {
+        styleMap: [
+          "p[style-name='Heading 1'] => #",
+          "p[style-name='Heading 2'] => ##",
+          "p[style-name='Heading 3'] => ###",
+          "p[style-name='Title'] => #",
+        ]
+      });
+      let markdownContent = result.value;
+
+      // ===== 内容清理和优化 =====
+
+      // 1. 清理 mammoth 输出的 __xxx__ 加粗格式 → **xxx**
+      markdownContent = markdownContent.replace(/__([^_\n]+)__/g, '**$1**');
+
+      // 2. 清理多余的反斜杠转义（mammoth 对特殊字符过度转义）
+      markdownContent = markdownContent.replace(/\\([!#$%&*+<=>@^_`|~])/g, '$1');
+      markdownContent = markdownContent.replace(/\\-/g, '-');
+      markdownContent = markdownContent.replace(/\\!/g, '!');
+
+      // 3. 处理 base64 图片（提示用户）
+      const base64Images = markdownContent.match(/!\[([^\]]*)\]\(data:image[^)]+\)/g);
+      if (base64Images && base64Images.length > 0) {
+        // 移除 base64 图片，添加提示
+        markdownContent = markdownContent.replace(/!\[([^\]]*)\]\(data:image[^)]+\)/g, '');
+        markdownContent += '\n\n---\n**⚠️ 图片提示**：本文档包含 ' + base64Images.length + ' 张图片，需手动添加。请将图片上传至 `/static/img/manuals/` 目录，然后在文档中使用 `![描述](/img/manuals/图片名.png)` 格式引用。\n';
+      }
+
+      // 4. 清理 HTML 标签（如果有）
+      markdownContent = markdownContent.replace(/<[^>]+>/g, '');
+
+      // 5. 清理多余空行
+      markdownContent = markdownContent.replace(/\n{3,}/g, '\n\n');
+
+      // 6. 识别并转换简单表格（mammoth 输出的表格往往是纯文本）
+      // 尝试识别连续的 "列1  列2  列3" 格式并转为 Markdown 表格
+      const tablePatterns = markdownContent.match(/(\|[^\n]+\|\n)+/g);
+      if (tablePatterns) {
+        // 已经是管道表格，保持不变
+      } else {
+        // 尝试识别 "阶段\t核心任务\t关键产出" 类型的文本表格
+        // 暂时保持原样，用户可手动调整
+      }
+
+      // 7. 确保标题格式正确
+      // 修复可能出现的 "#标题"（无空格）→ "# 标题"
+      markdownContent = markdownContent.replace(/^(#{1,6})([^\s#])/gm, '$1 $2');
 
       const fileName = file.name.replace(/\.docx?$/i, '');
       const title = fileName;
