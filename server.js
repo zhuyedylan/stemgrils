@@ -74,26 +74,33 @@ app.post('/api/upload', async (req, res) => {
         .replace(/[^\u4e00-\u9fa5a-zA-Z0-9-]/g, '')
         .toLowerCase();
 
-      // 使用 pandoc 将 Word 转换为 Markdown (GFM 格式，表格更兼容)
+      // 使用 pandoc 将 Word 转换为 Markdown (markdown 格式，表格为 pipe table)
       const tempOutput = filePath + '.md';
-      // -t gfm: 使用 GitHub Flavored Markdown，表格转为管道表
+      // -t markdown: 输出 pipe table 格式（比 gfm 的 HTML table 更兼容 MDX）
+      // --wrap=none: 避免长行自动换行
       // --extract-media: 提取图片到指定目录
       const mediaDir = path.join(__dirname, 'static', 'img', 'manuals', fileName);
-      await execPromise(`pandoc "${filePath}" -t gfm -o "${tempOutput}" --extract-media="${mediaDir}"`);
+      await execPromise(`pandoc "${filePath}" -t markdown --wrap=none -o "${tempOutput}" --extract-media="${mediaDir}"`);
 
       let content = fs.readFileSync(tempOutput, 'utf8');
 
-      // 双重正则抓取：标准 Markdown 图片 + HTML <img> 标签
-      const standardImageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+      // 匹配多种图片格式：Markdown 图片（可能带属性）+ HTML <img> 标签
+      // 格式：![alt](path) 或 ![alt](path){width="..."} 或 <img src="path">
+      const markdownImageRegex = /!\[([^\]]*)\]\(([^)]+)\)(\{[^}]+\})?/g;
       const htmlImageRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
 
       // 处理图片路径和重命名
       const imagesToProcess = [];
 
-      // 抓取标准 Markdown 图片
+      // 抓取 Markdown 图片（包含可选的属性）
       let match;
-      while ((match = standardImageRegex.exec(content)) !== null) {
-        imagesToProcess.push({ original: match[2], type: 'markdown', full: match[0] });
+      while ((match = markdownImageRegex.exec(content)) !== null) {
+        imagesToProcess.push({
+          original: match[2],
+          alt: match[1],
+          full: match[0],
+          hasAttributes: !!match[3]
+        });
       }
 
       // 抓取 HTML img 标签
@@ -104,28 +111,52 @@ app.post('/api/upload', async (req, res) => {
       // 去重（同一张图片可能被重复匹配）
       const uniqueImages = Array.from(new Map(imagesToProcess.map(img => [img.original, img])).values());
 
-      // 处理每张图片：移动到正确位置并统一降级为标准 Markdown 格式
+      // 处理每张图片：移动到正确位置并统一为标准 Markdown 格式
       for (const img of uniqueImages) {
         const src = img.original;
-        // 处理相对路径（pandoc 提取的图片路径）
-        if (src.startsWith('media/')) {
-          const srcFileName = path.basename(src);
+        // 提取图片文件名（处理各种路径格式：media/xxx, /path/media/xxx, xxx）
+        const srcFileName = path.basename(src);
+
+        // 查找图片源文件（pandoc 提取到 mediaDir/media/ 下）
+        const possibleSrcPaths = [
+          path.join(mediaDir, 'media', srcFileName),
+          path.join(mediaDir, srcFileName),
+        ];
+
+        let srcPath = null;
+        for (const p of possibleSrcPaths) {
+          if (fs.existsSync(p)) {
+            srcPath = p;
+            break;
+          }
+        }
+
+        if (srcPath) {
           const newFileName = `${fileName}-${Date.now()}-${srcFileName}`;
-          const srcPath = path.join(mediaDir, srcFileName);
           const destPath = path.join(__dirname, 'static', 'img', 'manuals', newFileName);
 
-          if (fs.existsSync(srcPath)) {
+          // 移动图片到 static/img/manuals/
+          if (srcPath !== destPath) {
             fs.renameSync(srcPath, destPath);
-            // 统一降级为标准 Markdown 格式
-            const newMarkdown = `![${path.basename(srcFileName, path.extname(srcFileName))}](/img/manuals/${newFileName})`;
-            content = content.replace(img.full, newMarkdown);
           }
+
+          // 替换为标准 Markdown 格式（无属性）
+          const altText = img.alt || path.basename(srcFileName, path.extname(srcFileName));
+          const newMarkdown = `![${altText}](/img/manuals/${newFileName})`;
+          content = content.replace(img.full, newMarkdown);
         }
       }
 
       // 清理提取的媒体目录（如果为空）
-      if (fs.existsSync(mediaDir) && fs.readdirSync(mediaDir).length === 0) {
-        fs.rmdirSync(mediaDir);
+      if (fs.existsSync(mediaDir)) {
+        // 清理 media 子目录
+        const mediaSubDir = path.join(mediaDir, 'media');
+        if (fs.existsSync(mediaSubDir) && fs.readdirSync(mediaSubDir).length === 0) {
+          fs.rmdirSync(mediaSubDir);
+        }
+        if (fs.readdirSync(mediaDir).length === 0) {
+          fs.rmdirSync(mediaDir);
+        }
       }
 
       // 清理临时输出文件
@@ -133,15 +164,33 @@ app.post('/api/upload', async (req, res) => {
         fs.unlinkSync(tempOutput);
       }
 
-      // 清理内容
+      // 清理内容，确保 MDX 兼容
+      // 1. 清理 Word 生成的锚点标签
       content = content.replace(/<a id="_[^"]*"><\/a>/g, '');
-      content = content.replace(/<a id="_[^]*">/g, '');
+      content = content.replace(/<a id="_[^"]*">/g, '');
+
+      // 2. 清理 HTML 表格（如果残留，转为纯文本）
+      content = content.replace(/<table[^>]*>[\s\S]*?<\/table>/gi, (match) => {
+        // 提取表格文本内容
+        return match.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+      });
+
+      // 3. 清理 HTML img 标签（如果残留）
+      content = content.replace(/<img[^>]+>/gi, '');
+
+      // 4. 清理所有 HTML 标签的 style 属性
+      content = content.replace(/ style="[^"]*"/g, '');
+
+      // 5. 清理 pandoc 图片尺寸属性 {width="..."}
+      content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)\{[^}]+\}/g, '![$1]($2)');
+
+      // 6. 统一加粗格式 __xxx__ => **xxx**
       content = content.replace(/__([^_]+)__/g, '**$1**');
-      // 移除 pandoc 图片尺寸属性，避免 MDX 解析错误
-      // 匹配 ![xxx](yyy){width="..."} 格式，移除 {xxx} 部分
-      content = content.replace(/(!\[[^\]]*\]\([^)]+\))\{[^}]+\}/g, '$1');
-      // 保留编号列表格式
-      content = content.replace(/^\d+\.\s+/gm, '- ');
+
+      // 7. 清理转义字符 \< => <
+      content = content.replace(/\\</g, '<');
+
+      // 8. 清理多余空行
       content = content.replace(/\n{3,}/g, '\n\n');
 
       // 转换中文章节标题为 Markdown 标题
