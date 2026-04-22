@@ -13,12 +13,10 @@ export default async (req: Request): Promise<Response> => {
   };
 
   if (req.method === "OPTIONS") {
-    console.log("OPTIONS request");
     return new Response(null, { headers: corsHeaders });
   }
 
   if (req.method !== "POST") {
-    console.log("Non-POST request");
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -26,28 +24,22 @@ export default async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("Parsing body...");
     const body = await req.json();
-    console.log("Body parsed:", body.filename);
-
     const { filename, username, category, markdown, images } = body;
 
     if (!filename || !markdown) {
-      console.log("Missing filename or markdown");
       return new Response(JSON.stringify({ error: "缺少文件名或内容" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Document received:", filename, "Images:", images?.length || 0);
+    console.log("Document:", filename, "Images:", images?.length || 0);
 
     let finalMarkdown = markdown;
     const uploadedImageUrls: string[] = [];
 
-    // Upload images
     if (images && images.length > 0) {
-      console.log("Starting image upload...");
       const safeFilename = filename.replace(/[^一-龥a-zA-Z0-9_-]/g, "-");
 
       for (let i = 0; i < images.length; i++) {
@@ -59,8 +51,6 @@ export default async (req: Request): Promise<Response> => {
         for (let j = 0; j < binaryString.length; j++) {
           bytes[j] = binaryString.charCodeAt(j);
         }
-
-        console.log(`Uploading image ${i + 1}: ${imageFileName}`);
 
         const uploadResponse = await fetch(
           `${SUPABASE_URL}/storage/v1/object/images/${imageFileName}`,
@@ -80,22 +70,16 @@ export default async (req: Request): Promise<Response> => {
           const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${imageFileName}`;
           uploadedImageUrls.push(publicUrl);
           finalMarkdown = finalMarkdown.replace(new RegExp(img.ref, "g"), publicUrl);
-          console.log(`Image uploaded: ${imageFileName}`);
-        } else {
-          console.error(`Image upload failed: ${img.name}`);
         }
       }
     }
 
-    // Generate content
     const fullContent = `---
 id: ${filename}
 title: ${filename}
 ---
 
 ${finalMarkdown}`;
-
-    console.log("Saving document to database...");
 
     const docResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/documents`,
@@ -121,21 +105,17 @@ ${finalMarkdown}`;
 
     if (!docResponse.ok) {
       const errorText = await docResponse.text();
-      console.error("Database save failed:", errorText);
       return new Response(JSON.stringify({ error: `存储失败: ${errorText}` }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Document saved successfully:", filename);
-
     return new Response(
       JSON.stringify({
         success: true,
         filename: filename,
         imagesUploaded: uploadedImageUrls.length,
-        contentLength: fullContent.length,
         message: uploadedImageUrls.length > 0
           ? `上传成功，${uploadedImageUrls.length} 张图片已上传`
           : "上传成功",
@@ -145,7 +125,6 @@ ${finalMarkdown}`;
       }
     );
   } catch (error) {
-    console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: `处理失败: ${error.message || error}` }),
       {

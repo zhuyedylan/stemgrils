@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import mammoth from 'mammoth';
+import JSZip from 'jszip';
 
 function UploadPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,41 +68,77 @@ function UploadPage() {
     setMessage('正在转换文档...');
 
     try {
-      // 读取文件并转为 base64
+      // 读取文件
       const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(
-        new Uint8Array(arrayBuffer)
-          .reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-
       const filename = file.name.replace(/\.docx?$/i, '');
       const savedUser = localStorage.getItem('stem_user');
       const userData = savedUser ? JSON.parse(savedUser) : null;
 
-      // 调用 Supabase Edge Function（使用 pandoc-wasm）
+      // ===== 前端 mammoth 转换 =====
+      const result = await mammoth.convertToMarkdown({ arrayBuffer });
+      let markdown = result.value;
+
+      // ===== 提取图片 =====
+      const zip = await JSZip.loadAsync(arrayBuffer);
+      const mediaFiles = zip.file(/word\/media\/.*/);
+      const images: Array<{ name: string; data: string; type: string; ref: string }> = [];
+
+      for (const zipFile of mediaFiles) {
+        const originalName = zipFile.name.replace('word/media/', '');
+        const imageData = await zipFile.async('base64');
+        const mimeType = originalName.endsWith('.png') ? 'image/png'
+          : originalName.endsWith('.jpg') || originalName.endsWith('.jpeg') ? 'image/jpeg'
+          : originalName.endsWith('.gif') ? 'image/gif'
+          : 'image/png';
+
+        images.push({
+          name: originalName,
+          data: imageData,
+          type: mimeType,
+          ref: `media/${originalName}`
+        });
+      }
+
+      // ===== 格式后处理 =====
+      // 标题格式修复
+      markdown = markdown.replace(/^(#{1,6})([^\s])/gm, '$1 $2');
+      // 列表格式修复
+      markdown = markdown.replace(/([^\n])\n([-*+] )/g, '$1\n\n$2');
+      markdown = markdown.replace(/([^\n])\n(\d+\. )/g, '$1\n\n$2');
+      // 清理多余空行
+      markdown = markdown.replace(/\n{3,}/g, '\n\n');
+      // 清理行尾空格
+      markdown = markdown.replace(/ +\n/g, '\n');
+      // 表格格式修复
+      markdown = markdown.replace(/([^\n])\n(\|)/g, '$1\n\n$2');
+      markdown = markdown.replace(/(\|)\n([^\n|])/g, '$1\n\n$2');
+
+      setMessage(`转换完成，${images.length} 张图片待上传，正在保存...`);
+
+      // ===== 调用 Edge Function =====
       const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-      const response = await fetch(`${supabaseUrl}/functions/v1/convert-docx`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/upload-doc`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW`,
         },
         body: JSON.stringify({
-          file: base64,
+          markdown: markdown,
+          images: images,
           filename: filename,
           username: userData?.username || 'unknown',
           category: selectedCategory,
         }),
       });
 
-      const result = await response.json();
+      const resData = await response.json();
 
-      if (result.success) {
-        setMessage(`✅ ${filename} 上传成功！${result.imagesUploaded > 0 ? `已上传 ${result.imagesUploaded} 张图片。` : ''}等待管理员审批`);
+      if (resData.success) {
+        setMessage(`✅ ${filename} 上传成功！${resData.imagesUploaded > 0 ? `已上传 ${resData.imagesUploaded} 张图片。` : ''}等待管理员审批`);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs();
       } else {
-        setMessage('上传失败: ' + (result.error || '未知错误'));
+        setMessage('上传失败: ' + (resData.error || '未知错误'));
       }
     } catch (error) {
       setMessage('转换失败: ' + error.message);
