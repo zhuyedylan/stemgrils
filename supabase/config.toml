@@ -1,0 +1,5 @@
+# Supabase 项目配置
+project_id = "stemgrils"
+
+[functions.convert-docx]
+verify_jwt = false

@@ -6,7 +6,6 @@ function UploadPage() {
   const [user, setUser] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
-  const [mammothReady, setMammothReady] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('process');
   const [myDocs, setMyDocs] = useState([]);
@@ -24,11 +23,6 @@ function UploadPage() {
 
     loadCategories();
     loadMyDocs();
-
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
-    script.onload = () => setMammothReady(true);
-    document.head.appendChild(script);
   }, []);
 
   const loadCategories = async () => {
@@ -68,154 +62,45 @@ function UploadPage() {
       return;
     }
 
-    if (!mammothReady) {
-      setMessage('正在加载转换工具，请稍后重试');
-      return;
-    }
-
     setUploading(true);
-    setMessage('转换中...');
+    setMessage('正在转换文档...');
 
     try {
+      // 读取文件并转为 base64
       const arrayBuffer = await file.arrayBuffer();
-      // @ts-ignore
-      const result = await window.mammoth.convertToMarkdown({ arrayBuffer }, {
-        styleMap: [
-          "p[style-name='Heading 1'] => #",
-          "p[style-name='Heading 2'] => ##",
-          "p[style-name='Heading 3'] => ###",
-          "p[style-name='Title'] => #",
-        ]
-      });
-      let markdownContent = result.value;
+      const base64 = btoa(
+        new Uint8Array(arrayBuffer)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      );
 
-      // ===== 内容清理和优化 =====
+      const filename = file.name.replace(/\.docx?$/i, '');
+      const savedUser = localStorage.getItem('stem_user');
+      const userData = savedUser ? JSON.parse(savedUser) : null;
 
-      // 1. 清理 mammoth 输出的 __xxx__ 加粗格式 → **xxx**
-      markdownContent = markdownContent.replace(/__([^_\n]+)__/g, '**$1**');
-
-      // 2. 清理多余的反斜杠转义（mammoth 对特殊字符过度转义）
-      markdownContent = markdownContent.replace(/\\([!#$%&*+<=>@^_`|~])/g, '$1');
-      markdownContent = markdownContent.replace(/\\-/g, '-');
-      markdownContent = markdownContent.replace(/\\!/g, '!');
-
-      // 3. 处理 base64 图片 - 自动上传到 Supabase Storage
-      const base64ImageRegex = /!\[([^\]]*)\]\(data:image\/([^;]+);base64,([^)]+)\)/g;
-      const imageUploads: { original: string; altText: string; mimeType: string; base64Data: string }[] = [];
-      let imageMatch;
-      let imageIndex = 0;
-
-      // 收集所有 base64 图片
-      while ((imageMatch = base64ImageRegex.exec(markdownContent)) !== null) {
-        imageUploads.push({
-          original: imageMatch[0],
-          altText: imageMatch[1],
-          mimeType: imageMatch[2],
-          base64Data: imageMatch[3],
-        });
-      }
-
-      // 上传图片到 Supabase Storage
-      if (imageUploads.length > 0) {
-        setMessage(`转换中... 正在上传 ${imageUploads.length} 张图片`);
-
-        const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-        const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-        const docFileName = file.name.replace(/\.docx?$/i, '').replace(/[^\u4e00-\u9fa5a-zA-Z0-9_-]/g, '-');
-
-        for (let i = 0; i < imageUploads.length; i++) {
-          const img = imageUploads[i];
-          try {
-            // 将 base64 转换为 ArrayBuffer
-            const binaryString = atob(img.base64Data);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let j = 0; j < binaryString.length; j++) {
-              bytes[j] = binaryString.charCodeAt(j);
-            }
-
-            // 生成唯一文件名
-            const imageFileName = `${docFileName}-${Date.now()}-${i + 1}.${img.mimeType === 'png' ? 'png' : img.mimeType}`;
-            const imagePath = `images/${imageFileName}`;
-
-            // 上传到 Supabase Storage
-            const uploadResponse = await fetch(`${supabaseUrl}/storage/v1/object/${imagePath}`, {
-              method: 'POST',
-              headers: {
-                'apikey': supabaseKey,
-                'Authorization': `Bearer ${supabaseKey}`,
-                'Content-Type': `image/${img.mimeType}`,
-                'x-upsert': 'true',
-              },
-              body: bytes,
-            });
-
-            if (uploadResponse.ok) {
-              // 构建公开 URL
-              const publicUrl = `${supabaseUrl}/storage/v1/object/public/${imagePath}`;
-              // 替换 markdown 中的图片
-              const newImageMarkdown = `![${img.altText || '图片'}](${publicUrl})`;
-              markdownContent = markdownContent.replace(img.original, newImageMarkdown);
-            } else {
-              // 上传失败，保留原样并提示
-              console.error(`图片 ${i + 1} 上传失败`);
-              markdownContent = markdownContent.replace(img.original, `**[图片 ${i + 1} 上传失败]**`);
-            }
-          } catch (uploadError) {
-            console.error(`图片 ${i + 1} 上传错误:`, uploadError);
-            markdownContent = markdownContent.replace(img.original, `**[图片 ${i + 1} 处理失败]**`);
-          }
-        }
-      }
-
-      // 4. 清理 HTML 标签（如果有）
-      markdownContent = markdownContent.replace(/<[^>]+>/g, '');
-
-      // 5. 清理多余空行
-      markdownContent = markdownContent.replace(/\n{3,}/g, '\n\n');
-
-      // 6. 识别并转换简单表格（mammoth 输出的表格往往是纯文本）
-      // 尝试识别连续的 "列1  列2  列3" 格式并转为 Markdown 表格
-      const tablePatterns = markdownContent.match(/(\|[^\n]+\|\n)+/g);
-      if (tablePatterns) {
-        // 已经是管道表格，保持不变
-      } else {
-        // 尝试识别 "阶段\t核心任务\t关键产出" 类型的文本表格
-        // 暂时保持原样，用户可手动调整
-      }
-
-      // 7. 确保标题格式正确
-      // 修复可能出现的 "#标题"（无空格）→ "# 标题"
-      markdownContent = markdownContent.replace(/^(#{1,6})([^\s#])/gm, '$1 $2');
-
-      const fileName = file.name.replace(/\.docx?$/i, '');
-      const title = fileName;
-
-      const fullContent = `---
-id: ${title}
-title: ${title}
----
-
-${markdownContent}`;
-
-      const response = await fetch('/api/save', {
+      // 调用 Supabase Edge Function（使用 pandoc-wasm）
+      const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+      const response = await fetch(`${supabaseUrl}/functions/v1/convert-docx`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW`,
+        },
         body: JSON.stringify({
-          filePath: title + '.md',
-          content: fullContent,
+          file: base64,
+          filename: filename,
+          username: userData?.username || 'unknown',
           category: selectedCategory,
-          uploader: user.username
-        })
+        }),
       });
 
-      const saveResult = await response.json();
+      const result = await response.json();
 
-      if (saveResult.success) {
-        setMessage(`✅ ${title} 上传成功！等待管理员审批`);
+      if (result.success) {
+        setMessage(`✅ ${filename} 上传成功！${result.imagesUploaded > 0 ? `已上传 ${result.imagesUploaded} 张图片。` : ''}等待管理员审批`);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs();
       } else {
-        setMessage('上传失败: ' + saveResult.error);
+        setMessage('上传失败: ' + (result.error || '未知错误'));
       }
     } catch (error) {
       setMessage('转换失败: ' + error.message);
@@ -353,11 +238,11 @@ ${markdownContent}`;
 
       {/* 上传区域 */}
       <div style={{ border: '2px dashed #10b981', borderRadius: '12px', padding: '40px', textAlign: 'center', backgroundColor: '#f0fdf4', marginBottom: '20px' }}>
-        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading || !mammothReady} id="file-upload" style={{ display: 'none' }} />
-        <label htmlFor="file-upload" style={{ cursor: mammothReady ? 'pointer' : 'not-allowed', opacity: mammothReady ? 1 : 0.5 }}>
+        <input ref={fileInputRef} type="file" accept=".doc,.docx" onChange={handleUpload} disabled={uploading} id="file-upload" style={{ display: 'none' }} />
+        <label htmlFor="file-upload" style={{ cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.5 : 1 }}>
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
-            {uploading ? '转换中...' : (!mammothReady ? '加载中...' : '点击选择 Word 文档')}
+            {uploading ? '转换中...' : '点击选择 Word 文档'}
           </div>
           <div style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>支持 .doc 和 .docx 格式</div>
         </label>
