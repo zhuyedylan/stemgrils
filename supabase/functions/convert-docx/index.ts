@@ -2,7 +2,7 @@ import { convert } from "npm:pandoc-wasm";
 import JSZip from "npm:jszip";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "https://jyhmhksdpjkzkhqlkuqh.supabase.co";
-const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_KEY") || Deno.env.get("SUPABASE_ANON_KEY") || "sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW";
+const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_ANON_KEY") || "sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW";
 
 console.log("convert-docx function started (using pandoc-wasm)");
 
