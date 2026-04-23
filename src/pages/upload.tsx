@@ -3,6 +3,32 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import mammoth from 'mammoth';
 import JSZip from 'jszip';
 
+const SUPABASE_URL = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
+
+// 日志记录函数
+const addLog = async (action: string, details: any, username?: string) => {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/logs`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
+        action,
+        details: JSON.stringify(details),
+        username: username || 'system',
+        created_at: new Date().toISOString(),
+      }),
+    });
+  } catch (e) {
+    console.error('Log error:', e);
+  }
+};
+
 function UploadPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -38,20 +64,20 @@ function UploadPage() {
       }
     } catch (error) {
       console.error('加载目录失败:', error);
+      addLog('error_load_categories', { error: error.message }, user?.username);
     }
   };
 
   const loadMyDocs = async () => {
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`, {
-        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       });
       const docs = await response.json();
       setMyDocs(docs);
     } catch (error) {
       console.error('加载我的文档失败:', error);
+      addLog('error_load_docs', { error: error.message }, user?.username);
     }
   };
 
@@ -61,24 +87,29 @@ function UploadPage() {
 
     if (!file.name.match(/\.docx?$/i)) {
       setMessage('请上传 Word 文档 (.doc 或 .docx)');
+      addLog('upload_invalid_format', { filename: file.name }, user?.username);
       return;
     }
 
     setUploading(true);
     setMessage('正在转换文档...');
+    const filename = file.name.replace(/\.docx?$/i, '');
 
     try {
+      addLog('upload_start', { filename, size: file.size }, user?.username);
+
       // 读取文件
       const arrayBuffer = await file.arrayBuffer();
-      const filename = file.name.replace(/\.docx?$/i, '');
-      const savedUser = localStorage.getItem('stem_user');
-      const userData = savedUser ? JSON.parse(savedUser) : null;
 
       // ===== 前端 mammoth 转换 =====
+      setMessage('正在解析 Word 文档...');
       const result = await mammoth.convertToMarkdown({ arrayBuffer });
       let markdown = result.value;
 
+      addLog('convert_success', { filename, contentLength: markdown.length }, user?.username);
+
       // ===== 提取图片 =====
+      setMessage('正在提取图片...');
       const zip = await JSZip.loadAsync(arrayBuffer);
       const mediaFiles = zip.file(/word\/media\/.*/);
       const images: Array<{ name: string; data: string; type: string; ref: string }> = [];
@@ -92,87 +123,123 @@ function UploadPage() {
           : 'image/png';
 
         images.push({
-          name: originalName,
+          name: `${filename}-${Date.now()}-${originalName}`,
           data: imageData,
           type: mimeType,
           ref: `media/${originalName}`
         });
       }
 
+      addLog('images_extracted', { filename, count: images.length }, user?.username);
+
       // ===== 格式后处理 =====
-      // 标题格式修复
       markdown = markdown.replace(/^(#{1,6})([^\s])/gm, '$1 $2');
-      // 列表格式修复
       markdown = markdown.replace(/([^\n])\n([-*+] )/g, '$1\n\n$2');
       markdown = markdown.replace(/([^\n])\n(\d+\. )/g, '$1\n\n$2');
-      // 清理多余空行
       markdown = markdown.replace(/\n{3,}/g, '\n\n');
-      // 清理行尾空格
       markdown = markdown.replace(/ +\n/g, '\n');
-      // 表格格式修复
       markdown = markdown.replace(/([^\n])\n(\|)/g, '$1\n\n$2');
       markdown = markdown.replace(/(\|)\n([^\n|])/g, '$1\n\n$2');
 
-      setMessage(`转换完成，${images.length} 张图片待上传，正在保存...`);
+      setMessage(`转换完成，${images.length} 张图片待上传...`);
 
-      // ===== 调用 Edge Function =====
-      const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-      const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
-      const response = await fetch(`${supabaseUrl}/functions/v1/up`, {
+      // ===== 直接上传图片到 Supabase Storage =====
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        setMessage(`正在上传图片 ${i + 1}/${images.length}...`);
+
+        const binaryString = atob(img.data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let j = 0; j < binaryString.length; j++) {
+          bytes[j] = binaryString.charCodeAt(j);
+        }
+
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${img.name}`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': img.type,
+            'x-upsert': 'true',
+          },
+          body: bytes,
+        });
+
+        if (uploadRes.ok) {
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${img.name}`;
+          markdown = markdown.replace(new RegExp(img.ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), publicUrl);
+          addLog('image_upload_success', { name: img.name }, user?.username);
+        } else {
+          addLog('image_upload_failed', { name: img.name, status: uploadRes.status }, user?.username);
+        }
+      }
+
+      // ===== 直接存储文档到 Supabase =====
+      setMessage('正在保存文档...');
+      const fullContent = `---
+id: ${filename}
+title: ${filename}
+---
+
+${markdown}`;
+
+      const docRes = await fetch(`${SUPABASE_URL}/rest/v1/documents`, {
         method: 'POST',
         headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Prefer': 'return=minimal',
         },
         body: JSON.stringify({
-          markdown: markdown,
-          images: images,
-          filename: filename,
-          username: userData?.username || 'unknown',
+          filename,
+          content: fullContent,
           category: selectedCategory,
+          uploader: user?.username || 'unknown',
+          approved: false,
+          created_at: new Date().toISOString(),
         }),
       });
 
-      const resData = await response.json();
-
-      if (resData.success) {
-        setMessage(`✅ ${filename} 上传成功！${resData.imagesUploaded > 0 ? `已上传 ${resData.imagesUploaded} 张图片。` : ''}等待管理员审批`);
+      if (docRes.ok) {
+        setMessage(`✅ ${filename} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
+        addLog('upload_success', { filename, category: selectedCategory, images: images.length }, user?.username);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs();
       } else {
-        setMessage('上传失败: ' + (resData.error || '未知错误'));
+        const errText = await docRes.text();
+        setMessage('保存失败: ' + errText);
+        addLog('upload_save_failed', { filename, error: errText }, user?.username);
       }
     } catch (error) {
-      setMessage('转换失败: ' + error.message);
+      setMessage('上传失败: ' + error.message);
+      addLog('upload_error', { filename, error: error.message }, user?.username);
     }
 
     setUploading(false);
   };
 
   const handleResubmit = async (doc) => {
-    // 重新提交被拒绝的文档
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(doc.filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(doc.filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
+          'Prefer': 'return=minimal',
         },
         body: JSON.stringify({
           approved: false,
           hidden: false,
           rejection_reason: null,
-          updated_at: new Date().toISOString()
-        })
+          updated_at: new Date().toISOString(),
+        }),
       });
 
       if (response.ok) {
         setMessage('✅ 已重新提交，等待审批');
+        addLog('resubmit', { filename: doc.filename }, user?.username);
         loadMyDocs();
       } else {
         setMessage('❌ 提交失败');
@@ -182,23 +249,21 @@ function UploadPage() {
     }
   };
 
-  // 管理员审批通过
   const handleApproveFromUpload = async (filename) => {
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
+          'Prefer': 'return=minimal',
         },
-        body: JSON.stringify({ approved: true })
+        body: JSON.stringify({ approved: true }),
       });
       if (response.ok) {
         setMessage(`✅ ${filename} 已审批通过`);
+        addLog('approve', { filename }, user?.username);
         loadMyDocs();
       }
     } catch (error) {
@@ -206,25 +271,24 @@ function UploadPage() {
     }
   };
 
-  // 管理员拒绝
   const handleRejectFromUpload = async (filename) => {
     const reason = prompt('请输入拒绝理由:');
     if (!reason) return;
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
+          'Prefer': 'return=minimal',
         },
-        body: JSON.stringify({ approved: false, hidden: true, rejection_reason: reason })
+        body: JSON.stringify({ approved: false, hidden: true, rejection_reason: reason }),
       });
       if (response.ok) {
         setMessage(`❌ ${filename} 已拒绝`);
+        addLog('reject', { filename, reason }, user?.username);
         loadMyDocs();
       }
     } catch (error) {
@@ -249,7 +313,6 @@ function UploadPage() {
     return <div style={{ textAlign: 'center', padding: '50px' }}>正在跳转...</div>;
   }
 
-  // 分类显示
   const pendingDocs = myDocs.filter(d => !d.approved && !d.hidden);
   const rejectedDocs = myDocs.filter(d => !d.approved && d.hidden && d.rejection_reason);
   const approvedDocs = myDocs.filter(d => d.approved && !d.hidden);
@@ -282,13 +345,13 @@ function UploadPage() {
         <label htmlFor="file-upload" style={{ cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.5 : 1 }}>
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#10b981' }}>
-            {uploading ? '转换中...' : '点击选择 Word 文档'}
+            {uploading ? message : '点击选择 Word 文档'}
           </div>
           <div style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>支持 .doc 和 .docx 格式</div>
         </label>
       </div>
 
-      {message && (
+      {message && !uploading && (
         <div style={{ padding: '15px', borderRadius: '8px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', marginBottom: '20px' }}>
           {message}
         </div>
@@ -306,18 +369,8 @@ function UploadPage() {
               </div>
               {user?.role === 'admin' && (
                 <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={() => handleApproveFromUpload(doc.filename)}
-                    style={{ padding: '6px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}
-                  >
-                    ✅ 通过
-                  </button>
-                  <button
-                    onClick={() => handleRejectFromUpload(doc.filename)}
-                    style={{ padding: '6px 16px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}
-                  >
-                    ❌ 拒绝
-                  </button>
+                  <button onClick={() => handleApproveFromUpload(doc.filename)} style={{ padding: '6px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}>✅ 通过</button>
+                  <button onClick={() => handleRejectFromUpload(doc.filename)} style={{ padding: '6px 16px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}>❌ 拒绝</button>
                 </div>
               )}
             </div>
@@ -338,9 +391,7 @@ function UploadPage() {
               <div style={{ fontSize: '12px', color: '#dc2626', marginBottom: '8px' }}>
                 <strong>拒绝理由：</strong>{doc.rejection_reason}
               </div>
-              <button onClick={() => handleResubmit(doc)} style={{ padding: '6px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}>
-                ✏️ 修改后重新提交
-              </button>
+              <button onClick={() => handleResubmit(doc)} style={{ padding: '6px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '13px' }}>✏️ 修改后重新提交</button>
             </div>
           ))}
         </div>
@@ -374,6 +425,12 @@ function UploadPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {user?.role === 'admin' && (
+        <button onClick={() => window.location.href = '/logs'} style={{ marginTop: '10px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+          📋 查看日志
+        </button>
       )}
 
       <button onClick={() => window.location.href = '/'} style={{ marginTop: '20px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
