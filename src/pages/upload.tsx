@@ -117,10 +117,12 @@ function UploadPage() {
 
       // ===== 调用 Edge Function =====
       const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-      const response = await fetch(`${supabaseUrl}/functions/v1/upload-doc`, {
+      const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
+      const response = await fetch(`${supabaseUrl}/functions/v1/up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
         },
         body: JSON.stringify({
           markdown: markdown,

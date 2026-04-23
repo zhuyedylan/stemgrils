@@ -3,3 +3,6 @@ project_id = "stemgrils"
 
 [functions.convert-docx]
 verify_jwt = false
+
+[functions.upload-doc]
+verify_jwt = false
