@@ -49,7 +49,12 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('最新版本:', d['dist-tags']['latest']\\); print\\('支持 Deno:', 'unknown'\\)\")",
       "Bash(mkdir -p /tmp/pandoc-wasm-test)",
       "Bash(npm init *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(brew services *)",
+      "mcp__plugin_claude-mem_mcp-search__search",
+      "Bash(vercel env *)",
+      "Bash(xargs -I {} basename {} .md)",
+      "Bash(vercel list *)"
     ]
   }
 }

@@ -113,29 +113,41 @@ function UploadPage() {
       let markdown = '';
 
       // 处理表格 - 转换为 Markdown 表格格式
-      const tableRegex = /<table[^>]*>(.*?)<\/table>/gi;
-      let tableMatch;
+      // 使用更精确的正则，匹配表格内容（包括嵌套标签）
+      const tableRegex = /<table[^>]*>([\s\S]*?)<\/table>/gi;
       let processedHtml = html;
 
+      // 收集所有表格并处理
+      const tables: Array<{ original: string; markdown: string }> = [];
+      let tableMatch;
       while ((tableMatch = tableRegex.exec(html)) !== null) {
         const tableContent = tableMatch[1];
         let markdownTable = '\n';
 
-        // 提取行
-        const rows = tableContent.match(/<tr[^>]*>(.*?)<\/tr>/gi) || [];
-        let headerRowProcessed = false;
+        // 提取行（支持嵌套内容）
+        const rows = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
 
         for (let i = 0; i < rows.length; i++) {
-          const rowContent = rows[i].replace(/<\/?tr[^>]*>/gi, '');
+          const rowContent = rows[i];
 
-          // 提取单元格
-          const cells = rowContent.match(/<td[^>]*>(.*?)<\/td>|<th[^>]*>(.*?)<\/th>/gi) || [];
+          // 提取单元格（支持嵌套标签和换行）
+          const cells: string[] = [];
+          let cellMatch;
+          const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>|<th[^>]*>([\s\S]*?)<\/th>/gi;
+          while ((cellMatch = cellRegex.exec(rowContent)) !== null) {
+            cells.push(cellMatch[1] || cellMatch[2] || '');
+          }
+
+          if (cells.length === 0) continue;
+
           let rowText = '|';
-
           for (const cell of cells) {
-            let cellText = cell.replace(/<\/?(td|th)[^>]*>/gi, '')
-              .replace(/<br[^>]*>/gi, ' ')
-              .replace(/<[^>]+>/g, '')
+            // 清理单元格内容：移除所有 HTML 标签和换行符
+            let cellText = cell
+              .replace(/<br[^>]*>/gi, ' ')  // br 标签转为空格
+              .replace(/<[^>]+>/g, '')        // 移除其他 HTML 标签
+              .replace(/\n/g, ' ')            // 移除换行符
+              .replace(/\s+/g, ' ')           // 合并多个空格
               .trim();
             rowText += ' ' + cellText + ' |';
           }
@@ -143,18 +155,21 @@ function UploadPage() {
           markdownTable += rowText + '\n';
 
           // 在第一行后添加分隔行
-          if (i === 0 && cells.length > 0) {
+          if (i === 0) {
             let separator = '|';
             for (let j = 0; j < cells.length; j++) {
               separator += ' --- |';
             }
             markdownTable += separator + '\n';
-            headerRowProcessed = true;
           }
         }
 
-        // 替换 HTML 表格为 Markdown 表格
-        processedHtml = processedHtml.replace(tableMatch[0], markdownTable);
+        tables.push({ original: tableMatch[0], markdown: markdownTable });
+      }
+
+      // 替换所有表格
+      for (const table of tables) {
+        processedHtml = processedHtml.replace(table.original, table.markdown);
       }
 
       // 处理其他 HTML 元素
