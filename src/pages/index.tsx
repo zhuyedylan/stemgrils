@@ -31,7 +31,7 @@ function HomepageHeader() {
         </p>
         <div className={styles.heroButtons}>
           <Link className={styles.primaryButton} to="/docs/项目说明">
-            浏览工艺手册
+            开始浏览
           </Link>
         </div>
       </div>
