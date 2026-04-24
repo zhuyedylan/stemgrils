@@ -230,15 +230,20 @@ function UploadPage() {
       const processHeading = (originalLevel: number, content: string): string => {
         const trimmed = content.trim();
 
-        // 清理内容中多余的 # 符号（Word 文档可能标题内容本身就带 #）
-        let cleanContent = trimmed;
-        if (cleanContent.startsWith('#')) {
-          // 移除开头的 # 符号及其后可能的空格
-          cleanContent = cleanContent.replace(/^#+\s*/, '');
-        }
+        // 清理内容中所有的 # 符号（Word 文档标题内容可能带有 #）
+        // 先移除开头的 # 符号
+        let cleanContent = trimmed.replace(/^#+\s*/, '');
+
+        // 再移除内容中任何位置的 # 符号（但保留有意义的用法，如"问题 #1"）
+        // 只移除独立的 # 符号，不移除作为其他内容的一部分
+        cleanContent = cleanContent.replace(/#\s+/g, ''); // 移除 # 后面有空格的情况
+        cleanContent = cleanContent.replace(/\s+#/g, ''); // 移除 # 前面有空格的情况
 
         // 清理标题内容中的 ** 加粗符号（Word 标题可能带加粗）
         cleanContent = cleanContent.replace(/^\*+|\*+$/g, '').trim();
+
+        // 清理多余空格
+        cleanContent = cleanContent.replace(/\s+/g, ' ').trim();
 
         // 如果清理后内容为空，返回空
         if (!cleanContent) {
