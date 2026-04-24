@@ -94,6 +94,7 @@ async function downloadDocs() {
 
       // MDX兼容性修复：将 <br> 转换为 <br/>
       content = content.replace(/<br>/g, '<br/>');
+      content = content.replace(/<br\/>/g, '<br />');
 
       // 移除不存在图片的引用（project-images 目录下的图片）
       content = content.replace(/!\[.*?\]\(\/img\/project-images\/.*?\)/g, '');
@@ -101,6 +102,22 @@ async function downloadDocs() {
       // 清理图片占位符（残留的 __IMAGE_PLACEHOLDER__ 标记）
       content = content.replace(/!\[.*?\]\(__IMAGE_PLACEHOLDER_\d+__\)/g, '');
       content = content.replace(/__IMAGE_PLACEHOLDER_\d+__/g, '');
+
+      // MDX 表格兼容性：简化表格内的嵌套标签
+      // 将表格内的 <ol>/<li> 转为带换行的文本
+      content = content.replace(/<ol>/gi, '');
+      content = content.replace(/<\/ol>/gi, '<br/>');
+      content = content.replace(/<li>/gi, '');
+      content = content.replace(/<\/li>/gi, '<br/>');
+
+      // 将表格内的 <p> 标签替换为简单文本（保留内容）
+      content = content.replace(/<p>/gi, '');
+      content = content.replace(/<\/p>/gi, '<br/>');
+
+      // 清理表格内多余的 <br/> 和空行
+      content = content.replace(/(<br\/>\s*<br\/>)+/gi, '<br/>');
+      content = content.replace(/<br\/>\s*<\/td>/gi, '</td>');
+      content = content.replace(/<br\/>\s*<\/th>/gi, '</th>');
 
       content = content.trim();
 
