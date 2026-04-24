@@ -16,6 +16,7 @@ function UploadPage() {
   const [selectedCategory, setSelectedCategory] = useState('process');
   const [myDocs, setMyDocs] = useState<any[]>([]);
   const [tableStyle, setTableStyle] = useState('classic'); // 表格样式选择
+  const [headingMode, setHeadingMode] = useState('smart'); // 标题层级模式：smart（智能识别）、flat（扁平）、preserve（保持原样）
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 日志记录函数
@@ -203,49 +204,65 @@ function UploadPage() {
         return placeholder;
       });
 
-      processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, (match, content) => {
-        // 如果内容已经包含 # 开头，不再添加
+      // 智能层级识别函数：根据编号格式推断标题级别
+      const detectHeadingLevel = (content: string): number => {
+        const trimmed = content.trim();
+        // 清理可能的 ** 包裹
+        const cleanContent = trimmed.replace(/^\*+|\*+$/g, '').trim();
+
+        // 中文数字章节：一、二、三、四、五... → 一级标题
+        if (/^[一二三四五六七八九十]+、/.test(cleanContent)) {
+          return 1;
+        }
+        // 数字编号：1. 2. 3. → 二级标题
+        if (/^[0-9]+\.\s/.test(cleanContent)) {
+          return 2;
+        }
+        // 括号编号：（1）、(1)、① → 三级标题
+        if (/^[(（][0-9]+[)）]/.test(cleanContent) || /^[①②③④⑤⑥⑦⑧⑨⑩]/.test(cleanContent)) {
+          return 3;
+        }
+        // 默认返回 0 表示无法识别
+        return 0;
+      };
+
+      // 根据层级模式处理标题
+      const processHeading = (originalLevel: number, content: string): string => {
         const trimmed = content.trim();
         if (trimmed.startsWith('#')) {
           return trimmed + '\n\n';
         }
-        return '# ' + trimmed + '\n\n';
-      });
-      processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, (match, content) => {
-        const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
+
+        if (headingMode === 'smart') {
+          // 智能识别：根据编号格式推断层级
+          const detectedLevel = detectHeadingLevel(content);
+          if (detectedLevel > 0) {
+            // 检测到的层级 + 1（因为 Docusaurus 目录从 ## 开始）
+            const markdownLevel = detectedLevel + 1;
+            const hashes = '#'.repeat(markdownLevel);
+            return hashes + ' ' + trimmed + '\n\n';
+          }
+          // 无法识别编号，使用原始级别 + 1
+          const markdownLevel = Math.min(originalLevel + 1, 6);
+          const hashes = '#'.repeat(markdownLevel);
+          return hashes + ' ' + trimmed + '\n\n';
+        } else if (headingMode === 'flat') {
+          // 扁平模式：所有标题都变成 ##
+          return '## ' + trimmed + '\n\n';
+        } else {
+          // 保持原样：保持 HTML 标签级别，但 +1（因为 Docusaurus 从 ## 开始）
+          const markdownLevel = Math.min(originalLevel + 1, 6);
+          const hashes = '#'.repeat(markdownLevel);
+          return hashes + ' ' + trimmed + '\n\n';
         }
-        return '## ' + trimmed + '\n\n';
-      });
-      processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, (match, content) => {
-        const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
-        }
-        return '### ' + trimmed + '\n\n';
-      });
-      processedHtml = processedHtml.replace(/<h4[^>]*>(.*?)<\/h4>/gi, (match, content) => {
-        const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
-        }
-        return '#### ' + trimmed + '\n\n';
-      });
-      processedHtml = processedHtml.replace(/<h5[^>]*>(.*?)<\/h5>/gi, (match, content) => {
-        const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
-        }
-        return '##### ' + trimmed + '\n\n';
-      });
-      processedHtml = processedHtml.replace(/<h6[^>]*>(.*?)<\/h6>/gi, (match, content) => {
-        const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
-        }
-        return '###### ' + trimmed + '\n\n';
-      });
+      };
+
+      processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, (match, content) => processHeading(1, content));
+      processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, (match, content) => processHeading(2, content));
+      processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, (match, content) => processHeading(3, content));
+      processedHtml = processedHtml.replace(/<h4[^>]*>(.*?)<\/h4>/gi, (match, content) => processHeading(4, content));
+      processedHtml = processedHtml.replace(/<h5[^>]*>(.*?)<\/h5>/gi, (match, content) => processHeading(5, content));
+      processedHtml = processedHtml.replace(/<h6[^>]*>(.*?)<\/h6>/gi, (match, content) => processHeading(6, content));
       processedHtml = processedHtml.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
       processedHtml = processedHtml.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
       processedHtml = processedHtml.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
@@ -523,6 +540,23 @@ ${markdown}`;
         </select>
         <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
           💡 提示：选择表格在文档中的展示风格
+        </div>
+      </div>
+
+      {/* 标题层级模式选择 */}
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '10px' }}>标题层级：</label>
+        <select
+          value={headingMode}
+          onChange={(e) => setHeadingMode(e.target.value)}
+          style={{ padding: '8px 15px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', minWidth: '200px' }}
+        >
+          <option value="smart">智能识别 - 根据编号自动推断层级</option>
+          <option value="flat">扁平结构 - 所有标题平铺显示</option>
+          <option value="preserve">保持原样 - 按Word标题样式转换</option>
+        </select>
+        <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+          💡 提示："一、"→一级，"1."→二级，"(1)"→三级，右侧目录会显示层级结构
         </div>
       </div>
 

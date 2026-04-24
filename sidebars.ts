@@ -43,20 +43,25 @@ const processDocs = localDocs.filter(doc =>
   (!introDocs.includes(doc) && !HARDCODED_CATEGORIES[doc])
 );
 
-const sidebarItems = [
-  {
+const sidebarItems: any[] = [];
+
+if (introDocs.length > 0) {
+  sidebarItems.push({
     type: 'category',
     label: '项目介绍',
     collapsed: false,
-    items: introDocs.length > 0 ? introDocs : ['暂无']
-  },
-  {
+    items: introDocs
+  });
+}
+
+if (processDocs.length > 0) {
+  sidebarItems.push({
     type: 'category',
     label: '工艺手册',
     collapsed: false,
-    items: processDocs.length > 0 ? processDocs : ['暂无']
-  }
-];
+    items: processDocs
+  });
+}
 
 const sidebars: SidebarsConfig = {
   tutorialSidebar: sidebarItems
