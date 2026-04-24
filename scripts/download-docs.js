@@ -98,6 +98,10 @@ async function downloadDocs() {
       // 移除不存在图片的引用（project-images 目录下的图片）
       content = content.replace(/!\[.*?\]\(\/img\/project-images\/.*?\)/g, '');
 
+      // 清理图片占位符（残留的 __IMAGE_PLACEHOLDER__ 标记）
+      content = content.replace(/!\[.*?\]\(__IMAGE_PLACEHOLDER_\d+__\)/g, '');
+      content = content.replace(/__IMAGE_PLACEHOLDER_\d+__/g, '');
+
       content = content.trim();
 
       const frontmatter = `---
