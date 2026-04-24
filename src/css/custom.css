@@ -120,3 +120,190 @@
 .sidebar-hidden-category {
   display: none !important;
 }
+
+/* ===== 表格样式 ===== */
+
+/* 1. 经典田字格表格 - 完整边框 */
+.table-style-classic {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 0.95em;
+}
+
+.table-style-classic th,
+.table-style-classic td {
+  border: 1px solid #333;
+  padding: 10px 15px;
+  text-align: left;
+}
+
+.table-style-classic th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  border-bottom: 2px solid #333;
+}
+
+.table-style-classic tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+[data-theme='dark'] .table-style-classic th,
+[data-theme='dark'] .table-style-classic td {
+  border-color: #555;
+}
+
+[data-theme='dark'] .table-style-classic th {
+  background-color: #2d2d2d;
+}
+
+[data-theme='dark'] .table-style-classic tbody tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+
+/* 2. 现代简约表格 - 绿色主题，表头带色 */
+.table-style-modern {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 0.95em;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-style-modern th {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.table-style-modern td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-style-modern tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-style-modern tbody tr:hover {
+  background-color: #f0fdf4;
+}
+
+[data-theme='dark'] .table-style-modern {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .table-style-modern td {
+  border-bottom-color: #374151;
+}
+
+[data-theme='dark'] .table-style-modern tbody tr:hover {
+  background-color: #1f2d1f;
+}
+
+/* 3. 条纹交替表格 - 无边框，行间分隔 */
+.table-style-striped {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 0.95em;
+}
+
+.table-style-striped th {
+  background-color: #10b981;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.table-style-striped td {
+  padding: 10px 15px;
+  border: none;
+}
+
+.table-style-striped tbody tr:nth-child(even) {
+  background-color: #f3f4f6;
+}
+
+.table-style-striped tbody tr:hover {
+  background-color: #d1fae5;
+}
+
+[data-theme='dark'] .table-style-striped th {
+  background-color: #059669;
+}
+
+[data-theme='dark'] .table-style-striped td {
+  border: none;
+}
+
+[data-theme='dark'] .table-style-striped tbody tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .table-style-striped tbody tr:hover {
+  background-color: #064e3b;
+}
+
+/* 4. 卡片式表格 - 渐变表头，阴影效果 */
+.table-style-card {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 0.95em;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid #10b981;
+}
+
+.table-style-card th {
+  background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+  color: white;
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.table-style-card td {
+  padding: 12px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: white;
+}
+
+.table-style-card tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-style-card tbody tr:nth-child(even) td {
+  background-color: #f9fafb;
+}
+
+.table-style-card tbody tr:hover td {
+  background-color: #ecfdf5;
+}
+
+[data-theme='dark'] .table-style-card {
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .table-style-card td {
+  border-bottom-color: #374151;
+  background-color: #111827;
+}
+
+[data-theme='dark'] .table-style-card tbody tr:nth-child(even) td {
+  background-color: #1f2937;
+}
+
+[data-theme='dark'] .table-style-card tbody tr:hover td {
+  background-color: #064e3b;
+}

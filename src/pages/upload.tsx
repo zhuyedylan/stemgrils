@@ -15,6 +15,7 @@ function UploadPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('process');
   const [myDocs, setMyDocs] = useState<any[]>([]);
+  const [tableStyle, setTableStyle] = useState('classic'); // 表格样式选择
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 日志记录函数
@@ -112,23 +113,42 @@ function UploadPage() {
       let html = htmlResult.value;
       let markdown = '';
 
-      // 处理表格 - 转换为 Markdown 表格格式
+      // 处理表格 - 转换为带样式类的 HTML 表格
       // 使用更精确的正则，匹配表格内容（包括嵌套标签）
       const tableRegex = /<table[^>]*>([\s\S]*?)<\/table>/gi;
       let processedHtml = html;
 
+      // 根据选择的样式生成 CSS 类名
+      const tableClassName = `table-style-${tableStyle}`;
+
       // 收集所有表格并处理
-      const tables: Array<{ original: string; markdown: string }> = [];
+      const tables: Array<{ original: string; replacement: string }> = [];
       let tableMatch;
       while ((tableMatch = tableRegex.exec(html)) !== null) {
         const tableContent = tableMatch[1];
-        let markdownTable = '\n';
+
+        // 生成带样式类的 HTML 表格
+        let htmlTable = `<table class="${tableClassName}">\n`;
 
         // 提取行（支持嵌套内容）
         const rows = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
 
         for (let i = 0; i < rows.length; i++) {
           const rowContent = rows[i];
+
+          // 判断是否是表头行（第一行或包含 th）
+          const isHeaderRow = i === 0 || rowContent.includes('<th');
+          const rowTag = isHeaderRow ? 'thead' : 'tbody';
+
+          // 如果是第一行，添加 thead
+          if (i === 0) {
+            htmlTable += '<thead>\n';
+          } else if (i === 1 && !rows[0].includes('<th')) {
+            // 如果第一行不是表头，第二行开始 tbody
+            htmlTable += '</thead>\n<tbody>\n';
+          } else if (i === 1) {
+            htmlTable += '</thead>\n<tbody>\n';
+          }
 
           // 提取单元格（支持嵌套标签和换行）
           const cells: string[] = [];
@@ -140,39 +160,49 @@ function UploadPage() {
 
           if (cells.length === 0) continue;
 
-          let rowText = '|';
+          htmlTable += '<tr>';
           for (const cell of cells) {
-            // 清理单元格内容：移除所有 HTML 标签和换行符
+            // 清理单元格内容：移除多余标签，保留基本格式
             let cellText = cell
-              .replace(/<br[^>]*>/gi, ' ')  // br 标签转为空格
-              .replace(/<[^>]+>/g, '')        // 移除其他 HTML 标签
-              .replace(/\n/g, ' ')            // 移除换行符
-              .replace(/\s+/g, ' ')           // 合并多个空格
+              .replace(/<br[^>]*>/gi, '<br/>')  // 保留 br 标签
+              .replace(/\n/g, ' ')              // 移除换行符
+              .replace(/\s+/g, ' ')             // 合并多个空格
               .trim();
-            rowText += ' ' + cellText + ' |';
+            // 使用 th 或 td
+            const cellTag = isHeaderRow ? 'th' : 'td';
+            htmlTable += `<${cellTag}>${cellText}</${cellTag}>`;
           }
-
-          markdownTable += rowText + '\n';
-
-          // 在第一行后添加分隔行
-          if (i === 0) {
-            let separator = '|';
-            for (let j = 0; j < cells.length; j++) {
-              separator += ' --- |';
-            }
-            markdownTable += separator + '\n';
-          }
+          htmlTable += '</tr>\n';
         }
 
-        tables.push({ original: tableMatch[0], markdown: markdownTable });
+        // 关闭 tbody 和 table
+        if (rows.length > 1) {
+          htmlTable += '</tbody>\n';
+        }
+        htmlTable += '</table>\n';
+
+        tables.push({ original: tableMatch[0], replacement: htmlTable });
       }
 
       // 替换所有表格
       for (const table of tables) {
-        processedHtml = processedHtml.replace(table.original, table.markdown);
+        processedHtml = processedHtml.replace(table.original, table.replacement);
       }
 
-      // 处理其他 HTML 元素
+      // 处理其他 HTML 元素（但不处理表格，表格已转为 HTML 格式）
+      // 先保护表格内容
+      const tablePlaceholder = '___TABLE_PLACEHOLDER___';
+      const tablePlaceholders: Array<{ placeholder: string; content: string }> = [];
+      let tableIndex = 0;
+
+      // 临时替换表格，保护它们不被后续处理破坏
+      processedHtml = processedHtml.replace(/<table[^>]*>[\s\S]*?<\/table>/gi, (match) => {
+        const placeholder = `${tablePlaceholder}${tableIndex}___`;
+        tablePlaceholders.push({ placeholder, content: match });
+        tableIndex++;
+        return placeholder;
+      });
+
       processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
       processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
       processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
@@ -191,6 +221,11 @@ function UploadPage() {
       processedHtml = processedHtml.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)');
       processedHtml = processedHtml.replace(/<img[^>]*src="([^"]*)"[^>]*>/gi, '![]($1)');
       processedHtml = processedHtml.replace(/<[^>]+>/g, ''); // 移除剩余 HTML 标签
+
+      // 恢复表格内容
+      for (const { placeholder, content } of tablePlaceholders) {
+        processedHtml = processedHtml.replace(placeholder, '\n\n' + content + '\n\n');
+      }
 
       // 清理多余空白
       processedHtml = processedHtml.replace(/\n{3,}/g, '\n\n');
@@ -230,44 +265,6 @@ function UploadPage() {
       markdown = markdown.replace(/([^\n])\n(\d+\. )/g, '$1\n\n$2');
       markdown = markdown.replace(/\n{3,}/g, '\n\n');
       markdown = markdown.replace(/ +\n/g, '\n');
-
-      // 表格特殊处理：移除表格行之间的空行，确保表格前后有空行
-      // Markdown表格要求行紧密排列，不能有空行分隔
-      const lines = markdown.split('\n');
-      const processedLines: string[] = [];
-      let inTable = false;
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const isTableLine = line.trim().startsWith('|') && line.trim().endsWith('|');
-        const isSeparator = line.trim().match(/^\|[\s\-:]+\|[\s\-:]+\|/);
-
-        if (isTableLine || isSeparator) {
-          // 进入表格模式
-          if (!inTable) {
-            // 表格开始，确保前面有空行
-            if (processedLines.length > 0 && processedLines[processedLines.length - 1].trim() !== '') {
-              processedLines.push('');
-            }
-            inTable = true;
-          }
-          // 添加表格行（跳过表格内的空行）
-          if (line.trim() !== '') {
-            processedLines.push(line);
-          }
-        } else {
-          // 非表格行
-          if (inTable) {
-            // 表格结束，确保后面有空行
-            if (line.trim() !== '') {
-              processedLines.push('');
-            }
-            inTable = false;
-          }
-          processedLines.push(line);
-        }
-      }
-      markdown = processedLines.join('\n');
 
       setMessage(`转换完成，${images.length} 张图片待上传...`);
 
@@ -472,6 +469,24 @@ ${markdown}`;
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
+      </div>
+
+      {/* 表格样式选择 */}
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '10px' }}>表格样式：</label>
+        <select
+          value={tableStyle}
+          onChange={(e) => setTableStyle(e.target.value)}
+          style={{ padding: '8px 15px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', minWidth: '200px' }}
+        >
+          <option value="classic">经典田字格 - 完整边框，适合打印</option>
+          <option value="modern">现代简约 - 绿色主题，表头带色</option>
+          <option value="striped">条纹交替 - 无边框，行间分隔</option>
+          <option value="card">卡片式 - 渐变表头，阴影效果</option>
+        </select>
+        <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+          💡 提示：选择表格在文档中的展示风格
+        </div>
       </div>
 
       {/* 上传区域 */}
