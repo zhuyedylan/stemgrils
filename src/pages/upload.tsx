@@ -3,41 +3,42 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import mammoth from 'mammoth';
 import JSZip from 'jszip';
 
-const SUPABASE_URL = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
-
-// 日志记录函数
-const addLog = async (action: string, details: any, username?: string) => {
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/logs`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({
-        action,
-        details: JSON.stringify(details),
-        username: username || 'system',
-        created_at: new Date().toISOString(),
-      }),
-    });
-  } catch (e) {
-    console.error('Log error:', e);
-  }
-};
-
 function UploadPage() {
+  // 从 Docusaurus customFields 获取环境变量
+  const SUPABASE_URL = (window as any).SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+  const SUPABASE_KEY = (window as any).SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('process');
-  const [myDocs, setMyDocs] = useState([]);
-  const fileInputRef = useRef(null);
+  const [myDocs, setMyDocs] = useState<any[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 日志记录函数
+  const addLog = async (action: string, details: any, username?: string) => {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/logs`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({
+          action,
+          details: JSON.stringify(details),
+          username: username || 'system',
+          created_at: new Date().toISOString(),
+        }),
+      });
+    } catch (e) {
+      console.error('Log error:', e);
+    }
+  };
 
   useEffect(() => {
     const savedUser = localStorage.getItem('stem_user');
@@ -57,12 +58,12 @@ function UploadPage() {
     try {
       const response = await fetch('/api/categories');
       const data = await response.json();
-      const allowedCategories = user?.role === 'admin' ? data : data.filter(c => c.allowUserUpload);
-      setCategories(allowedCategories.sort((a, b) => a.order - b.order));
+      const allowedCategories = user?.role === 'admin' ? data : data.filter((c: any) => c.allowUserUpload);
+      setCategories(allowedCategories.sort((a: any, b: any) => a.order - b.order));
       if (allowedCategories.length > 0) {
         setSelectedCategory(allowedCategories[0].id);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('加载目录失败:', error);
       addLog('error_load_categories', { error: error.message }, user?.username);
     }
@@ -75,13 +76,13 @@ function UploadPage() {
       });
       const docs = await response.json();
       setMyDocs(docs);
-    } catch (error) {
+    } catch (error: any) {
       console.error('加载我的文档失败:', error);
       addLog('error_load_docs', { error: error.message }, user?.username);
     }
   };
 
-  const handleUpload = async (e) => {
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -211,7 +212,7 @@ ${markdown}`;
         setMessage('保存失败: ' + errText);
         addLog('upload_save_failed', { filename, error: errText }, user?.username);
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage('上传失败: ' + error.message);
       addLog('upload_error', { filename, error: error.message }, user?.username);
     }
@@ -219,7 +220,7 @@ ${markdown}`;
     setUploading(false);
   };
 
-  const handleResubmit = async (doc) => {
+  const handleResubmit = async (doc: any) => {
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(doc.filename)}`, {
         method: 'PATCH',
@@ -244,12 +245,12 @@ ${markdown}`;
       } else {
         setMessage('❌ 提交失败');
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage('❌ 提交失败: ' + error.message);
     }
   };
 
-  const handleApproveFromUpload = async (filename) => {
+  const handleApproveFromUpload = async (filename: string) => {
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
@@ -266,12 +267,12 @@ ${markdown}`;
         addLog('approve', { filename }, user?.username);
         loadMyDocs();
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage('操作失败: ' + error.message);
     }
   };
 
-  const handleRejectFromUpload = async (filename) => {
+  const handleRejectFromUpload = async (filename: string) => {
     const reason = prompt('请输入拒绝理由:');
     if (!reason) return;
 
@@ -291,12 +292,12 @@ ${markdown}`;
         addLog('reject', { filename, reason }, user?.username);
         loadMyDocs();
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessage('操作失败: ' + error.message);
     }
   };
 
-  const getStatusBadge = (doc) => {
+  const getStatusBadge = (doc: any) => {
     if (doc.hidden && doc.rejection_reason) {
       return <span style={{ padding: '2px 8px', backgroundColor: '#ef4444', color: 'white', borderRadius: '4px', fontSize: '12px' }}>已拒绝</span>;
     }
@@ -438,6 +439,14 @@ ${markdown}`;
       </button>
     </div>
   );
+}
+
+// 注入环境变量到 window 对象
+declare global {
+  interface Window {
+    SUPABASE_URL?: string;
+    SUPABASE_KEY?: string;
+  }
 }
 
 export default function Upload() {

@@ -12,6 +12,12 @@ const config: Config = {
     },
   ],
 
+  // 环境变量注入到前端
+  customFields: {
+    SUPABASE_URL: process.env.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co',
+    SUPABASE_KEY: process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc',
+  },
+
   title: '社区家庭或校园废旧高分子材料再生3D打印项目',
   tagline: '初中生3D打印材料制作工艺手册汇集平台',
   favicon: 'img/favicon.ico',

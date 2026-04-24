@@ -1,5 +1,5 @@
-const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
 const DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB';
 

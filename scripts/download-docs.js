@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
 // 本地路径
 const localDocsDir = path.join(__dirname, '..', 'docs');
