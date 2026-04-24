@@ -86,7 +86,21 @@ function WYSIWYGEditor() {
   const parseMarkdown = (text) => {
     if (!text) return '';
     let html = text;
+
+    // 先保护表格内容，避免被后续处理破坏
+    const tablePlaceholder = '___TABLE_PLACEHOLDER___';
+    const tablePlaceholders: Array<{ placeholder: string; content: string }> = [];
+    let tableIndex = 0;
+
+    html = html.replace(/<table[^>]*>[\s\S]*?<\/table>/gi, (match) => {
+      const placeholder = `${tablePlaceholder}${tableIndex}___`;
+      tablePlaceholders.push({ placeholder, content: match });
+      tableIndex++;
+      return placeholder;
+    });
+
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;height:auto;">');
+    html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
     html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
@@ -98,6 +112,12 @@ function WYSIWYGEditor() {
     html = html.replace(/<p><\/p>/g, '');
     html = html.replace(/<p><br>/g, '<p>');
     html = html.replace(/<br><\/p>/g, '</p>');
+
+    // 恢复表格内容
+    for (const { placeholder, content } of tablePlaceholders) {
+      html = html.replace(new RegExp(`<p>${placeholder}</p>|${placeholder}`, 'g'), content);
+    }
+
     return html;
   };
 
@@ -439,10 +459,27 @@ function WYSIWYGEditor() {
     if (!editor) { setSaving(false); return; }
 
     let html = editor.innerHTML;
+
+    // ===== 保护表格内容 =====
+    // 先提取并保护所有表格，避免被后续正则删除
+    const tablePlaceholder = '___TABLE_PLACEHOLDER___';
+    const tablePlaceholders: Array<{ placeholder: string; content: string }> = [];
+    let tableIndex = 0;
+
+    html = html.replace(/<table[^>]*>[\s\S]*?<\/table>/gi, (match) => {
+      const placeholder = `${tablePlaceholder}${tableIndex}___`;
+      tablePlaceholders.push({ placeholder, content: match });
+      tableIndex++;
+      return placeholder;
+    });
+
     let markdown = html
       .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n')
       .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n')
       .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n')
+      .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n')
+      .replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n\n')
+      .replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n\n')
       .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
       .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
       .replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*')
@@ -456,6 +493,11 @@ function WYSIWYGEditor() {
       .replace(/&gt;/g, '>')
       .replace(/&amp;/g, '&')
       .replace(/\n{3,}/g, '\n\n');
+
+    // ===== 恢复表格内容 =====
+    for (const { placeholder, content } of tablePlaceholders) {
+      markdown = markdown.replace(placeholder, '\n\n' + content + '\n\n');
+    }
 
     const fileName = filePath.split('/').pop() + '.md';
     const fullContent = `---
