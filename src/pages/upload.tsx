@@ -263,8 +263,15 @@ ${markdown}`;
         body: JSON.stringify({ approved: true }),
       });
       if (response.ok) {
-        setMessage(`✅ ${filename} 已审批通过`);
+        setMessage(`✅ ${filename} 已审批通过，正在触发重新部署...`);
         addLog('approve', { filename }, user?.username);
+        // 触发 Vercel 重新部署
+        try {
+          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+          setMessage(`✅ ${filename} 已审批通过，网站将自动更新`);
+        } catch (e) {
+          setMessage(`✅ ${filename} 已审批通过，请手动触发部署`);
+        }
         loadMyDocs();
       }
     } catch (error: any) {
