@@ -6,6 +6,11 @@ const config: Config = {
   // 自定义脚本
   scripts: [
     {
+      src: '/supabase-config.js',
+      async: false,
+      defer: false,
+    },
+    {
       src: '/hide-categories.js',
       async: true,
       defer: true,

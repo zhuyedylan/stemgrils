@@ -119,6 +119,20 @@ async function downloadDocs() {
       content = content.replace(/<br\/>\s*<\/td>/gi, '</td>');
       content = content.replace(/<br\/>\s*<\/th>/gi, '</th>');
 
+      // 清理标题行中残留的 # 符号（如 "## # 标题" 应变成 "## 标题"）
+      // 匹配 markdown 标题格式，移除内容开头的 # 符号和空格
+      // 处理多种情况：
+      // - "## # 标题" → "## 标题"
+      // - "### ## 标题" → "### 标题"
+      // - "#### ### 标题" → "#### 标题"
+      content = content.replace(/^(#{1,6})\s*#+\s+/gm, '$1 ');
+
+      // 也处理 "**1." 这种标题开头（标题内容可能带加粗和编号）
+      content = content.replace(/^(#{1,6})\s*#\s*\*/gm, '$1 *');
+
+      // 如果标题内容开头还有残留的 #，继续清理
+      content = content.replace(/^(#{1,6})\s+(#)\s/gm, '$1 ');
+
       content = content.trim();
 
       const frontmatter = `---

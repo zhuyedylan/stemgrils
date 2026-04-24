@@ -317,3 +317,21 @@
 .deploying-spinner {
   animation: spin 1s linear infinite;
 }
+
+/* 隐藏标题前的锚点链接 # 符号 */
+.theme-doc-markdown header .hash-link,
+.theme-doc-markdown h1 .hash-link,
+.theme-doc-markdown h2 .hash-link,
+.theme-doc-markdown h3 .hash-link,
+.theme-doc-markdown h4 .hash-link,
+.theme-doc-markdown h5 .hash-link,
+.theme-doc-markdown h6 .hash-link,
+.markdown header .hash-link,
+.markdown h1 .hash-link,
+.markdown h2 .hash-link,
+.markdown h3 .hash-link,
+.markdown h4 .hash-link,
+.markdown h5 .hash-link,
+.markdown h6 .hash-link {
+  display: none !important;
+}

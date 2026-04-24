@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { redirect } from '@docusaurus/router';
 
+// Supabase 配置
+const SUPABASE_URL = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
+
 function WYSIWYGEditor() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [content, setContent] = useState('');
@@ -32,30 +36,18 @@ function WYSIWYGEditor() {
     setUser(userData);
     setIsLoggedIn(true);
     loadCategories();
-    fetch('/api/files?t=' + Date.now())
-      .then(res => res.json())
-      .then(files => {
-        setEditableFiles(files);
-        // 检查 URL 参数中是否指定了文件
-        const params = new URLSearchParams(window.location.search);
-        const fileParam = params.get('file');
-        const refreshParam = params.get('refresh');
-        const targetFile = fileParam ? files.find(f => f.path === fileParam || f.path === fileParam + '.md') : files[0];
-        if (targetFile) {
-          setFilePath(targetFile.path);
-          loadFile(targetFile.path);
-          // 如果有 refresh 参数，清除 URL 参数
-          if (refreshParam) {
-            window.history.replaceState({}, '', '/editor?file=' + targetFile.path.replace('.md', ''));
-          }
-        }
-      });
+    loadFiles();
   }, []);
 
-  // 加载目录列表
+  // 加载目录列表 - 直接从 Supabase 获取
   const loadCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?order=order.asc`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
       const data = await response.json();
       setCategories(data.sort((a, b) => a.order - b.order));
     } catch (error) {
@@ -63,15 +55,47 @@ function WYSIWYGEditor() {
     }
   };
 
+  // 加载文件列表 - 直接从 Supabase 获取
+  const loadFiles = async () => {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?select=filename,content,category,approved,hidden,uploader&order=created_at.desc`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      const docs = await response.json();
+      const files = docs.map(doc => ({
+        path: doc.filename,
+        label: doc.filename,
+        category: doc.category,
+        approved: doc.approved,
+        hidden: doc.hidden,
+        uploader: doc.uploader
+      }));
+      setEditableFiles(files);
+
+      // 检查 URL 参数中是否指定了文件
+      const params = new URLSearchParams(window.location.search);
+      const fileParam = params.get('file');
+      const targetFile = fileParam ? files.find(f => f.path === fileParam) : files[0];
+      if (targetFile) {
+        setFilePath(targetFile.path);
+        loadFile(targetFile.path);
+      }
+    } catch (error) {
+      console.error('加载文件列表失败:', error);
+      setMessage('加载文件列表失败');
+    }
+  };
+
   // 加载文档所属目录
   const loadDocCategory = async (docPath) => {
     try {
       const fileName = docPath.split('/').pop().replace('.md', '');
-      const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-      const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=category`, {
-        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=category`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       });
       const data = await response.json();
       if (data && data.length > 0) {
@@ -123,55 +147,53 @@ function WYSIWYGEditor() {
 
   const loadFile = async (docPath) => {
     try {
-      // 使用 API 读取原始 md 文件
-      const response = await fetch(`/api/read?filePath=${encodeURIComponent(docPath)}&t=${Date.now()}`);
-      if (response.ok) {
-        const data = await response.json();
-        const text = data.content;
-        const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
-        const rendered = parseMarkdown(withoutFrontmatter);
-        setContent(withoutFrontmatter);
-        setRenderedContent(rendered);
-        setOriginalContent(rendered);
-        setHasChanges(false);
-        setMessage('文件已加载');
-
-        // 加载文档所属目录
-        const fileName = docPath.split('/').pop();
-        loadDocCategory(docPath);
-
-        // 加载文档审批状态
-        const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-        const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-        try {
-          const statusRes = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=approved,hidden,rejection_reason`, {
-            headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
-          });
-          const statusData = await statusRes.json();
-          if (statusData && statusData.length > 0) {
-            const doc = statusData[0];
-            setCurrentDoc(doc);
-            if (doc.hidden && doc.rejection_reason) {
-              setDocStatus('已拒绝');
-            } else if (doc.hidden) {
-              setDocStatus('已隐藏');
-            } else if (doc.approved) {
-              setDocStatus('已公开');
-            } else {
-              setDocStatus('待审批');
-            }
-          }
-        } catch (e) {
-          console.error('加载状态失败:', e);
+      // 直接从 Supabase 获取文档内容
+      const fileName = docPath.split('/').pop().replace('.md', '');
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}&select=content,category,approved,hidden,rejection_reason`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
         }
+      });
 
-        setTimeout(() => {
-          if (editorRef.current) {
-            editorRef.current.innerHTML = rendered;
+      if (response.ok) {
+        const docs = await response.json();
+        if (docs && docs.length > 0) {
+          const doc = docs[0];
+          const text = doc.content || '';
+          const withoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
+          const rendered = parseMarkdown(withoutFrontmatter);
+          setContent(withoutFrontmatter);
+          setRenderedContent(rendered);
+          setOriginalContent(rendered);
+          setHasChanges(false);
+          setMessage('文件已加载');
+
+          // 设置文档分类
+          setCurrentCategory(doc.category || '');
+
+          // 设置文档审批状态
+          setCurrentDoc(doc);
+          if (doc.hidden && doc.rejection_reason) {
+            setDocStatus('已拒绝');
+          } else if (doc.hidden) {
+            setDocStatus('已隐藏');
+          } else if (doc.approved) {
+            setDocStatus('已公开');
+          } else {
+            setDocStatus('待审批');
           }
-        }, 100);
+
+          setTimeout(() => {
+            if (editorRef.current) {
+              editorRef.current.innerHTML = rendered;
+            }
+          }, 100);
+        } else {
+          setMessage('文件不存在: ' + docPath);
+        }
       } else {
-        setMessage('文件不存在: ' + docPath);
+        setMessage('加载文件失败');
       }
     } catch (error) {
       setMessage('加载文件失败: ' + error.message);
@@ -216,21 +238,34 @@ function WYSIWYGEditor() {
   const currentFile = editableFiles.find(f => f.path === filePath);
   const isCurrentFileEditable = canEdit(currentFile || {});
 
-  // 处理图片上传
-  const handleImageUpload = (e) => {
+  // 处理图片上传 - 直接上传到 Supabase Storage
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+    try {
+      // 生成唯一文件名
+      const fileName = `editor-${Date.now()}-${file.name}`;
 
-    fetch('/api/upload-image', {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.url) {
+      // 读取文件为 ArrayBuffer
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+
+      // 上传到 Supabase Storage
+      const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${fileName}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': file.type,
+          'x-upsert': 'true',
+        },
+        body: bytes,
+      });
+
+      if (uploadRes.ok) {
+        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
+
         // 在光标位置插入图片
         const editor = editorRef.current;
         if (editor) {
@@ -241,7 +276,7 @@ function WYSIWYGEditor() {
           if (selection.rangeCount > 0 && selection.getRangeAt(0).toString().length === 0) {
             const range = selection.getRangeAt(0);
             const img = document.createElement('img');
-            img.src = data.url;
+            img.src = publicUrl;
             img.style.maxWidth = '100%';
             img.style.height = 'auto';
             img.alt = '上传的图片';
@@ -260,7 +295,7 @@ function WYSIWYGEditor() {
           // 如果没有成功插入，直接添加到编辑器末尾并提示
           if (!inserted) {
             const img = document.createElement('img');
-            img.src = data.url;
+            img.src = publicUrl;
             img.style.maxWidth = '100%';
             img.style.height = 'auto';
             img.alt = '上传的图片';
@@ -272,18 +307,17 @@ function WYSIWYGEditor() {
         }
         setMessage('✅ 图片上传成功');
       } else {
-        setMessage('❌ 上传失败: ' + data.error);
+        setMessage('❌ 上传失败');
       }
-    })
-    .catch(err => {
+    } catch (err) {
       setMessage('❌ 上传失败: ' + err.message);
-    });
+    }
 
     // 清空输入框，以便可以重复选择同一张图片
     e.target.value = '';
   };
 
-  // 处理文件重命名
+  // 处理文件重命名 - 直接更新 Supabase
   const handleRename = async () => {
     if (!currentFile) return;
     const oldName = currentFile.label;
@@ -291,53 +325,55 @@ function WYSIWYGEditor() {
     if (!newName || newName === oldName) return;
 
     try {
-      const response = await fetch('/api/rename', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // 更新 Supabase 中的文档
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(oldName)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify({
-          oldName,
-          newName,
-          username: user.username,
-          role: user.role
+          filename: newName,
+          updated_at: new Date().toISOString()
         })
       });
-      const result = await response.json();
-      if (result.success) {
-        setMessage('✅ 文件已重命名，正在重新构建...');
-        await fetch('/api/rebuild', { method: 'POST' });
+
+      if (response.ok) {
         setMessage('✅ 重命名成功！页面将刷新...');
         setTimeout(() => window.location.reload(), 1500);
       } else {
-        setMessage('重命名失败: ' + result.error);
+        const errText = await response.text();
+        setMessage('重命名失败: ' + errText);
       }
     } catch (error) {
       setMessage('重命名失败: ' + error.message);
     }
   };
 
+  // 删除文件 - 直接从 Supabase 删除
   const handleDelete = async () => {
     if (!currentFile) return;
     if (!confirm(`确定要删除 "${currentFile.label}" 吗？此操作不可恢复！`)) return;
     if (!confirm(`再次确认：确实要删除 "${currentFile.label}" 吗？`)) return;
 
     try {
-      const response = await fetch('/api/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: currentFile.label,
-          username: user.username,
-          role: user.role
-        })
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(currentFile.label)}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        }
       });
-      const result = await response.json();
-      if (result.success) {
-        setMessage('✅ 文件已删除，正在重新构建...');
-        await fetch('/api/rebuild', { method: 'POST' });
+
+      if (response.ok) {
         setMessage('✅ 删除成功！页面将刷新...');
         setTimeout(() => window.location.reload(), 1500);
       } else {
-        setMessage('删除失败: ' + result.error);
+        const errText = await response.text();
+        setMessage('删除失败: ' + errText);
       }
     } catch (error) {
       setMessage('删除失败: ' + error.message);
@@ -347,16 +383,14 @@ function WYSIWYGEditor() {
   // 审批通过
   const handleApprove = async () => {
     if (!currentFile) return;
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
     const filename = currentFile.label;
 
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
@@ -371,8 +405,7 @@ function WYSIWYGEditor() {
       if (response.ok) {
         setMessage('✅ 审批通过！');
         setDocStatus('已公开');
-        // 触发重新部署
-        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+        loadFiles(); // 刷新文件列表
       } else {
         setMessage('❌ 操作失败');
       }
@@ -388,15 +421,13 @@ function WYSIWYGEditor() {
 
   const confirmReject = async () => {
     if (!rejectModal) return;
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(rejectModal.filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(rejectModal.filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
@@ -411,7 +442,6 @@ function WYSIWYGEditor() {
         setMessage('❌ 已拒绝');
         setDocStatus('已拒绝');
         setRejectModal(null);
-        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
       } else {
         setMessage('❌ 操作失败');
       }
@@ -423,17 +453,15 @@ function WYSIWYGEditor() {
   // 隐藏/显示
   const handleToggleHidden = async () => {
     if (!currentFile || !currentDoc) return;
-    const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-    const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
     const filename = currentFile.label;
     const newHidden = !currentDoc.hidden;
 
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
@@ -444,7 +472,6 @@ function WYSIWYGEditor() {
         setMessage(newHidden ? '👁️ 已隐藏' : '👁️‍🗨️ 已显示');
         setCurrentDoc({ ...currentDoc, hidden: newHidden });
         setDocStatus(newHidden ? '已隐藏' : '已公开');
-        await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
       } else {
         setMessage('❌ 操作失败');
       }
@@ -522,29 +549,40 @@ function WYSIWYGEditor() {
       markdown = markdown.replace(placeholder, '\n' + imgMarkdown + '\n');
     }
 
-    const fileName = filePath.split('/').pop() + '.md';
+    const fileName = filePath.split('/').pop().replace('.md', '');
     const fullContent = `---
-id: ${fileName.replace('.md', '')}
-title: ${fileName.replace('.md', '')}
+id: ${fileName}
+title: ${fileName}
 ---
 
 ${markdown}`;
 
     try {
-      const saveResponse = await fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filePath: fileName, content: fullContent })
+      // 直接保存到 Supabase
+      const saveResponse = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(fileName)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          content: fullContent,
+          category: currentCategory,
+          updated_at: new Date().toISOString()
+        })
       });
-      const saveResult = await saveResponse.json();
-      if (saveResult.success) {
+
+      if (saveResponse.ok) {
         setMessage('✅ 保存成功！');
         setHasChanges(false);
         setOriginalContent(editor.innerHTML);
-        // 强制刷新，跳转到首页再回来
-        window.location.href = '/editor?refresh=' + Date.now();
+        // 刷新页面
+        window.location.href = '/editor?file=' + fileName + '&refresh=' + Date.now();
       } else {
-        setMessage('保存失败: ' + saveResult.error);
+        const errText = await saveResponse.text();
+        setMessage('保存失败: ' + errText);
       }
     } catch (error) {
       setMessage('保存失败: ' + error.message);
@@ -626,15 +664,12 @@ ${markdown}`;
                 const newCategory = e.target.value;
                 if (!confirm(`确定要将文档移动到 "${categories.find(c => c.id === newCategory)?.name}" 吗？`)) return;
                 try {
-                  const supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
-                  const supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
-
                   // 保存分类到 Supabase
-                  await fetch(`${supabaseUrl}/rest/v1/documents?filename=eq.${encodeURIComponent(currentFile?.label)}`, {
+                  await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(currentFile?.label)}`, {
                     method: 'PATCH',
                     headers: {
-                      'apikey': supabaseKey,
-                      'Authorization': `Bearer ${supabaseKey}`,
+                      'apikey': SUPABASE_KEY,
+                      'Authorization': `Bearer ${SUPABASE_KEY}`,
                       'Content-Type': 'application/json',
                       'Prefer': 'return=minimal'
                     },
@@ -643,9 +678,6 @@ ${markdown}`;
 
                   setCurrentCategory(newCategory);
                   setMessage('✅ 文档分类已更新');
-
-                  // 触发 Vercel 重新部署
-                  await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
                 } catch (error) {
                   setMessage('移动失败: ' + error.message);
                 }

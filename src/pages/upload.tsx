@@ -58,7 +58,13 @@ function UploadPage() {
 
   const loadCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
+      // 直接调用 Supabase API 获取分类
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/categories?order=order.asc`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
       const data = await response.json();
       const allowedCategories = user?.role === 'admin' ? data : data.filter((c: any) => c.allowUserUpload);
       setCategories(allowedCategories.sort((a: any, b: any) => a.order - b.order));
@@ -234,9 +240,13 @@ function UploadPage() {
         let cleanContent = trimmed;
 
         // 移除开头的所有 # 符号（不管后面有没有空格）
-        cleanContent = cleanContent.replace(/^#+/, '');
+        // 使用更彻底的正则，移除所有开头的 # 和可能的空格
+        cleanContent = cleanContent.replace(/^#+\s*/, '');
 
-        // 移除开头可能残留的空格
+        // 移除开头可能残留的空格和 #（以防万一）
+        while (cleanContent.startsWith('#') || cleanContent.startsWith(' ')) {
+          cleanContent = cleanContent.substring(1);
+        }
         cleanContent = cleanContent.trim();
 
         // 清理标题内容中的 ** 加粗符号（Word 标题可能带加粗）
@@ -346,6 +356,12 @@ function UploadPage() {
         for (const line of lines) {
           const trimmed = line.trim();
 
+          // 如果已经是 markdown 标题格式（开头有 #），跳过处理
+          if (/^#{1,6}\s/.test(trimmed)) {
+            processedLines.push(line);
+            continue;
+          }
+
           // 检测中文数字章节（一、二、三...）→ 二级标题
           if (/^[一二三四五六七八九十]+、/.test(trimmed)) {
             processedLines.push('## ' + trimmed);
@@ -400,9 +416,31 @@ function UploadPage() {
 
       // ===== 直接存储文档到 Supabase =====
       setMessage('正在保存文档...');
+
+      // 检查文件名是否已存在，如果存在则自动加数字后缀
+      let finalFilename = filename;
+      let suffix = 0;
+      let filenameExists = true;
+
+      while (filenameExists) {
+        const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(finalFilename)}&select=filename`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        const existingDocs = await checkRes.json();
+        if (existingDocs.length === 0) {
+          filenameExists = false;
+        } else {
+          suffix++;
+          finalFilename = `${filename}${suffix}`;
+        }
+      }
+
       const fullContent = `---
-id: ${filename}
-title: ${filename}
+id: ${finalFilename}
+title: ${finalFilename}
 ---
 
 ${markdown}`;
@@ -416,7 +454,7 @@ ${markdown}`;
           'Prefer': 'return=minimal',
         },
         body: JSON.stringify({
-          filename,
+          filename: finalFilename,
           content: fullContent,
           category: selectedCategory,
           uploader: user?.username || 'unknown',
@@ -426,14 +464,15 @@ ${markdown}`;
       });
 
       if (docRes.ok) {
-        setMessage(`✅ ${filename} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
-        addLog('upload_success', { filename, category: selectedCategory, images: images.length }, user?.username);
+        const displayName = finalFilename === filename ? filename : `${filename}（重命名为 ${finalFilename}）`;
+        setMessage(`✅ ${displayName} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
+        addLog('upload_success', { filename: finalFilename, originalFilename: filename, category: selectedCategory, images: images.length }, user?.username);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs();
       } else {
         const errText = await docRes.text();
         setMessage('保存失败: ' + errText);
-        addLog('upload_save_failed', { filename, error: errText }, user?.username);
+        addLog('upload_save_failed', { filename: finalFilename, error: errText }, user?.username);
       }
     } catch (error: any) {
       setMessage('上传失败: ' + error.message);
