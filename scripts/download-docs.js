@@ -133,6 +133,53 @@ async function downloadDocs() {
       // 如果标题内容开头还有残留的 #，继续清理
       content = content.replace(/^(#{1,6})\s+(#)\s/gm, '$1 ');
 
+      // ===== 智能修复标题层级 =====
+      // 根据标题内容中的编号格式重新确定层级
+      const lines = content.split('\n');
+      const fixedLines = [];
+      let isFirstHeading = true;
+
+      for (const line of lines) {
+        // 检查是否是标题行
+        const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+          const [, hashes, headingContent] = headingMatch;
+          const trimmedContent = headingContent.trim().replace(/^\*+|\*+$/g, '').trim();
+
+          // 第一行标题保持一级（文档标题）
+          if (isFirstHeading) {
+            isFirstHeading = false;
+            fixedLines.push('# ' + headingContent.trim());
+            continue;
+          }
+
+          // 根据编号格式确定层级
+          let newLevel;
+          if (/^[一二三四五六七八九十]+、/.test(trimmedContent)) {
+            // 中文数字章节 → 二级标题
+            newLevel = 2;
+          } else if (/^[0-9]+\./.test(trimmedContent)) {
+            // 数字编号 → 三级标题
+            newLevel = 3;
+          } else if (/^[(（][0-9]+[)）]/.test(trimmedContent) || /^[①②③④⑤⑥⑦⑧⑨⑩]/.test(trimmedContent)) {
+            // 括号编号 → 四级标题
+            newLevel = 4;
+          } else if (/^表：|^图：/.test(trimmedContent)) {
+            // 表格/图表标题 → 三级标题
+            newLevel = 3;
+          } else {
+            // 其他情况保持原层级，但至少是二级
+            newLevel = Math.max(hashes.length, 2);
+          }
+
+          const newHashes = '#'.repeat(Math.min(newLevel, 6));
+          fixedLines.push(newHashes + ' ' + headingContent.trim());
+        } else {
+          fixedLines.push(line);
+        }
+      }
+      content = fixedLines.join('\n');
+
       content = content.trim();
 
       const frontmatter = `---

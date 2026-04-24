@@ -211,21 +211,32 @@ function UploadPage() {
       });
 
       // 智能层级识别函数：根据编号格式推断标题级别
-      const detectHeadingLevel = (content: string): number => {
+      let isFirstHeading = true; // 标记是否是第一个标题（文档标题）
+
+      const detectHeadingLevel = (content: string, isFirst: boolean): number => {
+        // 第一个标题保持一级（文档标题）
+        if (isFirst) {
+          return 1;
+        }
+
         const trimmed = content.trim();
         // 清理可能的 ** 包裹
         const cleanContent = trimmed.replace(/^\*+|\*+$/g, '').trim();
 
-        // 中文数字章节：一、二、三、四、五... → 一级标题
+        // 中文数字章节：一、二、三、四、五... → 章节标题（二级）
         if (/^[一二三四五六七八九十]+、/.test(cleanContent)) {
-          return 1;
-        }
-        // 数字编号：1. 2. 3. → 二级标题
-        if (/^[0-9]+\.\s/.test(cleanContent)) {
           return 2;
         }
-        // 括号编号：（1）、(1)、① → 三级标题
+        // 数字编号：1. 2. 3. → 子章节标题（三级）
+        if (/^[0-9]+\.[\s]/.test(cleanContent) || /^[0-9]+\.[^\d]/.test(cleanContent)) {
+          return 3;
+        }
+        // 括号编号：（1）、(1)、① → 更细分标题（四级）
         if (/^[(（][0-9]+[)）]/.test(cleanContent) || /^[①②③④⑤⑥⑦⑧⑨⑩]/.test(cleanContent)) {
+          return 4;
+        }
+        // 表格/图表标题 → 三级标题
+        if (/^表：|^图：/.test(cleanContent)) {
           return 3;
         }
         // 默认返回 0 表示无法识别
@@ -240,10 +251,9 @@ function UploadPage() {
         let cleanContent = trimmed;
 
         // 移除开头的所有 # 符号（不管后面有没有空格）
-        // 使用更彻底的正则，移除所有开头的 # 和可能的空格
         cleanContent = cleanContent.replace(/^#+\s*/, '');
 
-        // 移除开头可能残留的空格和 #（以防万一）
+        // 移除开头可能残留的空格和 #
         while (cleanContent.startsWith('#') || cleanContent.startsWith(' ')) {
           cleanContent = cleanContent.substring(1);
         }
@@ -261,24 +271,27 @@ function UploadPage() {
         }
 
         if (headingMode === 'smart') {
-          // 智能识别：根据编号格式推断层级
-          const detectedLevel = detectHeadingLevel(cleanContent);
+          // 智能识别：根据编号格式直接确定层级
+          const detectedLevel = detectHeadingLevel(cleanContent, isFirstHeading);
+          isFirstHeading = false; // 标记已处理过第一个标题
+
           if (detectedLevel > 0) {
-            // 检测到的层级 + 1（因为 Docusaurus 目录从 ## 开始）
-            const markdownLevel = detectedLevel + 1;
-            const hashes = '#'.repeat(markdownLevel);
+            // 直接使用检测到的层级
+            const hashes = '#'.repeat(detectedLevel);
             return hashes + ' ' + cleanContent + '\n\n';
           }
-          // 无法识别编号，使用原始级别 + 1
-          const markdownLevel = Math.min(originalLevel + 1, 6);
+          // 无法识别编号，使用原始级别
+          const markdownLevel = Math.min(originalLevel, 6);
           const hashes = '#'.repeat(markdownLevel);
           return hashes + ' ' + cleanContent + '\n\n';
         } else if (headingMode === 'flat') {
           // 扁平模式：所有标题都变成 ##
+          isFirstHeading = false;
           return '## ' + cleanContent + '\n\n';
         } else {
-          // 保持原样：保持 HTML 标签级别，但 +1（因为 Docusaurus 从 ## 开始）
-          const markdownLevel = Math.min(originalLevel + 1, 6);
+          // 保持原样：保持 HTML 标签级别
+          isFirstHeading = false;
+          const markdownLevel = Math.min(originalLevel, 6);
           const hashes = '#'.repeat(markdownLevel);
           return hashes + ' ' + cleanContent + '\n\n';
         }
@@ -367,8 +380,12 @@ function UploadPage() {
             processedLines.push('## ' + trimmed);
           }
           // 检测数字编号（1. 2. 3.）→ 三级标题（但排除列表项）
-          else if (/^[0-9]+\.\s/.test(trimmed) && !trimmed.startsWith('-') && trimmed.length > 5) {
-            processedLines.push('### ' + trimmed);
+          else if (/^[0-9]+\.[\s]/.test(trimmed) || /^[0-9]+\.[^\d]/.test(trimmed)) {
+            if (!trimmed.startsWith('-') && trimmed.length > 5) {
+              processedLines.push('### ' + trimmed);
+            } else {
+              processedLines.push(line);
+            }
           }
           // 检测括号编号（(1) （1））→ 四级标题
           else if (/^[(（][0-9]+[)）]\s/.test(trimmed)) {
