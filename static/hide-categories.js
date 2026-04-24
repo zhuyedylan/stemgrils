@@ -5,6 +5,12 @@
   var supabaseUrl = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
   var supabaseKey = 'sb_publishable_a0zC2QDTxicG-HbxojKkTQ_medLD1JW';
 
+  // 硬编码分类映射（这些文档不动态添加，由 Docusaurus 静态处理）
+  var HARDCODED_DOCS = {
+    '项目说明': 'intro',
+    '探知未来科技女性培养计划': 'intro'
+  };
+
   function getUserStatus() {
     try {
       var userStr = localStorage.getItem('stem_user');
@@ -62,6 +68,10 @@
 
   function addDocToCategory(categoryItem, docFilename) {
     if (!categoryItem) return;
+
+    // 跳过硬编码分类的文档（这些由 Docusaurus 静态处理）
+    if (HARDCODED_DOCS[docFilename]) return;
+
     var subList = categoryItem.querySelector('.menu__list');
     if (!subList) return;
 
