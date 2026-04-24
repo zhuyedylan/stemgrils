@@ -307,3 +307,13 @@
 [data-theme='dark'] .table-style-card tbody tr:hover td {
   background-color: #064e3b;
 }
+
+/* ===== 部署状态动画 ===== */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.deploying-spinner {
+  animation: spin 1s linear infinite;
+}

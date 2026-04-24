@@ -11,11 +11,16 @@ declare global {
 
 const DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB';
 
+// Vercel 项目 ID（用于检查部署状态）
+const VERCEL_PROJECT_ID = 'prj_pdsffwCNPJcY904M0JMZUtzRjOCg';
+
 const ApprovePage = () => {
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [message, setMessage] = useState('');
+  const [deploying, setDeploying] = useState(false);
+  const [deployCountdown, setDeployCountdown] = useState(0);
 
   // 从 window 对象获取环境变量（由 Docusaurus customFields 注入）
   const supabaseUrl = window.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
@@ -68,15 +73,32 @@ const ApprovePage = () => {
       if (response.ok) {
         // 触发重新部署
         setMessage(`✅ ${filename} 已审批通过，正在触发重新部署...`);
+        setDeploying(true);
+        setDeployCountdown(90); // 90秒倒计时
+
         try {
           const deployRes = await fetch(DEPLOY_HOOK, { method: 'POST' });
           if (deployRes.ok) {
-            setMessage(`✅ ${filename} 已审批通过！网站将在约1分钟后自动更新。`);
+            setMessage(`✅ ${filename} 已审批通过！网站正在重新构建，请等待约1-2分钟...`);
+            // 启动倒计时
+            const countdownInterval = setInterval(() => {
+              setDeployCountdown(prev => {
+                if (prev <= 1) {
+                  clearInterval(countdownInterval);
+                  setDeploying(false);
+                  setMessage(`✅ ${filename} 已审批通过！部署完成，请刷新页面查看。`);
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
           } else {
-            setMessage(`✅ ${filename} 已审批通过，但部署触发失败。请手动推送代码。`);
+            setMessage(`✅ ${filename} 已审批通过，但部署触发失败。请手动刷新。`);
+            setDeploying(false);
           }
         } catch (e) {
-          setMessage(`✅ ${filename} 已审批通过，部署触发失败。请手动推送代码。`);
+          setMessage(`✅ ${filename} 已审批通过，部署触发失败。请手动刷新。`);
+          setDeploying(false);
         }
         loadPendingDocs();
       } else {
@@ -169,8 +191,25 @@ const ApprovePage = () => {
       </p>
 
       {message && (
-        <div style={{ padding: '10px', marginBottom: '20px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', borderRadius: '4px' }}>
-          {message}
+        <div style={{ padding: '15px', marginBottom: '20px', backgroundColor: message.includes('✅') ? '#d1fae5' : '#fee2e2', color: message.includes('✅') ? '#065f46' : '#991b1b', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span>{message}</span>
+          {deploying && deployCountdown > 0 && (
+            <span style={{ backgroundColor: '#3b82f6', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '14px' }}>
+              {deployCountdown}秒
+            </span>
+          )}
+        </div>
+      )}
+
+      {deploying && (
+        <div style={{ padding: '15px', marginBottom: '20px', backgroundColor: '#eff6ff', borderRadius: '8px', border: '2px solid #3b82f6' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '20px', height: '20px', border: '2px solid #3b82f6', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            <span style={{ color: '#1e40af' }}>正在重新构建网站，请耐心等待...</span>
+          </div>
+          <p style={{ margin: '10px 0 0 0', color: '#6b7280', fontSize: '14px' }}>
+            提示：构建完成后，新文档将出现在侧边栏。无需反复刷新页面。
+          </p>
         </div>
       )}
 
