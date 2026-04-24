@@ -119,6 +119,16 @@ async function downloadDocs() {
       content = content.replace(/<br\/>\s*<\/td>/gi, '</td>');
       content = content.replace(/<br\/>\s*<\/th>/gi, '</th>');
 
+      // MDX 兼容性：表格内的 ~ 符号会被解析为删除线，需要转义
+      // 只处理表格内的 ~（在 <td> 或 <th> 标签内）
+      // 将范围表示如 "1.42 ~1.47" 中的 ~ 转义为 HTML 实体
+      content = content.replace(/<td[^>]*>([^<]*)/gi, (match, inner) => {
+        return match.replace(/~/g, '&#126;');
+      });
+      content = content.replace(/<th[^>]*>([^<]*)/gi, (match, inner) => {
+        return match.replace(/~/g, '&#126;');
+      });
+
       // 清理标题行中残留的 # 符号（如 "## # 标题" 应变成 "## 标题"）
       // 匹配 markdown 标题格式，移除内容开头的 # 符号和空格
       // 处理多种情况：
