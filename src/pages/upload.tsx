@@ -203,12 +203,49 @@ function UploadPage() {
         return placeholder;
       });
 
-      processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
-      processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
-      processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
-      processedHtml = processedHtml.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n');
-      processedHtml = processedHtml.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n\n');
-      processedHtml = processedHtml.replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n\n');
+      processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, (match, content) => {
+        // 如果内容已经包含 # 开头，不再添加
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '# ' + trimmed + '\n\n';
+      });
+      processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, (match, content) => {
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '## ' + trimmed + '\n\n';
+      });
+      processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, (match, content) => {
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '### ' + trimmed + '\n\n';
+      });
+      processedHtml = processedHtml.replace(/<h4[^>]*>(.*?)<\/h4>/gi, (match, content) => {
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '#### ' + trimmed + '\n\n';
+      });
+      processedHtml = processedHtml.replace(/<h5[^>]*>(.*?)<\/h5>/gi, (match, content) => {
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '##### ' + trimmed + '\n\n';
+      });
+      processedHtml = processedHtml.replace(/<h6[^>]*>(.*?)<\/h6>/gi, (match, content) => {
+        const trimmed = content.trim();
+        if (trimmed.startsWith('#')) {
+          return trimmed + '\n\n';
+        }
+        return '###### ' + trimmed + '\n\n';
+      });
       processedHtml = processedHtml.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
       processedHtml = processedHtml.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
       processedHtml = processedHtml.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
