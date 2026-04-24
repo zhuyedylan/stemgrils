@@ -704,6 +704,7 @@ ${markdown}`;
         <button onClick={() => execCommand('formatBlock', 'h1')} style={toolButtonStyle} title="标题1">标题1</button>
         <button onClick={() => execCommand('formatBlock', 'h2')} style={toolButtonStyle} title="标题2">标题2</button>
         <button onClick={() => execCommand('formatBlock', 'h3')} style={toolButtonStyle} title="标题3">标题3</button>
+        <button onClick={() => execCommand('formatBlock', 'p')} style={toolButtonStyle} title="正文">正文</button>
         <span style={{ width: '1px', backgroundColor: '#ddd', margin: '0 5px' }}></span>
         <button onClick={() => execCommand('insertUnorderedList')} style={toolButtonStyle} title="无序列表">• 列表</button>
         <button onClick={() => execCommand('insertOrderedList')} style={toolButtonStyle} title="有序列表">1. 列表</button>

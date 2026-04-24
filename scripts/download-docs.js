@@ -133,6 +133,13 @@ async function downloadDocs() {
       // 如果标题内容开头还有残留的 #，继续清理
       content = content.replace(/^(#{1,6})\s+(#)\s/gm, '$1 ');
 
+      // MDX 兼容性：转义非 HTML 标签的小于号（如 <0.02%、<1、<100 等）
+      // 保留真正的 HTML 标签（如 <table>、<br/>、<strong> 等）
+      // 匹配 < 后面是数字或非字母的情况（排除 HTML 标签）
+      content = content.replace(/<([0-9])/g, '&lt;$1');
+      // 也处理 <= 符号
+      content = content.replace(/<=/g, '&lt;=');
+
       // ===== 智能修复标题层级 =====
       // 根据标题内容中的编号格式重新确定层级
       const lines = content.split('\n');
