@@ -91,6 +91,13 @@ async function downloadDocs() {
       }
       // 移除已有的 frontmatter（保留原始内容）
       content = content.replace(/^---[\s\S]*?---\n/, '');
+
+      // MDX兼容性修复：将 <br> 转换为 <br/>
+      content = content.replace(/<br>/g, '<br/>');
+
+      // 移除不存在图片的引用（project-images 目录下的图片）
+      content = content.replace(/!\[.*?\]\(\/img\/project-images\/.*?\)/g, '');
+
       content = content.trim();
 
       const frontmatter = `---
