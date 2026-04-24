@@ -229,31 +229,35 @@ function UploadPage() {
       // 根据层级模式处理标题
       const processHeading = (originalLevel: number, content: string): string => {
         const trimmed = content.trim();
-        if (trimmed.startsWith('#')) {
-          return trimmed + '\n\n';
+
+        // 清理内容中多余的 # 符号（Word 文档可能标题内容本身就带 #）
+        let cleanContent = trimmed;
+        if (cleanContent.startsWith('#')) {
+          // 移除开头的 # 符号及其后可能的空格
+          cleanContent = cleanContent.replace(/^#+\s*/, '');
         }
 
         if (headingMode === 'smart') {
           // 智能识别：根据编号格式推断层级
-          const detectedLevel = detectHeadingLevel(content);
+          const detectedLevel = detectHeadingLevel(cleanContent);
           if (detectedLevel > 0) {
             // 检测到的层级 + 1（因为 Docusaurus 目录从 ## 开始）
             const markdownLevel = detectedLevel + 1;
             const hashes = '#'.repeat(markdownLevel);
-            return hashes + ' ' + trimmed + '\n\n';
+            return hashes + ' ' + cleanContent + '\n\n';
           }
           // 无法识别编号，使用原始级别 + 1
           const markdownLevel = Math.min(originalLevel + 1, 6);
           const hashes = '#'.repeat(markdownLevel);
-          return hashes + ' ' + trimmed + '\n\n';
+          return hashes + ' ' + cleanContent + '\n\n';
         } else if (headingMode === 'flat') {
           // 扁平模式：所有标题都变成 ##
-          return '## ' + trimmed + '\n\n';
+          return '## ' + cleanContent + '\n\n';
         } else {
           // 保持原样：保持 HTML 标签级别，但 +1（因为 Docusaurus 从 ## 开始）
           const markdownLevel = Math.min(originalLevel + 1, 6);
           const hashes = '#'.repeat(markdownLevel);
-          return hashes + ' ' + trimmed + '\n\n';
+          return hashes + ' ' + cleanContent + '\n\n';
         }
       };
 
