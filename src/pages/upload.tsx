@@ -306,6 +306,14 @@ function UploadPage() {
       processedHtml = processedHtml.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
       processedHtml = processedHtml.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
       processedHtml = processedHtml.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
+
+      // 合合相邻的加粗块（Word 可能将一个加粗段落拆成多个 <strong> 标签）
+      // 例如：**1）**烘干设备要求：** → **1）烘干设备要求：**
+      processedHtml = processedHtml.replace(/\*\*([^*]+)\*\*\s*\*\*/g, '**');
+      processedHtml = processedHtml.replace(/\*\*\s*\*\*([^*]+)\*\*/g, '**$1**');
+      // 合合相邻加粗内容：**A**B**C** → **ABC**（当 B 是纯文本没有空格分隔时）
+      processedHtml = processedHtml.replace(/\*\*([^*]+)\*\*([^*\s]+)\*\*([^*]+)\*\*/g, '**$1$2$3**');
+
       processedHtml = processedHtml.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
       processedHtml = processedHtml.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
       processedHtml = processedHtml.replace(/<ul[^>]*>(.*?)<\/ul>/gi, '\n$1');
