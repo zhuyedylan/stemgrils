@@ -54,7 +54,9 @@
       "mcp__plugin_claude-mem_mcp-search__search",
       "Bash(vercel env *)",
       "Bash(xargs -I {} basename {} .md)",
-      "Bash(vercel list *)"
+      "Bash(vercel list *)",
+      "Bash(cat)",
+      "Bash(node /tmp/test-mammoth.js)"
     ]
   }
 }
