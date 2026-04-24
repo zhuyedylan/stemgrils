@@ -104,8 +104,84 @@ function UploadPage() {
 
       // ===== 前端 mammoth 转换 =====
       setMessage('正在解析 Word 文档...');
-      const result = await mammoth.convertToMarkdown({ arrayBuffer });
-      let markdown = result.value;
+
+      // 用 HTML 方式转换，然后手动处理表格
+      const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+
+      // 将 HTML 转换为 Markdown
+      let html = htmlResult.value;
+      let markdown = '';
+
+      // 处理表格 - 转换为 Markdown 表格格式
+      const tableRegex = /<table[^>]*>(.*?)<\/table>/gi;
+      let tableMatch;
+      let processedHtml = html;
+
+      while ((tableMatch = tableRegex.exec(html)) !== null) {
+        const tableContent = tableMatch[1];
+        let markdownTable = '\n';
+
+        // 提取行
+        const rows = tableContent.match(/<tr[^>]*>(.*?)<\/tr>/gi) || [];
+        let headerRowProcessed = false;
+
+        for (let i = 0; i < rows.length; i++) {
+          const rowContent = rows[i].replace(/<\/?tr[^>]*>/gi, '');
+
+          // 提取单元格
+          const cells = rowContent.match(/<td[^>]*>(.*?)<\/td>|<th[^>]*>(.*?)<\/th>/gi) || [];
+          let rowText = '|';
+
+          for (const cell of cells) {
+            let cellText = cell.replace(/<\/?(td|th)[^>]*>/gi, '')
+              .replace(/<br[^>]*>/gi, ' ')
+              .replace(/<[^>]+>/g, '')
+              .trim();
+            rowText += ' ' + cellText + ' |';
+          }
+
+          markdownTable += rowText + '\n';
+
+          // 在第一行后添加分隔行
+          if (i === 0 && cells.length > 0) {
+            let separator = '|';
+            for (let j = 0; j < cells.length; j++) {
+              separator += ' --- |';
+            }
+            markdownTable += separator + '\n';
+            headerRowProcessed = true;
+          }
+        }
+
+        // 替换 HTML 表格为 Markdown 表格
+        processedHtml = processedHtml.replace(tableMatch[0], markdownTable);
+      }
+
+      // 处理其他 HTML 元素
+      processedHtml = processedHtml.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
+      processedHtml = processedHtml.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
+      processedHtml = processedHtml.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
+      processedHtml = processedHtml.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n');
+      processedHtml = processedHtml.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n\n');
+      processedHtml = processedHtml.replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n\n');
+      processedHtml = processedHtml.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
+      processedHtml = processedHtml.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
+      processedHtml = processedHtml.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
+      processedHtml = processedHtml.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
+      processedHtml = processedHtml.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
+      processedHtml = processedHtml.replace(/<ul[^>]*>(.*?)<\/ul>/gi, '\n$1');
+      processedHtml = processedHtml.replace(/<ol[^>]*>(.*?)<\/ol>/gi, '\n$1');
+      processedHtml = processedHtml.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
+      processedHtml = processedHtml.replace(/<br[^>]*>/gi, '\n');
+      processedHtml = processedHtml.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)');
+      processedHtml = processedHtml.replace(/<img[^>]*src="([^"]*)"[^>]*>/gi, '![]($1)');
+      processedHtml = processedHtml.replace(/<[^>]+>/g, ''); // 移除剩余 HTML 标签
+
+      // 清理多余空白
+      processedHtml = processedHtml.replace(/\n{3,}/g, '\n\n');
+      processedHtml = processedHtml.trim();
+
+      markdown = processedHtml;
 
       addLog('convert_success', { filename, contentLength: markdown.length }, user?.username);
 
