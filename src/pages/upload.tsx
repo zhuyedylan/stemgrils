@@ -337,6 +337,34 @@ function UploadPage() {
       markdown = markdown.replace(/\n{3,}/g, '\n\n');
       markdown = markdown.replace(/ +\n/g, '\n');
 
+      // ===== 智能识别普通文本中的标题编号 =====
+      // 如果选择了智能模式，额外扫描文本中带有中文数字/数字编号的行
+      if (headingMode === 'smart') {
+        const lines = markdown.split('\n');
+        const processedLines: string[] = [];
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+
+          // 检测中文数字章节（一、二、三...）→ 二级标题
+          if (/^[一二三四五六七八九十]+、/.test(trimmed)) {
+            processedLines.push('## ' + trimmed);
+          }
+          // 检测数字编号（1. 2. 3.）→ 三级标题（但排除列表项）
+          else if (/^[0-9]+\.\s/.test(trimmed) && !trimmed.startsWith('-') && trimmed.length > 5) {
+            processedLines.push('### ' + trimmed);
+          }
+          // 检测括号编号（(1) （1））→ 四级标题
+          else if (/^[(（][0-9]+[)）]\s/.test(trimmed)) {
+            processedLines.push('#### ' + trimmed);
+          }
+          else {
+            processedLines.push(line);
+          }
+        }
+        markdown = processedLines.join('\n');
+      }
+
       setMessage(`转换完成，${images.length} 张图片待上传...`);
 
       // ===== 直接上传图片到 Supabase Storage =====
