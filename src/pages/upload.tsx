@@ -230,8 +230,44 @@ function UploadPage() {
       markdown = markdown.replace(/([^\n])\n(\d+\. )/g, '$1\n\n$2');
       markdown = markdown.replace(/\n{3,}/g, '\n\n');
       markdown = markdown.replace(/ +\n/g, '\n');
-      markdown = markdown.replace(/([^\n])\n(\|)/g, '$1\n\n$2');
-      markdown = markdown.replace(/(\|)\n([^\n|])/g, '$1\n\n$2');
+
+      // 表格特殊处理：移除表格行之间的空行，确保表格前后有空行
+      // Markdown表格要求行紧密排列，不能有空行分隔
+      const lines = markdown.split('\n');
+      const processedLines: string[] = [];
+      let inTable = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const isTableLine = line.trim().startsWith('|') && line.trim().endsWith('|');
+        const isSeparator = line.trim().match(/^\|[\s\-:]+\|[\s\-:]+\|/);
+
+        if (isTableLine || isSeparator) {
+          // 进入表格模式
+          if (!inTable) {
+            // 表格开始，确保前面有空行
+            if (processedLines.length > 0 && processedLines[processedLines.length - 1].trim() !== '') {
+              processedLines.push('');
+            }
+            inTable = true;
+          }
+          // 添加表格行（跳过表格内的空行）
+          if (line.trim() !== '') {
+            processedLines.push(line);
+          }
+        } else {
+          // 非表格行
+          if (inTable) {
+            // 表格结束，确保后面有空行
+            if (line.trim() !== '') {
+              processedLines.push('');
+            }
+            inTable = false;
+          }
+          processedLines.push(line);
+        }
+      }
+      markdown = processedLines.join('\n');
 
       setMessage(`转换完成，${images.length} 张图片待上传...`);
 
