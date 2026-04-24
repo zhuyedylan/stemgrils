@@ -460,7 +460,7 @@ function WYSIWYGEditor() {
 
     let html = editor.innerHTML;
 
-    // ===== 保护表格内容 =====
+    // ===== 保护表格和图片内容 =====
     // 先提取并保护所有表格，避免被后续正则删除
     const tablePlaceholder = '___TABLE_PLACEHOLDER___';
     const tablePlaceholders: Array<{ placeholder: string; content: string }> = [];
@@ -470,6 +470,26 @@ function WYSIWYGEditor() {
       const placeholder = `${tablePlaceholder}${tableIndex}___`;
       tablePlaceholders.push({ placeholder, content: match });
       tableIndex++;
+      return placeholder;
+    });
+
+    // 提取并保护所有图片
+    const imagePlaceholder = '___IMAGE_PLACEHOLDER___';
+    const imagePlaceholders: Array<{ placeholder: string; markdown: string }> = [];
+    let imageIndex = 0;
+
+    html = html.replace(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*>/gi, (match, src, alt) => {
+      const placeholder = `${imagePlaceholder}${imageIndex}___`;
+      imagePlaceholders.push({ placeholder, markdown: `![${alt || ''}](${src})` });
+      imageIndex++;
+      return placeholder;
+    });
+
+    // 处理没有 alt 属性的图片
+    html = html.replace(/<img[^>]*src="([^"]*)"[^>]*>/gi, (match, src) => {
+      const placeholder = `${imagePlaceholder}${imageIndex}___`;
+      imagePlaceholders.push({ placeholder, markdown: `![](${src})` });
+      imageIndex++;
       return placeholder;
     });
 
@@ -494,9 +514,12 @@ function WYSIWYGEditor() {
       .replace(/&amp;/g, '&')
       .replace(/\n{3,}/g, '\n\n');
 
-    // ===== 恢复表格内容 =====
+    // ===== 恢复表格和图片内容 =====
     for (const { placeholder, content } of tablePlaceholders) {
       markdown = markdown.replace(placeholder, '\n\n' + content + '\n\n');
+    }
+    for (const { placeholder, markdown: imgMarkdown } of imagePlaceholders) {
+      markdown = markdown.replace(placeholder, '\n' + imgMarkdown + '\n');
     }
 
     const fileName = filePath.split('/').pop() + '.md';

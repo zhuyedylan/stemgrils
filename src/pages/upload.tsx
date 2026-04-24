@@ -237,6 +237,14 @@ function UploadPage() {
           cleanContent = cleanContent.replace(/^#+\s*/, '');
         }
 
+        // 清理标题内容中的 ** 加粗符号（Word 标题可能带加粗）
+        cleanContent = cleanContent.replace(/^\*+|\*+$/g, '').trim();
+
+        // 如果清理后内容为空，返回空
+        if (!cleanContent) {
+          return '';
+        }
+
         if (headingMode === 'smart') {
           // 智能识别：根据编号格式推断层级
           const detectedLevel = detectHeadingLevel(cleanContent);
