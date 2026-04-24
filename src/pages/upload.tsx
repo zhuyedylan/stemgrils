@@ -231,13 +231,13 @@ function UploadPage() {
         const trimmed = content.trim();
 
         // 清理内容中所有的 # 符号（Word 文档标题内容可能带有 #）
-        // 先移除开头的 # 符号
-        let cleanContent = trimmed.replace(/^#+\s*/, '');
+        let cleanContent = trimmed;
 
-        // 再移除内容中任何位置的 # 符号（但保留有意义的用法，如"问题 #1"）
-        // 只移除独立的 # 符号，不移除作为其他内容的一部分
-        cleanContent = cleanContent.replace(/#\s+/g, ''); // 移除 # 后面有空格的情况
-        cleanContent = cleanContent.replace(/\s+#/g, ''); // 移除 # 前面有空格的情况
+        // 移除开头的所有 # 符号（不管后面有没有空格）
+        cleanContent = cleanContent.replace(/^#+/, '');
+
+        // 移除开头可能残留的空格
+        cleanContent = cleanContent.trim();
 
         // 清理标题内容中的 ** 加粗符号（Word 标题可能带加粗）
         cleanContent = cleanContent.replace(/^\*+|\*+$/g, '').trim();
