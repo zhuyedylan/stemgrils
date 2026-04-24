@@ -99,6 +99,19 @@ function UserManager() {
       <h2>👥 用户管理</h2>
       <p style={{ color: '#666', marginBottom: '20px' }}>管理员可以重置或修改用户密码</p>
 
+      {/* 快捷链接 */}
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <a href="/manage" style={{ padding: '10px 20px', backgroundColor: '#3b82f6', color: 'white', borderRadius: '5px', textDecoration: 'none' }}>
+          📚 文档排序管理
+        </a>
+        <a href="/approve" style={{ padding: '10px 20px', backgroundColor: '#10b981', color: 'white', borderRadius: '5px', textDecoration: 'none' }}>
+          📋 文档审批
+        </a>
+        <button onClick={() => window.location.href = '/'} style={{ padding: '10px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+          🏠 返回首页
+        </button>
+      </div>
+
       {message && (
         <div style={{ padding: '10px', backgroundColor: '#d1fae5', color: '#065f46', borderRadius: '5px', marginBottom: '20px' }}>
           {message}

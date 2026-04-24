@@ -18,12 +18,15 @@ const HARDCODED_CATEGORIES: Record<string, string> = {
   '探知未来科技女性培养计划': 'intro',
 };
 
-// 读取 Supabase 中的分类（从 .supabase-categories.json）
+// 读取 Supabase 中的分类和排序（从 .supabase-categories.json）
 let supabaseCategories: Record<string, string> = {};
-const supabaseCategoriesFile = path.join(docsDir, '.supabase-categories.json');
-if (fs.existsSync(supabaseCategoriesFile)) {
+let supabaseOrders: Record<string, number> = {};
+const supabaseDataFile = path.join(docsDir, '.supabase-categories.json');
+if (fs.existsSync(supabaseDataFile)) {
   try {
-    supabaseCategories = JSON.parse(fs.readFileSync(supabaseCategoriesFile, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(supabaseDataFile, 'utf8'));
+    supabaseCategories = data.categories || {};
+    supabaseOrders = data.orders || {};
   } catch (e) {}
 }
 
@@ -36,12 +39,12 @@ const docCategoryMap: Record<string, string> = {
 // 分类逻辑
 const introDocs = localDocs.filter(doc =>
   docCategoryMap[doc] === 'intro'
-);
+).sort((a, b) => (supabaseOrders[a] || 0) - (supabaseOrders[b] || 0));
 
 const processDocs = localDocs.filter(doc =>
   docCategoryMap[doc] === 'process' ||
   (!introDocs.includes(doc) && !HARDCODED_CATEGORIES[doc])
-);
+).sort((a, b) => (supabaseOrders[a] || 0) - (supabaseOrders[b] || 0));
 
 const sidebarItems: any[] = [];
 
