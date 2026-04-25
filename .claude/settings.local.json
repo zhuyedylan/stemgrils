@@ -57,7 +57,17 @@
       "Bash(vercel list *)",
       "Bash(cat)",
       "Bash(node /tmp/test-mammoth.js)",
-      "Bash(perl -i -pe 's/^# # /# /g' \"docs/PLA废料回收再生3D打印线材工艺手册.md\")"
+      "Bash(perl -i -pe 's/^# # /# /g' \"docs/PLA废料回收再生3D打印线材工艺手册.md\")",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill *)",
+      "Bash(lsof -ti:3000 -ti:3001)",
+      "Bash(node scripts/download-docs.js)",
+      "Bash(vercel --prod)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('已配置设备:', len\\(d\\)\\); [print\\(f'  - {x.get\\(\\\\\"name\\\\\",\\\\\"未知\\\\\"\\)}: {x.get\\(\\\\\"deviceID\\\\\"\\)}'\\) for x in d]\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(claude plugins *)",
+      "Bash(chmod +x *)"
     ]
   }
 }
