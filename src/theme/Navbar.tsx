@@ -102,7 +102,8 @@ export default function Navbar() {
                 html += `<a href="${baseUrl}editor" style="color:#fff;background:#10b981;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:13px;margin-right:8px">编辑</a>`;
                 html += `<a href="${baseUrl}upload" style="color:#fff;background:#10b981;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:13px;margin-right:8px">上传</a>`;
                 if (u.role === 'admin') {
-                  html += `<a href="${baseUrl}admin" style="color:#fff;background:#f59e0b;padding:5px 12px;border-radius:4px;font-size:13px;text-decoration:none;margin-right:8px">⚙️ 系统管理</a>`;
+                  html += `<button onclick="fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB',{method:'POST'}).then(()=>alert('部署已触发，请等待1-2分钟后刷新'));this.textContent='部署中...';this.disabled=true;this.style.background='#9ca3af'" style="color:#fff;background:#ef4444;padding:5px 12px;border-radius:4px;font-size:13px;border:none;cursor:pointer;margin-right:8px">🚀 发布</button>`;
+                  html += `<a href="${baseUrl}admin" style="color:#fff;background:#f59e0b;padding:5px 12px;border-radius:4px;font-size:13px;text-decoration:none;margin-right:8px">⚙️ 管理</a>`;
                 }
                 html += `<button onclick="localStorage.removeItem('stem_user');window.location.href='${baseUrl}'" style="background:transparent;border:1px solid rgba(255,255,255,0.5);color:white;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px">退出</button>`;
                 return html;
