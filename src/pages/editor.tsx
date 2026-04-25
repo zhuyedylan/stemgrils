@@ -22,6 +22,7 @@ function WYSIWYGEditor() {
   const [currentDoc, setCurrentDoc] = useState(null);
   const [docStatus, setDocStatus] = useState('');
   const [rejectModal, setRejectModal] = useState(null);
+  const [savedSelection, setSavedSelection] = useState(null); // 保存的选区位置
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -243,6 +244,18 @@ function WYSIWYGEditor() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // 保存当前选区（在点击上传按钮前）
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      setSavedSelection({
+        startContainer: range.startContainer,
+        startOffset: range.startOffset,
+        endContainer: range.endContainer,
+        endOffset: range.endOffset
+      });
+    }
+
     try {
       // 生成唯一文件名
       const fileName = `editor-${Date.now()}-${file.name}`;
@@ -269,36 +282,43 @@ function WYSIWYGEditor() {
         // 在光标位置插入图片
         const editor = editorRef.current;
         if (editor) {
-          const selection = window.getSelection();
-          let inserted = false;
+          // 先让编辑器获得焦点
+          editor.focus();
 
-          // 如果有选中的范围，尝试在选区中插入
-          if (selection.rangeCount > 0 && selection.getRangeAt(0).toString().length === 0) {
+          // 尝试恢复之前的选区
+          if (savedSelection) {
+            try {
+              const newRange = document.createRange();
+              newRange.setStart(savedSelection.startContainer, savedSelection.startOffset);
+              newRange.setEnd(savedSelection.endContainer, savedSelection.endOffset);
+              selection.removeAllRanges();
+              selection.addRange(newRange);
+            } catch (err) {
+              // 如果恢复失败，使用编辑器的默认位置
+              console.log('无法恢复选区，使用默认位置');
+            }
+          }
+
+          // 创建图片元素
+          const img = document.createElement('img');
+          img.src = publicUrl;
+          img.style.maxWidth = '100%';
+          img.style.height = 'auto';
+          img.alt = '上传的图片';
+
+          // 获取当前选区并插入图片
+          if (selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
-            const img = document.createElement('img');
-            img.src = publicUrl;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-            img.alt = '上传的图片';
-
             range.deleteContents();
             range.insertNode(img);
 
-            // 插入后移动光标到图片后面
+            // 移动光标到图片后面
             range.setStartAfter(img);
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
-            inserted = true;
-          }
-
-          // 如果没有成功插入，直接添加到编辑器末尾并提示
-          if (!inserted) {
-            const img = document.createElement('img');
-            img.src = publicUrl;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-            img.alt = '上传的图片';
+          } else {
+            // 如果没有选区，添加到编辑器末尾
             editor.appendChild(img);
           }
 
@@ -313,8 +333,9 @@ function WYSIWYGEditor() {
       setMessage('❌ 上传失败: ' + err.message);
     }
 
-    // 清空输入框，以便可以重复选择同一张图片
+    // 清空输入框和保存的选区
     e.target.value = '';
+    setSavedSelection(null);
   };
 
   // 处理文件重命名 - 直接更新 Supabase
