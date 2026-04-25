@@ -47,8 +47,13 @@ const ManagePage = () => {
       const docsData = await docsRes.json();
       setDocs(docsData);
 
-      // 加载分类
-      const catRes = await fetch('/api/categories');
+      // 加载分类 - 直接调用 Supabase
+      const catRes = await fetch(
+        `${supabaseUrl}/rest/v1/categories?order=order.asc`,
+        {
+          headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+        }
+      );
       const catData = await catRes.json();
       setCategories(catData.sort((a: any, b: any) => a.order - b.order));
     } catch (error: any) {

@@ -764,9 +764,14 @@ ${markdown}`;
       )}
 
       {user?.role === 'admin' && (
-        <button onClick={() => window.location.href = '/logs'} style={{ marginTop: '10px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-          📋 查看日志
-        </button>
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+          <button onClick={() => window.location.href = '/manage'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            📚 文档排序管理
+          </button>
+          <button onClick={() => window.location.href = '/logs'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            📋 查看日志
+          </button>
+        </div>
       )}
 
       <button onClick={() => window.location.href = '/'} style={{ marginTop: '20px', padding: '12px 30px', fontSize: '16px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
