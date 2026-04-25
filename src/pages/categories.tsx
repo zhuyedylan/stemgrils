@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 
+declare global {
+  interface Window {
+    SUPABASE_URL?: string;
+    SUPABASE_KEY?: string;
+  }
+}
+
 function CategoryManager() {
   const [categories, setCategories] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -8,6 +15,9 @@ function CategoryManager() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+
+  const supabaseUrl = window.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
+  const supabaseKey = window.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
 
   useEffect(() => {
     const savedUser = localStorage.getItem('stem_user');
@@ -26,7 +36,9 @@ function CategoryManager() {
 
   const loadCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?order=order.asc`, {
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey }
+      });
       const data = await response.json();
       setCategories(data.sort((a, b) => a.order - b.order));
     } catch (error) {
@@ -41,19 +53,30 @@ function CategoryManager() {
     }
 
     try {
-      const response = await fetch('/api/categories', {
+      const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.order || 0)) : 0;
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName.trim() })
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer ' + supabaseKey,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          id: newCategoryName.trim().toLowerCase().replace(/\s+/g, '-'),
+          name: newCategoryName.trim(),
+          order: maxOrder + 1,
+          allowUserUpload: true
+        })
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.ok) {
         setMessage('✅ 目录添加成功');
         setNewCategoryName('');
         setShowAddForm(false);
         loadCategories();
       } else {
-        setMessage('添加失败: ' + result.error);
+        const err = await response.text();
+        setMessage('添加失败: ' + err);
       }
     } catch (error) {
       setMessage('添加失败: ' + error.message);
@@ -66,13 +89,15 @@ function CategoryManager() {
     if (!confirm(`再次确认：此操作不可恢复！`)) return;
 
     try {
-      const response = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
-      const result = await response.json();
-      if (result.success) {
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey, 'Prefer': 'return=minimal' }
+      });
+      if (response.ok) {
         setMessage('✅ 目录已删除');
         loadCategories();
       } else {
-        setMessage('删除失败: ' + result.error);
+        setMessage('删除失败');
       }
     } catch (error) {
       setMessage('删除失败: ' + error.message);
@@ -87,17 +112,21 @@ function CategoryManager() {
     const allowUpload = confirm('是否允许普通用户上传到该目录？');
 
     try {
-      const response = await fetch(`/api/categories/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer ' + supabaseKey,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify({ name: newName, allowUserUpload: allowUpload })
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.ok) {
         setMessage('✅ 目录已更新');
         loadCategories();
       } else {
-        setMessage('更新失败: ' + result.error);
+        setMessage('更新失败');
       }
     } catch (error) {
       setMessage('更新失败: ' + error.message);
@@ -107,17 +136,21 @@ function CategoryManager() {
   const handleToggleUpload = async (id, currentValue) => {
     try {
       const cat = categories.find(c => c.id === id);
-      const response = await fetch(`/api/categories/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: cat.name, allowUserUpload: !currentValue })
+      const response = await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer ' + supabaseKey,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ allowUserUpload: !currentValue })
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.ok) {
         setMessage(`✅ 已${!currentValue ? '允许' : '禁止'}普通用户上传到该目录`);
         loadCategories();
       } else {
-        setMessage('更新失败: ' + result.error);
+        setMessage('更新失败');
       }
     } catch (error) {
       setMessage('更新失败: ' + error.message);
@@ -126,15 +159,20 @@ function CategoryManager() {
 
   const handleMoveUp = async (index) => {
     if (index === 0) return;
-    const newOrder = [...categories];
-    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
-    const orderIds = newOrder.map(c => c.id);
+    const cat = categories[index];
+    const prevCat = categories[index - 1];
 
     try {
-      await fetch('/api/categories/reorder', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order: orderIds })
+      // 交换 order
+      await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${cat.id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ order: prevCat.order })
+      });
+      await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${prevCat.id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ order: cat.order })
       });
       loadCategories();
     } catch (error) {
@@ -144,15 +182,19 @@ function CategoryManager() {
 
   const handleMoveDown = async (index) => {
     if (index === categories.length - 1) return;
-    const newOrder = [...categories];
-    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-    const orderIds = newOrder.map(c => c.id);
+    const cat = categories[index];
+    const nextCat = categories[index + 1];
 
     try {
-      await fetch('/api/categories/reorder', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order: orderIds })
+      await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${cat.id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ order: nextCat.order })
+      });
+      await fetch(`${supabaseUrl}/rest/v1/categories?id=eq.${nextCat.id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': supabaseKey, 'Authorization': 'Bearer ' + supabaseKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ order: cat.order })
       });
       loadCategories();
     } catch (error) {
@@ -167,9 +209,9 @@ function CategoryManager() {
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>📁 目录管理</h2>
-        <button onClick={() => window.location.href = '/'} style={{ padding: '8px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-          🏠 返回首页
+        <h1>📁 目录管理</h1>
+        <button onClick={() => window.location.href = '/upload'} style={{ padding: '8px 20px', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+          🏠 返回
         </button>
       </div>
 
