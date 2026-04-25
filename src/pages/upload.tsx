@@ -17,7 +17,26 @@ function UploadPage() {
   const [myDocs, setMyDocs] = useState<any[]>([]);
   const [tableStyle, setTableStyle] = useState('classic'); // 表格样式选择
   const [headingMode, setHeadingMode] = useState('smart'); // 标题层级模式：smart（智能识别）、flat（扁平）、preserve（保持原样）
+  const [deploying, setDeploying] = useState(false); // 部署状态
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 手动触发部署
+  const handleDeploy = async () => {
+    setDeploying(true);
+    setMessage('正在触发部署...');
+    try {
+      const res = await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+      if (res.ok) {
+        setMessage('✅ 部署已触发，请等待约 1-2 分钟后刷新页面查看更新');
+        addLog('manual_deploy', { triggeredBy: user?.username }, user?.username);
+      } else {
+        setMessage('❌ 部署触发失败');
+      }
+    } catch (e) {
+      setMessage('❌ 部署触发失败: ' + e);
+    }
+    setDeploying(false);
+  };
 
   // 日志记录函数
   const addLog = async (action: string, details: any, username?: string) => {
@@ -518,15 +537,8 @@ ${markdown}`;
       });
 
       if (response.ok) {
-        setMessage('✅ 已重新提交，正在触发重新部署...');
+        setMessage('✅ 已重新提交，等待审批');
         addLog('resubmit', { filename: doc.filename }, user?.username);
-        // 触发 Vercel 重新部署
-        try {
-          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
-          setMessage('✅ 已重新提交，等待审批，网站将自动更新');
-        } catch (e) {
-          setMessage('✅ 已重新提交，等待审批');
-        }
         loadMyDocs();
       } else {
         setMessage('❌ 提交失败');
@@ -549,15 +561,8 @@ ${markdown}`;
         body: JSON.stringify({ approved: true }),
       });
       if (response.ok) {
-        setMessage(`✅ ${filename} 已审批通过，正在触发重新部署...`);
+        setMessage(`✅ ${filename} 已审批通过`);
         addLog('approve', { filename }, user?.username);
-        // 触发 Vercel 重新部署
-        try {
-          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
-          setMessage(`✅ ${filename} 已审批通过，网站将自动更新`);
-        } catch (e) {
-          setMessage(`✅ ${filename} 已审批通过，请手动触发部署`);
-        }
         loadMyDocs();
       }
     } catch (error: any) {
@@ -581,15 +586,8 @@ ${markdown}`;
         body: JSON.stringify({ approved: false, hidden: true, rejection_reason: reason }),
       });
       if (response.ok) {
-        setMessage(`❌ ${filename} 已拒绝，正在触发重新部署...`);
+        setMessage(`❌ ${filename} 已拒绝`);
         addLog('reject', { filename, reason }, user?.username);
-        // 触发 Vercel 重新部署
-        try {
-          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
-          setMessage(`❌ ${filename} 已拒绝，网站将自动更新`);
-        } catch (e) {
-          setMessage(`❌ ${filename} 已拒绝`);
-        }
         loadMyDocs();
       }
     } catch (error: any) {
@@ -764,13 +762,35 @@ ${markdown}`;
       )}
 
       {user?.role === 'admin' && (
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-          <button onClick={() => window.location.href = '/manage'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-            📚 文档排序管理
-          </button>
-          <button onClick={() => window.location.href = '/logs'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-            📋 查看日志
-          </button>
+        <div style={{ marginBottom: '20px', padding: '20px', backgroundColor: '#fef3c7', borderRadius: '12px', border: '2px solid #f59e0b' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '15px', color: '#92400e', fontSize: '18px' }}>⚙️ 管理员控制面板</div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleDeploy}
+              disabled={deploying}
+              style={{
+                padding: '12px 30px',
+                fontSize: '16px',
+                backgroundColor: deploying ? '#9ca3af' : '#ef4444',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: deploying ? 'not-allowed' : 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              {deploying ? '⏳ 部署中...' : '🚀 发布网站'}
+            </button>
+            <button onClick={() => window.location.href = '/manage'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+              📚 文档排序管理
+            </button>
+            <button onClick={() => window.location.href = '/logs'} style={{ padding: '12px 30px', fontSize: '16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+              📋 查看日志
+            </button>
+          </div>
+          <div style={{ marginTop: '10px', fontSize: '14px', color: '#78350f' }}>
+            💡 提示：编辑、审批、排序操作后需要点击"发布网站"才能更新静态页面
+          </div>
         </div>
       )}
 

@@ -19,8 +19,6 @@ const ManagePage = () => {
 
   const supabaseUrl = window.SUPABASE_URL || 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
   const supabaseKey = window.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
-
-  useEffect(() => {
     const storedUser = localStorage.getItem('stem_user');
     if (!storedUser) {
       window.location.href = '/login';
@@ -139,7 +137,6 @@ const ManagePage = () => {
       if (res.ok) {
         setMessage('✅ 分类已更改');
         loadData();
-        triggerDeploy();
       } else {
         setMessage('分类更改失败');
       }
@@ -147,14 +144,6 @@ const ManagePage = () => {
       setMessage('操作失败: ' + error.message);
     }
     setEditingDoc(null);
-  };
-
-  // 触发重新部署
-  const triggerDeploy = async () => {
-    try {
-      await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
-      setMessage(message + '，正在重新部署...');
-    } catch (e) {}
   };
 
   // 上移
@@ -189,7 +178,6 @@ const ManagePage = () => {
 
     setMessage('✅ 排序已更新');
     loadData();
-    triggerDeploy();
   };
 
   // 下移
@@ -224,7 +212,6 @@ const ManagePage = () => {
 
     setMessage('✅ 排序已更新');
     loadData();
-    triggerDeploy();
   };
 
   if (!user || loading) {
