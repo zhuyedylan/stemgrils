@@ -6,6 +6,20 @@ import { redirect } from '@docusaurus/router';
 const SUPABASE_URL = 'https://jyhmhksdpjkzkhqlkuqh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5aG1oa3NkcGpremtocWxrdXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDEwNTYsImV4cCI6MjA5MDg3NzA1Nn0.e5iYCkY-UNumjWWnsPugc5nIUKOkITccuhODLPBCiwc';
 
+// Vercel 部署 Hook
+const DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB';
+
+// 触发重新部署的函数
+const triggerDeploy = async () => {
+  try {
+    await fetch(DEPLOY_HOOK, { method: 'POST' });
+    return true;
+  } catch (e) {
+    console.error('部署触发失败:', e);
+    return false;
+  }
+};
+
 function WYSIWYGEditor() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [content, setContent] = useState('');
@@ -362,7 +376,9 @@ function WYSIWYGEditor() {
       });
 
       if (response.ok) {
-        setMessage('✅ 重命名成功！页面将刷新...');
+        setMessage('✅ 重命名成功，正在触发重新部署...');
+        await triggerDeploy();
+        setMessage('✅ 重命名成功，网站将自动更新');
         setTimeout(() => window.location.reload(), 1500);
       } else {
         const errText = await response.text();
@@ -390,7 +406,9 @@ function WYSIWYGEditor() {
       });
 
       if (response.ok) {
-        setMessage('✅ 删除成功！页面将刷新...');
+        setMessage('✅ 删除成功，正在触发重新部署...');
+        await triggerDeploy();
+        setMessage('✅ 删除成功，网站将自动更新');
         setTimeout(() => window.location.reload(), 1500);
       } else {
         const errText = await response.text();
@@ -424,7 +442,9 @@ function WYSIWYGEditor() {
       });
 
       if (response.ok) {
-        setMessage('✅ 审批通过！');
+        setMessage('✅ 审批通过，正在触发重新部署...');
+        await triggerDeploy();
+        setMessage('✅ 审批通过，网站将自动更新');
         setDocStatus('已公开');
         loadFiles(); // 刷新文件列表
       } else {
@@ -460,7 +480,9 @@ function WYSIWYGEditor() {
       });
 
       if (response.ok) {
-        setMessage('❌ 已拒绝');
+        setMessage('❌ 已拒绝，正在触发重新部署...');
+        await triggerDeploy();
+        setMessage('❌ 已拒绝，网站将自动更新');
         setDocStatus('已拒绝');
         setRejectModal(null);
       } else {
@@ -490,7 +512,9 @@ function WYSIWYGEditor() {
       });
 
       if (response.ok) {
-        setMessage(newHidden ? '👁️ 已隐藏' : '👁️‍🗨️ 已显示');
+        setMessage(newHidden ? '👁️ 已隐藏，正在触发重新部署...' : '👁️‍🗨️ 已显示，正在触发重新部署...');
+        await triggerDeploy();
+        setMessage(newHidden ? '👁️ 已隐藏，网站将自动更新' : '👁️‍🗨️ 已显示，网站将自动更新');
         setCurrentDoc({ ...currentDoc, hidden: newHidden });
         setDocStatus(newHidden ? '已隐藏' : '已公开');
       } else {
@@ -596,9 +620,12 @@ ${markdown}`;
       });
 
       if (saveResponse.ok) {
-        setMessage('✅ 保存成功！');
+        setMessage('✅ 保存成功，正在触发重新部署...');
         setHasChanges(false);
         setOriginalContent(editor.innerHTML);
+        // 触发 Vercel 重新部署
+        await triggerDeploy();
+        setMessage('✅ 保存成功，网站将自动更新');
         // 刷新页面
         window.location.href = '/editor?file=' + fileName + '&refresh=' + Date.now();
       } else {

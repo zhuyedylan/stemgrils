@@ -306,14 +306,6 @@ function UploadPage() {
       processedHtml = processedHtml.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
       processedHtml = processedHtml.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
       processedHtml = processedHtml.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
-
-      // 合合相邻的加粗块（Word 可能将一个加粗段落拆成多个 <strong> 标签）
-      // 例如：**1）**烘干设备要求：** → **1）烘干设备要求：**
-      processedHtml = processedHtml.replace(/\*\*([^*]+)\*\*\s*\*\*/g, '**');
-      processedHtml = processedHtml.replace(/\*\*\s*\*\*([^*]+)\*\*/g, '**$1**');
-      // 合合相邻加粗内容：**A**B**C** → **ABC**（当 B 是纯文本没有空格分隔时）
-      processedHtml = processedHtml.replace(/\*\*([^*]+)\*\*([^*\s]+)\*\*([^*]+)\*\*/g, '**$1$2$3**');
-
       processedHtml = processedHtml.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
       processedHtml = processedHtml.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
       processedHtml = processedHtml.replace(/<ul[^>]*>(.*?)<\/ul>/gi, '\n$1');
@@ -526,8 +518,15 @@ ${markdown}`;
       });
 
       if (response.ok) {
-        setMessage('✅ 已重新提交，等待审批');
+        setMessage('✅ 已重新提交，正在触发重新部署...');
         addLog('resubmit', { filename: doc.filename }, user?.username);
+        // 触发 Vercel 重新部署
+        try {
+          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+          setMessage('✅ 已重新提交，等待审批，网站将自动更新');
+        } catch (e) {
+          setMessage('✅ 已重新提交，等待审批');
+        }
         loadMyDocs();
       } else {
         setMessage('❌ 提交失败');
@@ -582,8 +581,15 @@ ${markdown}`;
         body: JSON.stringify({ approved: false, hidden: true, rejection_reason: reason }),
       });
       if (response.ok) {
-        setMessage(`❌ ${filename} 已拒绝`);
+        setMessage(`❌ ${filename} 已拒绝，正在触发重新部署...`);
         addLog('reject', { filename, reason }, user?.username);
+        // 触发 Vercel 重新部署
+        try {
+          await fetch('https://api.vercel.com/v1/integrations/deploy/prj_pdsffwCNPJcY904M0JMZUtzRjOCg/1PuxGzixwB', { method: 'POST' });
+          setMessage(`❌ ${filename} 已拒绝，网站将自动更新`);
+        } catch (e) {
+          setMessage(`❌ ${filename} 已拒绝`);
+        }
         loadMyDocs();
       }
     } catch (error: any) {
