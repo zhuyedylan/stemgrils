@@ -53,6 +53,12 @@ if (introDocs.length > 0) {
     type: 'category',
     label: '项目介绍',
     collapsed: false,
+    link: {
+      type: 'generated-index',
+      title: '项目介绍',
+      description: '了解本项目的背景、目标和整体规划',
+      slug: '/intro',
+    },
     items: introDocs
   });
 }
@@ -62,6 +68,12 @@ if (processDocs.length > 0) {
     type: 'category',
     label: '工艺手册',
     collapsed: false,
+    link: {
+      type: 'generated-index',
+      title: '工艺手册',
+      description: '各类高分子材料再生3D打印线材的制作工艺',
+      slug: '/process',
+    },
     items: processDocs
   });
 }
