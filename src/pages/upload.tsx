@@ -637,37 +637,13 @@ ${markdown}`;
               fontWeight: 'bold'
             }}
           >
-            {deploying ? '⏳ 部署中...' : '🚀 发布网站'}
+            {deploying ? '⏳ 部署中...' : '️ 发布网站'}
           </button>
         )}
       </div>
       <p style={{ color: '#666', marginBottom: '20px' }}>
         上传 Word 文档，系统将自动转换为网页格式。新文档需要管理员审批后才能公开显示。
       </p>
-
-      {/* 管理员系统管理区域 */}
-      {user?.role === 'admin' && (
-        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '8px', border: '1px solid #6b7280' }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '10px', color: '#374151' }}>⚙️ 系统管理</div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <button onClick={() => window.location.href = '/manage'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              📚 文档管理
-            </button>
-            <button onClick={() => window.location.href = '/categories'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              📁 目录管理
-            </button>
-            <button onClick={() => window.location.href = '/users'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              👥 用户管理
-            </button>
-            <button onClick={() => window.location.href = '/logs'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              📋 查看日志
-            </button>
-          </div>
-          <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
-            💡 编辑、审批、排序后点击"发布网站"更新页面
-          </div>
-        </div>
-      )}
 
       {/* 分类选择 */}
       <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
