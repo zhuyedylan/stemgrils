@@ -619,55 +619,55 @@ ${markdown}`;
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      {/* 管理员区域 - 在顶部 */}
-      {user?.role === 'admin' && (
-        <div style={{ marginBottom: '20px', padding: '20px', backgroundColor: '#fef3c7', borderRadius: '12px', border: '2px solid #f59e0b' }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '15px', color: '#92400e', fontSize: '18px' }}>⚙️ 管理员控制面板</div>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
-            <button
-              onClick={handleDeploy}
-              disabled={deploying}
-              style={{
-                padding: '12px 30px',
-                fontSize: '16px',
-                backgroundColor: deploying ? '#9ca3af' : '#ef4444',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: deploying ? 'not-allowed' : 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              {deploying ? '⏳ 部署中...' : '🚀 发布网站'}
-            </button>
-          </div>
-          <div style={{ padding: '15px', backgroundColor: 'white', borderRadius: '8px' }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '10px', color: '#374151' }}>系统管理</div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button onClick={() => window.location.href = '/manage'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                📚 文档管理
-              </button>
-              <button onClick={() => window.location.href = '/categories'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                📁 目录管理
-              </button>
-              <button onClick={() => window.location.href = '/users'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                👥 用户管理
-              </button>
-              <button onClick={() => window.location.href = '/logs'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                📋 查看日志
-              </button>
-            </div>
-          </div>
-          <div style={{ marginTop: '10px', fontSize: '14px', color: '#78350f' }}>
-            💡 提示：编辑、审批、排序操作后需要点击"发布网站"才能更新静态页面
-          </div>
-        </div>
-      )}
-
-      <h2>📤 上传文档</h2>
+      {/* 标题行 - 上传文档 + 发布网站并列 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+        <h2>📤 上传文档</h2>
+        {user?.role === 'admin' && (
+          <button
+            onClick={handleDeploy}
+            disabled={deploying}
+            style={{
+              padding: '12px 30px',
+              fontSize: '16px',
+              backgroundColor: deploying ? '#9ca3af' : '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: deploying ? 'not-allowed' : 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            {deploying ? '⏳ 部署中...' : '🚀 发布网站'}
+          </button>
+        )}
+      </div>
       <p style={{ color: '#666', marginBottom: '20px' }}>
         上传 Word 文档，系统将自动转换为网页格式。新文档需要管理员审批后才能公开显示。
       </p>
+
+      {/* 管理员系统管理区域 */}
+      {user?.role === 'admin' && (
+        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '8px', border: '1px solid #6b7280' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '10px', color: '#374151' }}>⚙️ 系统管理</div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button onClick={() => window.location.href = '/manage'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              📚 文档管理
+            </button>
+            <button onClick={() => window.location.href = '/categories'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              📁 目录管理
+            </button>
+            <button onClick={() => window.location.href = '/users'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              👥 用户管理
+            </button>
+            <button onClick={() => window.location.href = '/logs'} style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              📋 查看日志
+            </button>
+          </div>
+          <div style={{ marginTop: '8px', fontSize: '13px', color: '#6b7280' }}>
+            💡 编辑、审批、排序后点击"发布网站"更新页面
+          </div>
+        </div>
+      )}
 
       {/* 分类选择 */}
       <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
