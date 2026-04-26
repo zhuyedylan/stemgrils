@@ -72,7 +72,7 @@ function UploadPage() {
     setIsLoggedIn(true);
 
     loadCategories();
-    loadMyDocs();
+    loadMyDocs(userData); // 直接传入 userData，而不是依赖状态
   }, []);
 
   const loadCategories = async () => {
@@ -96,20 +96,22 @@ function UploadPage() {
     }
   };
 
-  const loadMyDocs = async () => {
+  const loadMyDocs = async (currentUser?: any) => {
+    // 使用传入的 user 或状态中的 user
+    const u = currentUser || user;
     try {
       // 管理员获取所有文档，普通用户只获取自己的
-      const query = user?.role === 'admin'
+      const query = u?.role === 'admin'
         ? `${SUPABASE_URL}/rest/v1/documents?order=created_at.desc`
-        : `${SUPABASE_URL}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`;
+        : `${SUPABASE_URL}/rest/v1/documents?uploader=eq.${u?.username}&order=created_at.desc`;
       const response = await fetch(query, {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       });
       const docs = await response.json();
       setMyDocs(docs);
     } catch (error: any) {
-      console.error('加载我的文档失败:', error);
-      addLog('error_load_docs', { error: error.message }, user?.username);
+      console.error('加载文档失败:', error);
+      addLog('error_load_docs', { error: error.message }, u?.username);
     }
   };
 
@@ -508,7 +510,7 @@ ${markdown}`;
         setMessage(`✅ ${displayName} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
         addLog('upload_success', { filename: finalFilename, originalFilename: filename, category: selectedCategory, images: images.length }, user?.username);
         if (fileInputRef.current) fileInputRef.current.value = '';
-        loadMyDocs();
+        loadMyDocs(user);
       } else {
         const errText = await docRes.text();
         setMessage('保存失败: ' + errText);
@@ -543,7 +545,7 @@ ${markdown}`;
       if (response.ok) {
         setMessage('✅ 已重新提交，等待审批');
         addLog('resubmit', { filename: doc.filename }, user?.username);
-        loadMyDocs();
+        loadMyDocs(user);
       } else {
         setMessage('❌ 提交失败');
       }
@@ -567,7 +569,7 @@ ${markdown}`;
       if (response.ok) {
         setMessage(`✅ ${filename} 已审批通过`);
         addLog('approve', { filename }, user?.username);
-        loadMyDocs();
+        loadMyDocs(user);
       }
     } catch (error: any) {
       setMessage('操作失败: ' + error.message);
@@ -592,7 +594,7 @@ ${markdown}`;
       if (response.ok) {
         setMessage(`❌ ${filename} 已拒绝`);
         addLog('reject', { filename, reason }, user?.username);
-        loadMyDocs();
+        loadMyDocs(user);
       }
     } catch (error: any) {
       setMessage('操作失败: ' + error.message);
