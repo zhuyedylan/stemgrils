@@ -98,7 +98,11 @@ function UploadPage() {
 
   const loadMyDocs = async () => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`, {
+      // 管理员获取所有文档，普通用户只获取自己的
+      const query = user?.role === 'admin'
+        ? `${SUPABASE_URL}/rest/v1/documents?order=created_at.desc`
+        : `${SUPABASE_URL}/rest/v1/documents?uploader=eq.${user?.username}&order=created_at.desc`;
+      const response = await fetch(query, {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       });
       const docs = await response.json();
