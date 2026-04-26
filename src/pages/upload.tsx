@@ -38,10 +38,18 @@ function UploadPage() {
     setDeploying(false);
   };
 
-  // 日志记录函数
+  // 日志记录函数 - 增强版，包含详细错误追踪
   const addLog = async (action: string, details: any, username?: string) => {
+    const logData = {
+      action,
+      details: JSON.stringify(details),
+      username: username || 'unknown',
+      created_at: new Date().toISOString(),
+    };
+    console.log('📝 Logging:', action, details);
+
     try {
-      await fetch(`${SUPABASE_URL}/rest/v1/logs`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/logs`, {
         method: 'POST',
         headers: {
           'apikey': SUPABASE_KEY,
@@ -49,15 +57,16 @@ function UploadPage() {
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal',
         },
-        body: JSON.stringify({
-          action,
-          details: JSON.stringify(details),
-          username: username || 'system',
-          created_at: new Date().toISOString(),
-        }),
+        body: JSON.stringify(logData),
       });
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('❌ Log write failed:', res.status, errText);
+      } else {
+        console.log('✅ Log written:', action);
+      }
     } catch (e) {
-      console.error('Log error:', e);
+      console.error('❌ Log error:', e);
     }
   };
 
@@ -117,11 +126,16 @@ function UploadPage() {
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log('❌ No file selected');
+      return;
+    }
+
+    console.log('📁 File selected:', file.name, 'size:', file.size);
 
     if (!file.name.match(/\.docx?$/i)) {
       setMessage('请上传 Word 文档 (.doc 或 .docx)');
-      addLog('upload_invalid_format', { filename: file.name }, user?.username);
+      addLog('upload_invalid_format', { filename: file.name, size: file.size }, user?.username);
       return;
     }
 
@@ -130,16 +144,21 @@ function UploadPage() {
     const filename = file.name.replace(/\.docx?$/i, '');
 
     try {
-      addLog('upload_start', { filename, size: file.size }, user?.username);
+      addLog('upload_start', { filename, size: file.size, category: selectedCategory }, user?.username);
+      console.log('🚀 Upload started:', filename);
 
       // 读取文件
+      setMessage('正在读取文件...');
       const arrayBuffer = await file.arrayBuffer();
+      console.log('✅ File read, size:', arrayBuffer.byteLength);
 
       // ===== 前端 mammoth 转换 =====
       setMessage('正在解析 Word 文档...');
+      console.log('📄 Converting with mammoth...');
 
       // 用 HTML 方式转换，然后手动处理表格
       const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+      console.log('✅ Mammoth conversion done, HTML length:', htmlResult.value.length);
 
       // 将 HTML 转换为 Markdown
       let html = htmlResult.value;
@@ -424,11 +443,14 @@ function UploadPage() {
       }
 
       setMessage(`转换完成，${images.length} 张图片待上传...`);
+      console.log('📊 Markdown length:', markdown.length, 'Images:', images.length);
+      addLog('convert_success', { filename, contentLength: markdown.length, images: images.length }, user?.username);
 
       // ===== 直接上传图片到 Supabase Storage =====
       for (let i = 0; i < images.length; i++) {
         const img = images[i];
         setMessage(`正在上传图片 ${i + 1}/${images.length}...`);
+        console.log('🖼️ Uploading image:', img.name);
 
         const binaryString = atob(img.data);
         const bytes = new Uint8Array(binaryString.length);
@@ -458,12 +480,14 @@ function UploadPage() {
 
       // ===== 直接存储文档到 Supabase =====
       setMessage('正在保存文档...');
+      console.log('💾 Saving document to Supabase...');
 
       // 检查文件名是否已存在，如果存在则自动加数字后缀
       let finalFilename = filename;
       let suffix = 0;
       let filenameExists = true;
 
+      console.log('🔍 Checking filename:', filename);
       while (filenameExists) {
         const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(finalFilename)}&select=filename`, {
           headers: {
@@ -472,6 +496,7 @@ function UploadPage() {
           }
         });
         const existingDocs = await checkRes.json();
+        console.log('📋 Filename check result:', finalFilename, 'exists:', existingDocs.length > 0);
         if (existingDocs.length === 0) {
           filenameExists = false;
         } else {
@@ -480,12 +505,17 @@ function UploadPage() {
         }
       }
 
+      console.log('✅ Final filename:', finalFilename);
+      addLog('filename_resolved', { original: filename, final: finalFilename }, user?.username);
+
       const fullContent = `---
 id: ${finalFilename}
 title: ${finalFilename}
 ---
 
 ${markdown}`;
+
+      console.log('📄 Document content length:', fullContent.length);
 
       const docRes = await fetch(`${SUPABASE_URL}/rest/v1/documents`, {
         method: 'POST',
@@ -505,20 +535,26 @@ ${markdown}`;
         }),
       });
 
+      console.log('📡 Supabase response:', docRes.status, docRes.ok);
+
       if (docRes.ok) {
         const displayName = finalFilename === filename ? filename : `${filename}（重命名为 ${finalFilename}）`;
         setMessage(`✅ ${displayName} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
+        console.log('🎉 Upload success:', displayName);
         addLog('upload_success', { filename: finalFilename, originalFilename: filename, category: selectedCategory, images: images.length }, user?.username);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs(user);
       } else {
         const errText = await docRes.text();
+        console.error('❌ Supabase save failed:', docRes.status, errText);
         setMessage('保存失败: ' + errText);
-        addLog('upload_save_failed', { filename: finalFilename, error: errText }, user?.username);
+        addLog('upload_save_failed', { filename: finalFilename, status: docRes.status, error: errText }, user?.username);
       }
     } catch (error: any) {
+      console.error('❌ Upload error:', error);
+      console.error('Stack:', error.stack);
       setMessage('上传失败: ' + error.message);
-      addLog('upload_error', { filename, error: error.message }, user?.username);
+      addLog('upload_error', { filename, error: error.message, stack: error.stack }, user?.username);
     }
 
     setUploading(false);
