@@ -67,7 +67,13 @@
       "Bash(python3 -c ' *)",
       "Bash(python3 -m json.tool)",
       "Bash(claude plugins *)",
-      "Bash(chmod +x *)"
+      "Bash(chmod +x *)",
+      "Bash(mkdir -p backups)",
+      "Bash(tar -czvf backups/stemgrils-2026-04-25.tar.gz --exclude='node_modules' --exclude='.docusaurus' --exclude='build' --exclude='.git' 工艺手册)",
+      "Bash(python3 -c \"print\\('x' * 2000000\\)\")",
+      "Bash(vercel ls *)",
+      "Bash(gh api *)",
+      "Bash(vercel inspect *)"
     ]
   }
 }
