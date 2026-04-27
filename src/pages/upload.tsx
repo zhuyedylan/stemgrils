@@ -135,8 +135,8 @@ function UploadPage() {
 
     // 大文件警告
     const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > 20) {
-      const proceed = confirm(`文件较大 (${fileSizeMB.toFixed(1)}MB)，上传可能需要较长时间。\n\n建议：\n- 如果包含大量图片，请耐心等待\n- 上传过程中不要关闭页面\n\n是否继续上传？`);
+    if (fileSizeMB > 15) {
+      const proceed = confirm(`文件较大 (${fileSizeMB.toFixed(1)}MB)，上传可能需要较长时间。\n\n建议：\n- 如果包含大量图片，请耐心等待\n- 大于15MB的文件将跳过图片提取\n- 上传过程中不要关闭页面\n\n是否继续上传？`);
       if (!proceed) {
         e.target.value = '';
         return;
@@ -384,11 +384,11 @@ function UploadPage() {
       addLog('convert_success', { filename, contentLength: markdown.length }, user?.username);
 
       // ===== 提取图片 =====
-      // 对于大文件（>10MB），跳过图片提取以避免内存问题
+      // 对于大文件（>15MB），跳过图片提取以避免内存问题
       const images: Array<{ name: string; data: string; type: string; ref: string }> = [];
       const fileSizeMB = file.size / (1024 * 1024);
 
-      if (fileSizeMB <= 10) {
+      if (fileSizeMB <= 15) {
         setMessage('正在提取图片...');
         console.log('📦 Extracting images...');
         try {
@@ -418,9 +418,9 @@ function UploadPage() {
           addLog('image_extract_failed', { filename, error: zipError.message }, user?.username);
         }
       } else {
-        console.log('⚠️ Large file (>' + fileSizeMB.toFixed(1) + 'MB), skipping image extraction');
+        console.log('⚠️ Large file (>' + fileSizeMB.toFixed(1) + 'MB), skipping image extraction (threshold: 15MB)');
         setMessage('⚠️ 文件较大(' + fileSizeMB.toFixed(1) + 'MB)，跳过图片提取以加快上传');
-        addLog('large_file_skip_images', { filename, sizeMB: fileSizeMB }, user?.username);
+        addLog('large_file_skip_images', { filename, sizeMB: fileSizeMB, threshold: 15 }, user?.username);
       }
 
       // ===== 格式后处理 =====
