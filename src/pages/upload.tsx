@@ -446,35 +446,58 @@ function UploadPage() {
       console.log('📊 Markdown length:', markdown.length, 'Images:', images.length);
       addLog('convert_success', { filename, contentLength: markdown.length, images: images.length }, user?.username);
 
-      // ===== 直接上传图片到 Supabase Storage =====
-      for (let i = 0; i < images.length; i++) {
-        const img = images[i];
-        setMessage(`正在上传图片 ${i + 1}/${images.length}...`);
-        console.log('🖼️ Uploading image:', img.name);
+      // ===== 并行上传图片到 Supabase Storage (最多5个同时) =====
+      if (images.length > 0) {
+        const batchSize = 5; // 每批最多5张图片
+        for (let batch = 0; batch < Math.ceil(images.length / batchSize); batch++) {
+          const batchImages = images.slice(batch * batchSize, (batch + 1) * batchSize);
+          setMessage(`正在上传图片 ${batch * batchSize + 1}-${Math.min((batch + 1) * batchSize, images.length)} / ${images.length}...`);
+          console.log(`🖼️ Uploading batch ${batch + 1}: ${batchImages.length} images`);
 
-        const binaryString = atob(img.data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let j = 0; j < binaryString.length; j++) {
-          bytes[j] = binaryString.charCodeAt(j);
-        }
+          // 并行上传这一批图片
+          const uploadPromises = batchImages.map(async (img) => {
+            const binaryString = atob(img.data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let j = 0; j < binaryString.length; j++) {
+              bytes[j] = binaryString.charCodeAt(j);
+            }
 
-        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${img.name}`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': img.type,
-            'x-upsert': 'true',
-          },
-          body: bytes,
-        });
+            try {
+              const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/images/${img.name}`, {
+                method: 'POST',
+                headers: {
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': `Bearer ${SUPABASE_KEY}`,
+                  'Content-Type': img.type,
+                  'x-upsert': 'true',
+                },
+                body: bytes,
+              });
 
-        if (uploadRes.ok) {
-          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${img.name}`;
-          markdown = markdown.replace(new RegExp(img.ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), publicUrl);
-          addLog('image_upload_success', { name: img.name }, user?.username);
-        } else {
-          addLog('image_upload_failed', { name: img.name, status: uploadRes.status }, user?.username);
+              if (uploadRes.ok) {
+                const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${img.name}`;
+                return { success: true, ref: img.ref, url: publicUrl, name: img.name };
+              } else {
+                console.error('Image upload failed:', img.name, uploadRes.status);
+                return { success: false, ref: img.ref, name: img.name };
+              }
+            } catch (e) {
+              console.error('Image upload error:', img.name, e);
+              return { success: false, ref: img.ref, name: img.name };
+            }
+          });
+
+          // 等待这一批完成
+          const results = await Promise.all(uploadPromises);
+
+          // 替换 markdown 中的图片引用
+          for (const result of results) {
+            if (result.success) {
+              markdown = markdown.replace(new RegExp(result.ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), result.url);
+            }
+          }
+
+          console.log(`✅ Batch ${batch + 1} completed: ${results.filter(r => r.success).length} success`);
         }
       }
 
@@ -482,7 +505,7 @@ function UploadPage() {
       setMessage('正在保存文档...');
       console.log('💾 Saving document to Supabase...');
 
-      // 检查文件名是否已存在，如果存在则自动加数字后缀
+      // 检查文件名是否已存在
       let finalFilename = filename;
       let suffix = 0;
       let filenameExists = true;
@@ -496,7 +519,6 @@ function UploadPage() {
           }
         });
         const existingDocs = await checkRes.json();
-        console.log('📋 Filename check result:', finalFilename, 'exists:', existingDocs.length > 0);
         if (existingDocs.length === 0) {
           filenameExists = false;
         } else {
@@ -506,7 +528,6 @@ function UploadPage() {
       }
 
       console.log('✅ Final filename:', finalFilename);
-      addLog('filename_resolved', { original: filename, final: finalFilename }, user?.username);
 
       const fullContent = `---
 id: ${finalFilename}
@@ -517,6 +538,7 @@ ${markdown}`;
 
       console.log('📄 Document content length:', fullContent.length);
 
+      // 保存文档
       const docRes = await fetch(`${SUPABASE_URL}/rest/v1/documents`, {
         method: 'POST',
         headers: {
