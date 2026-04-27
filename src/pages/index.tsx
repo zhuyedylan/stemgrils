@@ -30,7 +30,7 @@ function HomepageHeader() {
           让环保与创意走进课堂
         </p>
         <div className={styles.heroButtons}>
-          <Link className={styles.primaryButton} to="/docs/探知未来科技女性培养计划">
+          <Link className={styles.primaryButton} to="/docs/塑照新生-废旧塑料回收再生与3D打印实践手册">
             塑造新生
           </Link>
           <Link className={styles.primaryButton} to="/docs/process">
@@ -81,7 +81,7 @@ function HomepageCTA() {
         <div className={styles.ctaContent}>
           <Heading as="h2">中国妇基会—三星"探知未来科技女性培养计划"</Heading>
           <p>加入我们的行列，学习废旧材料再生技术，用科技创新守护地球家园</p>
-          <Link className={styles.primaryButton} to="/docs/探知未来科技女性培养计划">
+          <Link className={styles.primaryButton} to="/docs/中国妇基会-三星探知未来科技女性培养计划">
             了解更多
           </Link>
         </div>
