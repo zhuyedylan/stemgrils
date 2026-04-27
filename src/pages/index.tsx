@@ -23,7 +23,7 @@ function HomepageHeader() {
       <div className={styles.heroContent}>
         <div className={styles.heroIcon}>♻️</div>
         <Heading as="h1" className={styles.heroTitle}>
-          废旧高分子材料再生3D打印
+          从废品到3D:家庭材料的科技换新计划
         </Heading>
         <p className={styles.heroSubtitle}>
           将家庭和校园中的废旧塑料转化为3D打印材料<br/>
@@ -89,7 +89,7 @@ function HomepageCTA() {
 
 export default function Home(): ReactNode {
   return (
-    <Layout title="首页" description="废旧高分子材料再生3D打印项目">
+    <Layout title="首页" description="从废品到3D:家庭材料的科技换新计划">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
