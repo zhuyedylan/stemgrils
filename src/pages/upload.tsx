@@ -133,6 +133,16 @@ function UploadPage() {
 
     console.log('📁 File selected:', file.name, 'size:', file.size);
 
+    // 大文件警告
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > 20) {
+      const proceed = confirm(`文件较大 (${fileSizeMB.toFixed(1)}MB)，上传可能需要较长时间。\n\n建议：\n- 如果包含大量图片，请耐心等待\n- 上传过程中不要关闭页面\n\n是否继续上传？`);
+      if (!proceed) {
+        e.target.value = '';
+        return;
+      }
+    }
+
     if (!file.name.match(/\.docx?$/i)) {
       setMessage('请上传 Word 文档 (.doc 或 .docx)');
       addLog('upload_invalid_format', { filename: file.name, size: file.size }, user?.username);
@@ -446,9 +456,86 @@ function UploadPage() {
       console.log('📊 Markdown length:', markdown.length, 'Images:', images.length);
       addLog('convert_success', { filename, contentLength: markdown.length, images: images.length }, user?.username);
 
-      // ===== 并行上传图片到 Supabase Storage (最多5个同时) =====
+      // ===== 先保存文档（不含图片URL），避免超时 =====
+      setMessage('正在保存文档...');
+      console.log('💾 Saving document (without images first)...');
+
+      // 检查文件名是否已存在
+      let finalFilename = filename;
+      let suffix = 0;
+      let filenameExists = true;
+
+      while (filenameExists) {
+        const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(finalFilename)}&select=filename`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        const existingDocs = await checkRes.json();
+        if (existingDocs.length === 0) {
+          filenameExists = false;
+        } else {
+          suffix++;
+          finalFilename = `${filename}${suffix}`;
+        }
+      }
+
+      console.log('✅ Final filename:', finalFilename);
+
+      // 先用占位符保存文档
+      let placeholderMarkdown = markdown;
+      for (const img of images) {
+        placeholderMarkdown = placeholderMarkdown.replace(
+          new RegExp(img.ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+          `![图片占位符](__IMAGE_PLACEHOLDER_${img.name}__)`
+        );
+      }
+
+      const initialContent = `---
+id: ${finalFilename}
+title: ${finalFilename}
+---
+
+${placeholderMarkdown}`;
+
+      console.log('📄 Initial content length:', initialContent.length);
+
+      // 保存初始文档（不含图片）
+      const docRes = await fetch(`${SUPABASE_URL}/rest/v1/documents`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({
+          filename: finalFilename,
+          content: initialContent,
+          category: selectedCategory,
+          uploader: user?.username || 'unknown',
+          approved: false,
+          created_at: new Date().toISOString(),
+        }),
+      });
+
+      console.log('📡 Document save response:', docRes.status, docRes.ok);
+
+      if (!docRes.ok) {
+        const errText = await docRes.text();
+        console.error('❌ Document save failed:', errText);
+        setMessage('保存失败: ' + errText);
+        setUploading(false);
+        return;
+      }
+
+      setMessage('文档已保存，正在上传图片...');
+
+      // ===== 并行上传图片到 Supabase Storage =====
+      let updatedMarkdown = placeholderMarkdown;
       if (images.length > 0) {
-        const batchSize = 5; // 每批最多5张图片
+        const batchSize = 3; // 每批最多3张图片（减少并发压力）
         for (let batch = 0; batch < Math.ceil(images.length / batchSize); batch++) {
           const batchImages = images.slice(batch * batchSize, (batch + 1) * batchSize);
           setMessage(`正在上传图片 ${batch * batchSize + 1}-${Math.min((batch + 1) * batchSize, images.length)} / ${images.length}...`);
@@ -476,71 +563,45 @@ function UploadPage() {
 
               if (uploadRes.ok) {
                 const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${img.name}`;
-                return { success: true, ref: img.ref, url: publicUrl, name: img.name };
+                return { success: true, placeholder: `__IMAGE_PLACEHOLDER_${img.name}__`, url: publicUrl, name: img.name };
               } else {
                 console.error('Image upload failed:', img.name, uploadRes.status);
-                return { success: false, ref: img.ref, name: img.name };
+                return { success: false, placeholder: `__IMAGE_PLACEHOLDER_${img.name}__`, name: img.name };
               }
             } catch (e) {
               console.error('Image upload error:', img.name, e);
-              return { success: false, ref: img.ref, name: img.name };
+              return { success: false, placeholder: `__IMAGE_PLACEHOLDER_${img.name}__`, name: img.name };
             }
           });
 
-          // 等待这一批完成
+          // 等待这一批完成并替换占位符
           const results = await Promise.all(uploadPromises);
-
-          // 替换 markdown 中的图片引用
           for (const result of results) {
             if (result.success) {
-              markdown = markdown.replace(new RegExp(result.ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), result.url);
+              updatedMarkdown = updatedMarkdown.replace(result.placeholder, `![图片](${result.url})`);
+            } else {
+              // 上传失败的图片保留占位符或移除
+              updatedMarkdown = updatedMarkdown.replace(result.placeholder, '');
             }
           }
 
-          console.log(`✅ Batch ${batch + 1} completed: ${results.filter(r => r.success).length} success`);
+          console.log(`✅ Batch ${batch + 1} completed`);
         }
       }
 
-      // ===== 直接存储文档到 Supabase =====
-      setMessage('正在保存文档...');
-      console.log('💾 Saving document to Supabase...');
+      // ===== 更新文档内容（含图片URL） =====
+      setMessage('正在更新文档...');
+      console.log('💾 Updating document with image URLs...');
 
-      // 检查文件名是否已存在
-      let finalFilename = filename;
-      let suffix = 0;
-      let filenameExists = true;
-
-      console.log('🔍 Checking filename:', filename);
-      while (filenameExists) {
-        const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(finalFilename)}&select=filename`, {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        });
-        const existingDocs = await checkRes.json();
-        if (existingDocs.length === 0) {
-          filenameExists = false;
-        } else {
-          suffix++;
-          finalFilename = `${filename}${suffix}`;
-        }
-      }
-
-      console.log('✅ Final filename:', finalFilename);
-
-      const fullContent = `---
+      const finalContent = `---
 id: ${finalFilename}
 title: ${finalFilename}
 ---
 
-${markdown}`;
+${updatedMarkdown}`;
 
-      console.log('📄 Document content length:', fullContent.length);
-
-      // 保存文档
-      const docRes = await fetch(`${SUPABASE_URL}/rest/v1/documents`, {
-        method: 'POST',
+      const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/documents?filename=eq.${encodeURIComponent(finalFilename)}`, {
+        method: 'PATCH',
         headers: {
           'apikey': SUPABASE_KEY,
           'Authorization': `Bearer ${SUPABASE_KEY}`,
@@ -548,29 +609,23 @@ ${markdown}`;
           'Prefer': 'return=minimal',
         },
         body: JSON.stringify({
-          filename: finalFilename,
-          content: fullContent,
-          category: selectedCategory,
-          uploader: user?.username || 'unknown',
-          approved: false,
-          created_at: new Date().toISOString(),
+          content: finalContent,
+          updated_at: new Date().toISOString(),
         }),
       });
 
-      console.log('📡 Supabase response:', docRes.status, docRes.ok);
+      console.log('📡 Update response:', updateRes.status, updateRes.ok);
 
-      if (docRes.ok) {
+      if (updateRes.ok) {
         const displayName = finalFilename === filename ? filename : `${filename}（重命名为 ${finalFilename}）`;
         setMessage(`✅ ${displayName} 上传成功！${images.length > 0 ? `已上传 ${images.length} 张图片。` : ''}等待管理员审批`);
         console.log('🎉 Upload success:', displayName);
-        addLog('upload_success', { filename: finalFilename, originalFilename: filename, category: selectedCategory, images: images.length }, user?.username);
         if (fileInputRef.current) fileInputRef.current.value = '';
         loadMyDocs(user);
       } else {
-        const errText = await docRes.text();
-        console.error('❌ Supabase save failed:', docRes.status, errText);
-        setMessage('保存失败: ' + errText);
-        addLog('upload_save_failed', { filename: finalFilename, status: docRes.status, error: errText }, user?.username);
+        const errText = await updateRes.text();
+        console.error('❌ Update failed:', errText);
+        setMessage('更新失败: ' + errText + '（但文档已保存，图片可能未完成）');
       }
     } catch (error: any) {
       console.error('❌ Upload error:', error);
