@@ -15,6 +15,11 @@ const config: Config = {
       async: true,
       defer: true,
     },
+    {
+      src: '/visitor-tracker.js',
+      async: true,
+      defer: true,
+    },
   ],
 
   // 环境变量注入到前端

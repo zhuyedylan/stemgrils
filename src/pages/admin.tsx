@@ -55,6 +55,7 @@ function SystemAdmin() {
     { icon: '📚', label: '文档管理', href: '/manage', color: '#3b82f6' },
     { icon: '📁', label: '目录管理', href: '/categories', color: '#10b981' },
     { icon: '👥', label: '用户管理', href: '/users', color: '#8b5cf6' },
+    { icon: '👥', label: '访客记录', href: '/visitors', color: '#ec4899' },
     { icon: '📋', label: '查看日志', href: '/logs', color: '#f59e0b' },
   ];
 
