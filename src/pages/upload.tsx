@@ -384,28 +384,44 @@ function UploadPage() {
       addLog('convert_success', { filename, contentLength: markdown.length }, user?.username);
 
       // ===== 提取图片 =====
-      setMessage('正在提取图片...');
-      const zip = await JSZip.loadAsync(arrayBuffer);
-      const mediaFiles = zip.file(/word\/media\/.*/);
+      // 对于大文件（>10MB），跳过图片提取以避免内存问题
       const images: Array<{ name: string; data: string; type: string; ref: string }> = [];
+      const fileSizeMB = file.size / (1024 * 1024);
 
-      for (const zipFile of mediaFiles) {
-        const originalName = zipFile.name.replace('word/media/', '');
-        const imageData = await zipFile.async('base64');
-        const mimeType = originalName.endsWith('.png') ? 'image/png'
-          : originalName.endsWith('.jpg') || originalName.endsWith('.jpeg') ? 'image/jpeg'
-          : originalName.endsWith('.gif') ? 'image/gif'
-          : 'image/png';
+      if (fileSizeMB <= 10) {
+        setMessage('正在提取图片...');
+        console.log('📦 Extracting images...');
+        try {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          const mediaFiles = zip.file(/word\/media\/.*/);
 
-        images.push({
-          name: `${filename}-${Date.now()}-${originalName}`,
-          data: imageData,
-          type: mimeType,
-          ref: `media/${originalName}`
-        });
+          for (const zipFile of mediaFiles) {
+            const originalName = zipFile.name.replace('word/media/', '');
+            const imageData = await zipFile.async('base64');
+            const mimeType = originalName.endsWith('.png') ? 'image/png'
+              : originalName.endsWith('.jpg') || originalName.endsWith('.jpeg') ? 'image/jpeg'
+              : originalName.endsWith('.gif') ? 'image/gif'
+              : 'image/png';
+
+            images.push({
+              name: `${filename}-${Date.now()}-${originalName}`,
+              data: imageData,
+              type: mimeType,
+              ref: `media/${originalName}`
+            });
+          }
+          console.log(`✅ Extracted ${images.length} images`);
+          addLog('images_extracted', { filename, count: images.length }, user?.username);
+        } catch (zipError: any) {
+          console.error('❌ Image extraction failed:', zipError);
+          setMessage('⚠️ 图片提取失败，继续保存文本内容');
+          addLog('image_extract_failed', { filename, error: zipError.message }, user?.username);
+        }
+      } else {
+        console.log('⚠️ Large file (>' + fileSizeMB.toFixed(1) + 'MB), skipping image extraction');
+        setMessage('⚠️ 文件较大(' + fileSizeMB.toFixed(1) + 'MB)，跳过图片提取以加快上传');
+        addLog('large_file_skip_images', { filename, sizeMB: fileSizeMB }, user?.username);
       }
-
-      addLog('images_extracted', { filename, count: images.length }, user?.username);
 
       // ===== 格式后处理 =====
       markdown = markdown.replace(/^(#{1,6})([^\s])/gm, '$1 $2');
