@@ -30,8 +30,11 @@ function HomepageHeader() {
           让环保与创意走进课堂
         </p>
         <div className={styles.heroButtons}>
-          <Link className={styles.primaryButton} to="/docs/项目说明">
-            开始浏览
+          <Link className={styles.primaryButton} to="/docs/探知未来科技女性培养计划">
+            塑造新生
+          </Link>
+          <Link className={styles.primaryButton} to="/docs/process">
+            工艺手册
           </Link>
         </div>
       </div>

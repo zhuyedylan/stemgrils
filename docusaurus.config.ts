@@ -98,7 +98,7 @@ const config: Config = {
     footer: {
       style: 'dark',
       links: [],
-      copyright: `Copyright © ${new Date().getFullYear()} 从废品到3D:家庭材料的科技换新计划`,
+      copyright: `© ${new Date().getFullYear()} 从废品到3D:家庭材料的科技换新计划`,
     },
     prism: {
       theme: prismThemes.github,

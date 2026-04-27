@@ -335,3 +335,25 @@
 .markdown h6 .hash-link {
   display: none !important;
 }
+
+/* 手机模式下导航栏显示首页和文档 */
+@media (max-width: 996px) {
+  .navbar__items--left {
+    display: flex !important;
+  }
+
+  .navbar__items--left .navbar__item {
+    display: flex !important;
+  }
+
+  .navbar__items--left .navbar__link {
+    display: flex !important;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* 调整右侧登录按钮位置 */
+  .navbar__items--right {
+    margin-left: auto;
+  }
+}
