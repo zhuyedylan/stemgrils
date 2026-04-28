@@ -30,7 +30,7 @@ function HomepageHeader() {
           让环保与创意走进课堂
         </p>
         <div className={styles.heroButtons}>
-          <Link className={styles.primaryButton} to="/docs/塑照新生-废旧塑料回收再生与3D打印实践手册">
+          <Link className={styles.primaryButton} to="/docs/塑造新生-废旧塑料回收再生与3D打印实践手册">
             塑造新生
           </Link>
           <Link className={styles.primaryButton} to="/docs/process">
